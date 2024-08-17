@@ -1,4 +1,4 @@
-package org.maternalcare.ui.intro
+package org.maternalcare.modules.intro
 
 import kotlinx.serialization.Serializable
 
