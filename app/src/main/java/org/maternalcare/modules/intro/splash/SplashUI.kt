@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +44,7 @@ fun SplashUI(navController: NavController) {
             modifier = Modifier
                 .height(50.dp)
                 .width(140.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6650a4)),
             shape = RoundedCornerShape(topStart = 10.dp, bottomEnd = 10.dp),
             enabled = true,
             elevation = ButtonDefaults.buttonElevation(
