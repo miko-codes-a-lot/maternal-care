@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.residence.enum.CheckupStatus
 
 @Composable
 fun AddressesUI(navController: NavController) {
@@ -19,7 +20,7 @@ fun AddressesUI(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = {
-            navController.navigate(MainNav.Residence.Residences)
+            navController.navigate(MainNav.Residences(CheckupStatus.ALL.name))
         }) {
             Text(text = "Address 1, Address 2")
         }

@@ -1,4 +1,4 @@
-package org.maternalcare.modules.main.residence.ui
+package org.maternalcare.modules.main.dashboard.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,18 +10,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.residence.enum.CheckupStatus
 
 @Composable
-fun ResidencesUI(navController: NavController) {
+fun DashboardUI(navController: NavController) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = {
-            navController.navigate(MainNav.ChooseCheckup)
+            navController.navigate(MainNav.Addresses(CheckupStatus.COMPLETE.name))
         }) {
-            Text(text = "Juana Cruz, Jenelle Mapala")
+            Text(text = "Complete")
+        }
+        Button(onClick = {
+            navController.navigate(MainNav.Addresses(CheckupStatus.INCOMPLETE.name))
+        }) {
+            Text(text = "Incomplete")
         }
     }
 }

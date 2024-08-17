@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.residence.enum.CheckupStatus
 
 @Composable
 fun MenuUI(navController: NavController) {
@@ -73,7 +74,7 @@ private fun Menu(navController: NavController) {
         //Profile
         Spacer(modifier = Modifier.height(20.dp))
         MenuButton(text = "Profile") {
-            navController.navigate(MainNav.Residence)
+            navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
         }
 
         //Dashboard
