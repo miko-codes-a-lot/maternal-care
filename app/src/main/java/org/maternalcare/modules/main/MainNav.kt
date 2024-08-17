@@ -18,4 +18,7 @@ object MainNav {
 
     @Serializable
     object CheckupDetails
+
+    @Serializable
+    object Dashboard
 }
