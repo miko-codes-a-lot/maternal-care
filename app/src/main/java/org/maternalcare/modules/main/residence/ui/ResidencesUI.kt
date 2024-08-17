@@ -19,7 +19,7 @@ fun ResidencesUI(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = {
-            navController.navigate(MainNav.Residence.ChooseCheckup)
+            navController.navigate(MainNav.ChooseCheckup)
         }) {
             Text(text = "Juana Cruz, Jenelle Mapala")
         }

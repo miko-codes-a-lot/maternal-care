@@ -8,17 +8,17 @@ object MainNav {
     object Menu
 
     @Serializable
-    object Residence {
-        @Serializable
-        object Addresses
+    data class Addresses(val status: String)
 
-        @Serializable
-        object Residences
+    @Serializable
+    data class Residences(val status: String)
 
-        @Serializable
-        object ChooseCheckup
+    @Serializable
+    object ChooseCheckup
 
-        @Serializable
-        object CheckupDetails
-    }
+    @Serializable
+    object CheckupDetails
+
+    @Serializable
+    object Dashboard
 }
