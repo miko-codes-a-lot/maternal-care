@@ -1,4 +1,4 @@
-package org.maternalcare
+package org.maternalcare.ui.intro
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,73 +11,36 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import kotlinx.serialization.Serializable
+import org.maternalcare.ui.main.MainNav
 
 fun NavGraphBuilder.introGraph(navController: NavController) {
-    navigation<IntroRoute>(startDestination = IntroRoute.Splash) {
-        composable<IntroRoute.Splash> {
+    navigation<IntroNav>(startDestination = IntroNav.Splash) {
+        composable<IntroNav.Splash> {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Button(onClick = {
-                    navController.navigate(IntroRoute.Login)
+                    navController.navigate(IntroNav.Login)
                 }) {
                     Text(text = "Get Started")
                 }
             }
         }
 
-        composable<IntroRoute.Login> {
+        composable<IntroNav.Login> {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Button(onClick = {
-                    navController.navigate(MainRoute.Menu)
+                    navController.navigate(MainNav.Menu)
                 }) {
                     Text(text = "Login")
                 }
             }
         }
-    }
-}
-
-fun NavGraphBuilder.mainGraph(navController: NavController) {
-    navigation<MainRoute>(startDestination = MainRoute.Menu) {
-        composable<MainRoute.Menu> {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Address 1")
-                }
-            }
-        }
-    }
-}
-
-@Serializable
-object IntroRoute {
-    @Serializable
-    object Splash
-
-    @Serializable
-    object Login
-}
-
-@Serializable
-object MainRoute {
-    @Serializable
-    object Menu
-
-    @Serializable
-    object Residence {
-        @Serializable
-        object Address
     }
 }
