@@ -1,4 +1,4 @@
-package org.maternalcare.modules.main.menu
+package org.maternalcare.modules.main.menu.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -76,10 +76,10 @@ private fun Menu(navController: NavController) {
             navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
         },
         MenuItem(text = "Dashboard") {
-            // move to dashboard
+            navController.navigate(MainNav.Dashboard)
         },
         MenuItem(text = "Archive") {
-            // move to Archive
+            navController.navigate(MainNav.Residences(CheckupStatus.ALL.name, isArchive = true))
         },
         MenuItem(text = "Manage User") {
             navController.navigate(MainNav.User)

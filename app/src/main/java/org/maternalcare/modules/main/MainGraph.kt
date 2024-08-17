@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import org.maternalcare.modules.main.dashboard.ui.DashboardUI
-import org.maternalcare.modules.main.menu.MenuUI
+import org.maternalcare.modules.main.menu.ui.MenuUI
 import org.maternalcare.modules.main.residence.ui.AddressesUI
 import org.maternalcare.modules.main.residence.ui.CheckupDetailsUI
 import org.maternalcare.modules.main.residence.ui.ChooseCheckupUI
