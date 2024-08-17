@@ -11,7 +11,7 @@ object MainNav {
     data class Addresses(val status: String)
 
     @Serializable
-    data class Residences(val status: String)
+    data class Residences(val status: String, var isArchive: Boolean = false)
 
     @Serializable
     object ChooseCheckup
