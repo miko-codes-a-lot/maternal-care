@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "269352425018",
+    "firebase_url": "https://maternal-care-210f9-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "maternal-care-210f9",
+    "storage_bucket": "maternal-care-210f9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:269352425018:android:bc36248eb1c9ffba6ec703",
+        "android_client_info": {
+          "package_name": "org.maternalcare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoJFfSmp2zuVSFMoXBXIRddPmrNbl9WBo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
