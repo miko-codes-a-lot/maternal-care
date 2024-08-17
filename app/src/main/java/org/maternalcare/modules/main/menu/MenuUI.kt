@@ -82,10 +82,10 @@ private fun Menu(navController: NavController) {
             // move to Archive
         },
         MenuItem(text = "Manage User") {
-            // move to manage user
+            navController.navigate(MainNav.User)
         },
         MenuItem(text = "Settings") {
-            // move to Settings
+            navController.navigate(MainNav.Settings)
         }
     )
     Column {

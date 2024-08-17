@@ -21,4 +21,10 @@ object MainNav {
 
     @Serializable
     object Dashboard
+
+    @Serializable
+    object User
+
+    @Serializable
+    object Settings
 }
