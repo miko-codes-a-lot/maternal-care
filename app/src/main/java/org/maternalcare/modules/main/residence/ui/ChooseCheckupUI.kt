@@ -19,7 +19,7 @@ fun ChooseCheckupUI(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = {
-            navController.navigate(MainNav.Residence.CheckupDetails)
+            navController.navigate(MainNav.CheckupDetails)
         }) {
             Text(text = "1st checkup, 2nd checkup, 3rd checkup")
         }
