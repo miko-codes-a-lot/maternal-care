@@ -1,6 +1,7 @@
 package org.maternalcare.modules.main.menu
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import org.maternalcare.R
+import org.maternalcare.modules.intro.IntroNav
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
 
@@ -38,14 +40,17 @@ fun MenuUI(navController: NavController) {
             modifier = Modifier.fillMaxSize()
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.arrow),
-                contentDescription = "Exit Icon",
+                painter = painterResource(id = R.drawable.logout),
+                contentDescription = "Logout Icon",
                 tint = Color.Black,
                 modifier = Modifier
                     .size(40.dp)
-                    .align(Alignment.TopStart)
-                    .padding(start = 12.dp, top = 12.dp)
-                    .offset(x = 10.dp, y = 25.dp)
+                    .align(Alignment.TopEnd)
+                    .padding(end = 10.dp, top = 12.dp)
+                    .offset(x = (-13).dp, y = 42.dp)
+                    .clickable {
+                        navController.navigate(IntroNav.Login)
+                    }
             )
         }
         Column(
@@ -59,7 +64,7 @@ fun MenuUI(navController: NavController) {
                 modifier = Modifier.size(100.dp)
             )
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "Pregnant", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+            Text(text = "Super Admin", fontSize = 30.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Cursive)
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -81,6 +86,7 @@ private fun Menu(navController: NavController) {
         Spacer(modifier = Modifier.height(20.dp))
         MenuButton(text = "Dashboard") {
             // move to dashboard
+            navController.navigate(MainNav.Dashboard)
         }
 
         //Archive
