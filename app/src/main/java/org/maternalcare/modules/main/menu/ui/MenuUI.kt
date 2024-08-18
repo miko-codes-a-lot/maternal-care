@@ -1,4 +1,4 @@
-package org.maternalcare.modules.main.menu
+package org.maternalcare.modules.main.menu.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import org.maternalcare.R
 import org.maternalcare.modules.intro.IntroNav
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.menu.model.MenuItem
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
 
 @Composable
@@ -75,36 +76,27 @@ fun MenuUI(navController: NavController) {
 
 @Composable
 private fun Menu(navController: NavController) {
-    Column {
-        //Profile
-        Spacer(modifier = Modifier.height(20.dp))
-        MenuButton(text = "Profile") {
+    val menuItems = listOf(
+        MenuItem(text = "Profile") {
             navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
-        }
-
-        //Dashboard
-        Spacer(modifier = Modifier.height(20.dp))
-        MenuButton(text = "Dashboard") {
-            // move to dashboard
+        },
+        MenuItem(text = "Dashboard") {
             navController.navigate(MainNav.Dashboard)
+        },
+        MenuItem(text = "Archive") {
+            navController.navigate(MainNav.Residences(CheckupStatus.ALL.name, isArchive = true))
+        },
+        MenuItem(text = "Manage User") {
+            navController.navigate(MainNav.User)
+        },
+        MenuItem(text = "Settings") {
+            navController.navigate(MainNav.Settings)
         }
-
-        //Archive
-        Spacer(modifier = Modifier.height(20.dp))
-        MenuButton(text = "Archive") {
-            // move to Archive
-        }
-
-        //UserManagement
-        Spacer(modifier = Modifier.height(20.dp))
-        MenuButton(text = "Manage User") {
-            // move to manage user
-        }
-
-        //UserSettings
-        Spacer(modifier = Modifier.height(20.dp))
-        MenuButton(text = "Settings") {
-            // move to Settings
+    )
+    Column {
+        menuItems.forEach { menuItem ->
+            Spacer(modifier = Modifier.height(20.dp))
+            MenuButton(text = menuItem.text, onClick = menuItem.action)
         }
     }
 }

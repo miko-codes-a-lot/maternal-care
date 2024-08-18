@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.google.services).apply(false)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
+    id("kotlin-kapt")
+    alias(libs.plugins.android.dagger.hilt)
 }
 
 android {
@@ -66,6 +68,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database)
+    implementation(libs.android.hilt)
+    kapt(libs.android.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -73,4 +77,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+kapt {
+    correctErrorTypes = true
 }
