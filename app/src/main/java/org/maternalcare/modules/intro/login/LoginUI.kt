@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
@@ -68,6 +67,7 @@ fun LoginUI(navController: NavController) {
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+
         // Login
         ElevatedButton(onClick = {navController.navigate(MainNav.Menu)},
             modifier = Modifier
