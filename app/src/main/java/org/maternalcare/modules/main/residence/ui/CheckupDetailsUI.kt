@@ -161,7 +161,7 @@ fun ParentFloatingIcon(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize().padding(16.dp),
-            contentAlignment = Alignment.BottomEnd
+        contentAlignment = Alignment.BottomEnd
     ) {
         Column(horizontalAlignment = Alignment.End) {
             AnimatedVisibility(
