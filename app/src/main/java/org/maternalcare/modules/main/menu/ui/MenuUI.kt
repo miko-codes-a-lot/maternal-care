@@ -84,7 +84,7 @@ private fun Menu(navController: NavController) {
             navController.navigate(MainNav.Dashboard)
         },
         MenuItem(text = "Archive") {
-            navController.navigate(MainNav.Residences(CheckupStatus.ALL.name, isArchive = true))
+            navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name, isArchive = true))
         },
         MenuItem(text = "Manage User") {
             navController.navigate(MainNav.User)
