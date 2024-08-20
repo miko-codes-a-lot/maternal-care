@@ -1,6 +1,6 @@
 [versions]
 agp = "8.5.2"
-kotlin = "1.9.0"
+kotlin = "2.0.0"
 google-services = "4.4.2"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -14,7 +14,7 @@ navigationRuntimeKtx = "2.7.7"
 navigationCompose = "2.8.0-alpha08"
 serialization = "1.6.3"
 firebaseBom = "33.1.2"
-android-dagger-hilt = "2.44"
+android-dagger-hilt = "2.49"
 hilt-navigation-compose = "1.2.0"
 kotlinx-coroutines-android = "1.7.3"
 
@@ -50,3 +50,4 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 android-dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "android-dagger-hilt" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
