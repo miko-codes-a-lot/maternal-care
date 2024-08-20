@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ButtonDefaults
@@ -71,36 +72,16 @@ fun AddressesUI(navController: NavController, isArchive: Boolean = false) {
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(text = "Select Address", fontSize = 24.sp, fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(top = 80.dp))
+                modifier = Modifier.padding(top = 80.dp))
             Spacer(modifier = Modifier.height(20.dp))
 
-            ListAddress(navController)
-
+            ListAddress(navController,isShowPercent = false)
         }
     }
 }
 
 @Composable
-private fun ListAddress (navController: NavController) {
-    val listAddress =
-        listOf("Makati City", "Pasig City", "Quezon City", "Pasay City",
-               "Taguig City", "Caloocan City", "Mandaluyong City", "Bataan",
-               "Sampaloc", "Cubao","Taguig City", "Caloocan City", "Mandaluyong City",
-               "Bataan",
-        )
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(15.dp)
-    ) {
-        items(listAddress) { address ->
-            ListButton(text = address) {
-                navController.navigate(MainNav.Residences(CheckupStatus.ALL.name))
-            }
-        }
-    }
-}
-@Composable
-private fun ListButton (text: String, onClick: () -> Unit) {
+private fun ListButton (isShowPercent: Boolean = false, data: Map<String,Any>, onClick: () -> Unit,navController: NavController){
     ElevatedButton(onClick = onClick,
         colors = ButtonDefaults.elevatedButtonColors(
             containerColor =  Color(0xFF6650a4),
@@ -116,13 +97,41 @@ private fun ListButton (text: String, onClick: () -> Unit) {
         )
     ) {
         Text(
-            text = text,
+            text = "${data["name"]}",
             fontSize = 17.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.Serif,
         )
-    }
-//    Spacer(modifier = Modifier.height(1.dp))
 
+        if (isShowPercent) {
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Text(
+                text = "${data["percent"]} %",
+                fontSize = 17.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Serif,
+            )
+        }
+    }
+}
+
+@Composable
+fun ListAddress (navController: NavController, isShowPercent: Boolean) {
+    val listAddress =
+        listOf(
+            mapOf("name" to "Makati City", "percent" to 10),
+        )
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(15.dp)
+    ) {
+        items(listAddress) { address ->
+            ListButton(data = address, isShowPercent = isShowPercent, onClick = {
+                navController.navigate(MainNav.Residences(CheckupStatus.ALL.name))
+            }, navController = navController)
+        }
+    }
 }
