@@ -45,10 +45,9 @@ fun MenuUI(navController: NavController) {
                 contentDescription = "Logout Icon",
                 tint = Color.Black,
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(30.dp)
                     .align(Alignment.TopEnd)
-                    .padding(end = 10.dp, top = 12.dp)
-                    .offset(x = (-13).dp, y = 42.dp)
+                    .offset(x = (-51).dp, y = (60).dp)
                     .clickable {
                         navController.navigate(IntroNav.Login)
                     }

@@ -176,7 +176,7 @@ fun ParentFloatingIcon(navController: NavController) {
                                 painter = items[index],
                                 navController = navController
                             ) {
-                                navController.navigate(MainNav.ReviewCheckupStatus)
+                                navController.navigate(MainNav.EditCheckup)
                             }
                             1 -> ChildIcon(
                                 painter = items[index],
