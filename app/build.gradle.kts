@@ -69,6 +69,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database)
     implementation(libs.android.hilt)
+    implementation(libs.hilt.navigation.compose)
     kapt(libs.android.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
