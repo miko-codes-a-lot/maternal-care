@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import org.maternalcare.modules.main.MainNav
 
 @Composable
 fun UsersUI(navController: NavController) {
@@ -19,6 +20,11 @@ fun UsersUI(navController: NavController) {
     ) {
         Button(onClick = {}) {
             Text(text = "User1, User2, User3")
+        }
+        Button(onClick = {
+            navController.navigate(MainNav.CreateUser)
+        }) {
+            Text(text = "Create User")
         }
     }
 }
