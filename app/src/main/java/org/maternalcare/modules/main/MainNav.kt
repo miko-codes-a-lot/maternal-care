@@ -27,4 +27,9 @@ object MainNav {
 
     @Serializable
     object Settings
+    @Serializable
+    object MonitoringCheckup
+
+    @Serializable
+    object EditCheckup
 }
