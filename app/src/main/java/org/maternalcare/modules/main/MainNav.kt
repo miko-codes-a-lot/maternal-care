@@ -8,7 +8,7 @@ object MainNav {
     object Menu
 
     @Serializable
-    data class Addresses(val status: String)
+    data class Addresses(val status: String, var isArchive: Boolean = false)
 
     @Serializable
     data class Residences(val status: String, var isArchive: Boolean = false)
