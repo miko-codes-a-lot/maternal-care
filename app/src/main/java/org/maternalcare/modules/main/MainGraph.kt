@@ -12,6 +12,7 @@ import org.maternalcare.modules.main.residence.ui.CheckupDetailsUI
 import org.maternalcare.modules.main.residence.ui.ChooseCheckupUI
 import org.maternalcare.modules.main.residence.ui.ResidencesUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
+import org.maternalcare.modules.main.user.ui.UserCreateUI
 import org.maternalcare.modules.main.user.ui.UsersUI
 
 fun NavGraphBuilder.mainGraph(navController: NavController) {
@@ -37,6 +38,9 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.User> {
             UsersUI(navController)
+        }
+        composable<MainNav.CreateUser> {
+            UserCreateUI()
         }
         composable<MainNav.Settings> {
             SettingsUI(navController)

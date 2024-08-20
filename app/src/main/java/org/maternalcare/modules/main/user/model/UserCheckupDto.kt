@@ -1,6 +1,6 @@
 package org.maternalcare.modules.main.user.model
 
-data class UserCheckup(
+data class UserCheckupDto(
     var id: String = "",
     var userId: String = "",
     var height: Double = 0.0,

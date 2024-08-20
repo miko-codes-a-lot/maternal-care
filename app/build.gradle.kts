@@ -1,10 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.google.services).apply(false)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
-    id("kotlin-kapt")
     alias(libs.plugins.android.dagger.hilt)
+    alias(libs.plugins.compose.compiler)
+    id("kotlin-kapt")
 }
 
 android {
@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.android.hilt)
     implementation(libs.hilt.navigation.compose)
     kapt(libs.android.hilt.compiler)
+    implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -83,3 +84,5 @@ dependencies {
 kapt {
     correctErrorTypes = true
 }
+
+apply(plugin = "com.google.gms.google-services")
