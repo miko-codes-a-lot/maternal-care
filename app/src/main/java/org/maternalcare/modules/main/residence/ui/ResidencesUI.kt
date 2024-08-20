@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -101,35 +100,7 @@ fun SingleItemCard(residenceName: String,navController: NavController) {
                 modifier = Modifier.padding(start = 8.dp)
                     .weight(1f)
             )
-            Row(
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.edit),
-                    contentDescription = "Edit Icon",
-                    tint = Color(0xFF6650a4),
-                    modifier = Modifier
-                        .clickable {}
-                        .size(24.dp)
-                        .padding(end = 3.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    painter = painterResource(id = R.drawable.delete),
-                    contentDescription = "Delete Icon",
-                    tint = Color(0xFF6650a4),
-
-                    modifier = Modifier
-                        .size(24.dp)
-                        .padding(end = 3.dp)
-                        .clickable {}
-                )
-            }
-
         }
-
-
         Divider(
             color = Color(0xFF6650a4),
             thickness = 1.dp,
@@ -137,7 +108,6 @@ fun SingleItemCard(residenceName: String,navController: NavController) {
         )
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
