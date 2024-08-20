@@ -55,10 +55,9 @@ fun AddressesUI(navController: NavController, isArchive: Boolean = false) {
                 contentDescription = "Exit Icon",
                 tint = Color.Black,
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(29.dp)
                     .align(Alignment.TopStart)
-                    .padding(start = 12.dp, top = 12.dp)
-                    .offset(x = (-10).dp, y = 25.dp)
+                    .offset(x = (10).dp, y = (45).dp)
                     .clickable {
                         navController.navigate(MainNav)
                     }
@@ -69,7 +68,7 @@ fun AddressesUI(navController: NavController, isArchive: Boolean = false) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             Text(text = "Select Address", fontSize = 24.sp, fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 80.dp))
