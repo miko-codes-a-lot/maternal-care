@@ -76,9 +76,9 @@ private fun DashboardMenu (navController: NavController) {
         //Complete
         Spacer(modifier = Modifier.height(10.dp))
         DashboardButton(text = "Complete",iconResId = R.drawable.check) {
-            navController.navigate(MainNav.Addresses(CheckupStatus.COMPLETE.name))
+            navController.navigate(MainNav.MonitorCheckupProgressUI)
         }
-        
+
         // Incomplete
         Spacer(modifier = Modifier.height(25.dp))
         DashboardButton(text = "Incomplete",iconResId = R.drawable.clear) {
