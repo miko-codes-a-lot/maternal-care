@@ -1,6 +1,6 @@
 package org.maternalcare.modules.main.user.model
 
-data class User(
+data class UserDto(
     var id: String = "",
     var firstName: String = "",
     var middleName: String = "",
