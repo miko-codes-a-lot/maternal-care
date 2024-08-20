@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ButtonDefaults
@@ -31,17 +30,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
 
+@Preview
 @Composable
-fun AddressesUI(navController: NavController) {
+fun AddressUIPreview() {
+    AddressesUI(navController = rememberNavController(), isArchive = false)
+}
+
+@Composable
+fun AddressesUI(navController: NavController, isArchive: Boolean = false) {
     Surface {
         Box(
             modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.arrow),
@@ -51,7 +57,7 @@ fun AddressesUI(navController: NavController) {
                     .size(40.dp)
                     .align(Alignment.TopStart)
                     .padding(start = 12.dp, top = 12.dp)
-                    .offset(x = -10.dp, y = 25.dp)
+                    .offset(x = (-10).dp, y = 25.dp)
                     .clickable {
                         navController.navigate(MainNav)
                     }

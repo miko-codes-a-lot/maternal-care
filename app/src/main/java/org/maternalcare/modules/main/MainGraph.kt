@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import org.maternalcare.modules.main.dashboard.ui.DashboardUI
 import org.maternalcare.modules.main.menu.ui.MenuUI
 import org.maternalcare.modules.main.residence.ui.AddressesUI
@@ -19,7 +20,8 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             MenuUI(navController)
         }
         composable<MainNav.Addresses> {
-            AddressesUI(navController)
+            val args = it.toRoute<MainNav.Residences>()
+            AddressesUI(navController, isArchive = args.isArchive)
         }
         composable<MainNav.Residences> {
             ResidencesUI(navController)
