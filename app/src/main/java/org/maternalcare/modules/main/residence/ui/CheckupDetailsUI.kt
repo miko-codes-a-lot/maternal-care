@@ -12,32 +12,18 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -46,11 +32,19 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+
+@Preview
+@Composable
+fun CheckupDetailsUIPreview () {
+    CheckupDetailsUI(rememberNavController())
+}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -70,19 +64,18 @@ fun CheckupDetailsUI(navController: NavController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 35.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(top = 48.dp),
+                horizontalArrangement = Arrangement.Center
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.arrow),
                     contentDescription = "Back Arrow Icon",
                     tint = Color.Black,
                     modifier = Modifier
-                        .size(40.dp)
-                        .padding(8.dp)
+                        .size(30.dp)
+                        .offset(x = (-110).dp, y = (-2).dp)
                         .clickable { navController.navigate(MainNav.ChooseCheckup) }
                 )
-                Spacer(modifier = Modifier.padding(horizontal = 42.dp))
                 Text(
                     text = "1st Checkup",
                     fontSize = 20.sp,
@@ -154,13 +147,14 @@ fun ParentFloatingIcon(navController: NavController) {
     var expanded by remember { mutableStateOf(false) }
 
     val items = listOf(
-        MiniFabItems(icon = painterResource(id = R.drawable.editicon), "Edit"),
-        MiniFabItems(icon = painterResource(id = R.drawable.delete), "Delete")
+        painterResource(id = R.drawable.editicon),
+        painterResource(id = R.drawable.delete)
     )
 
     Box(
         modifier = Modifier
-            .fillMaxSize().padding(16.dp),
+            .fillMaxSize()
+            .padding(16.dp),
         contentAlignment = Alignment.BottomEnd
     ) {
         Column(horizontalAlignment = Alignment.End) {
@@ -170,25 +164,39 @@ fun ParentFloatingIcon(navController: NavController) {
                 exit = fadeOut() + slideOutVertically(targetOffsetY = { it }) + shrinkVertically()
             ) {
                 LazyColumn(
-                    modifier = Modifier.offset( y = ((4).dp)),
+                    modifier = Modifier.offset(y = 4.dp),
                     horizontalAlignment = Alignment.End
                 ) {
                     items(items.size) { index ->
-                        ChildIcon(painter = items[index].icon, title = items[index].title, navController = navController)
+                        when (index) {
+                            0 -> ChildIcon(
+                                painter = items[index],
+                                navController = navController
+                            ) {
+                                navController.navigate(MainNav.ReviewCheckupStatusUI)
+                            }
+                            1 -> ChildIcon(
+                                painter = items[index],
+                                navController = navController
+                            ) {
+//                                navController.navigate(MainNav.EditCheckupUI)
+                            }
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
-            // Parent FloatingActionButton
             FloatingActionButton(
                 onClick = { expanded = !expanded },
                 containerColor = Color(0xFF6650a4),
                 contentColor = Color(0xFFFFFFFF),
                 shape = CircleShape,
-                modifier = Modifier.size(72.dp).offset(x = (5.dp), y = (15.dp))
+                modifier = Modifier
+                    .size(72.dp)
+                    .offset(x = 5.dp, y = 15.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Add,
+                    imageVector = Icons.Filled.Edit,
                     contentDescription = "Add",
                     modifier = Modifier
                         .rotate(if (expanded) 45f else 0f)
@@ -200,34 +208,29 @@ fun ParentFloatingIcon(navController: NavController) {
 }
 
 @Composable
-fun ChildIcon(painter: Painter, title: String, navController: NavController) {
+fun ChildIcon(painter: Painter, navController: NavController, onClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(end = 5.dp)
-
     ) {
         Spacer(modifier = Modifier.weight(1f))
         Box(
             modifier = Modifier
                 .background(Color(0xFF6650a4), RoundedCornerShape(10.dp))
                 .padding(11.dp)
-        ) {
-            Text(text = title, fontFamily = FontFamily.Serif, color = Color.White,
-                fontSize = 17.sp)
-        }
+        )
 
         Spacer(modifier = Modifier.width(10.dp))
-        //Child Icon Container
-        FloatingActionButton(onClick = {
-            when (title) {
-                "Edit" -> navController.navigate("editScreen")
-                "Delete" -> navController.navigate("deleteScreen")
-            }
-        }, modifier = Modifier.size(52.dp),
+
+        FloatingActionButton(
+            onClick = onClick,
+            modifier = Modifier.size(52.dp),
             containerColor = Color(0xFF6650a4),
-            contentColor = Color(0xFFFFFFFF)) {
+            contentColor = Color(0xFFFFFFFF)
+        ) {
             Icon(
                 painter = painter,
                 contentDescription = "childIcon",
