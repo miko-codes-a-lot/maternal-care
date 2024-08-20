@@ -5,11 +5,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import org.maternalcare.modules.main.dashboard.ui.CheckupProgressUI
 import org.maternalcare.modules.main.dashboard.ui.DashboardUI
 import org.maternalcare.modules.main.menu.ui.MenuUI
 import org.maternalcare.modules.main.residence.ui.AddressesUI
 import org.maternalcare.modules.main.residence.ui.CheckupDetailsUI
 import org.maternalcare.modules.main.residence.ui.ChooseCheckupUI
+import org.maternalcare.modules.main.residence.ui.EditCheckupUI
 import org.maternalcare.modules.main.residence.ui.ResidencesUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
 import org.maternalcare.modules.main.user.ui.UsersUI
@@ -40,6 +42,12 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.Settings> {
             SettingsUI(navController)
+        }
+        composable<MainNav.MonitoringCheckup> {
+            CheckupProgressUI(navController)
+        }
+        composable<MainNav.EditCheckup> {
+            EditCheckupUI(navController)
         }
     }
 }
