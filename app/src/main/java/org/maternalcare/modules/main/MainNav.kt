@@ -26,5 +26,8 @@ object MainNav {
     object User
 
     @Serializable
+    object CreateUser
+
+    @Serializable
     object Settings
 }
