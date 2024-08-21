@@ -6,10 +6,15 @@ import org.maternalcare.modules.main.user.model.UserDto
 import java.util.UUID
 import javax.inject.Inject
 
-class UserService @Inject constructor(
-    private val fdb: FirebaseDatabase
-) {
+class UserService @Inject constructor(fdb: FirebaseDatabase) {
     private val userRefs = fdb.getReference("users")
+
+    suspend fun fetch(): List<UserDto> {
+        val snapshot = userRefs.get().await()
+        return snapshot.children.map { userSnapshot ->
+            userSnapshot.getValue(UserDto::class.java)!!
+        }
+    }
 
     suspend fun create(user: UserDto): Result<UserDto> {
         return try {

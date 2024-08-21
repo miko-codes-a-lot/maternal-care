@@ -34,6 +34,7 @@ fun UserFormPreview() {
 fun UserForm(onSubmit: suspend (UserDto) -> Unit = {}) {
     var firstName by remember { mutableStateOf("") }
     var middleName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var mobileNumber by remember { mutableStateOf("") }
     var dateOfBirth by remember { mutableStateOf("") }
@@ -57,6 +58,13 @@ fun UserForm(onSubmit: suspend (UserDto) -> Unit = {}) {
             value = middleName,
             onValueChange = { middleName = it },
             label = { Text("Middle Name") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        TextField(
+            value = lastName,
+            onValueChange = { lastName = it },
+            label = { Text("Last Name") },
             modifier = Modifier.fillMaxWidth()
         )
 

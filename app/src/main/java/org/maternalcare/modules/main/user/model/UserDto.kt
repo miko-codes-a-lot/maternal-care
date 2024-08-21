@@ -4,6 +4,7 @@ data class UserDto(
     var id: String = "",
     var firstName: String = "",
     var middleName: String = "",
+    var lastName: String = "",
     var email: String = "",
     var mobileNumber: String = "",
     var dateOfBirth: String = "",

@@ -42,7 +42,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             UsersUI(navController)
         }
         composable<MainNav.CreateUser> {
-            UserCreateUI()
+            UserCreateUI(navController)
         }
         composable<MainNav.Settings> {
             SettingsUI(navController)
