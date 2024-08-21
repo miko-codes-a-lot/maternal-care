@@ -30,6 +30,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.residence.ui.ListAddress
 
 @Preview
 @Composable
@@ -75,8 +76,8 @@ fun CheckupProgressUI(navController: NavController) {
             )
 
             Spacer(modifier = Modifier.height(30.dp))
-                // Warning signal
-//            ListAddress(navController = navController, isShowPercent = true)
+
+            ListAddress(navController = navController, isShowPercent = true)
         }
     }
 }
