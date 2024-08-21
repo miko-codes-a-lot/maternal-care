@@ -10,6 +10,9 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     private val userService: UserService
 ): ViewModel()  {
+    suspend fun fetchUsers(): List<UserDto> {
+        return this.userService.fetch()
+    }
     suspend fun createUser(userDto: UserDto): Result<UserDto> {
         return this.userService.create(userDto)
     }
