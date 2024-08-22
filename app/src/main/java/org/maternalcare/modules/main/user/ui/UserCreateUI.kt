@@ -16,5 +16,5 @@ fun UserCreateUI(navController: NavController) {
         navController.navigate(MainNav.User)
     }
 
-    UserForm(onSubmit = onSubmit)
+    UserForm(title = "Create Account", onSubmit = onSubmit,navController)
 }
