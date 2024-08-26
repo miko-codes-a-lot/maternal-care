@@ -1,6 +1,7 @@
 package org.maternalcare.modules.main.menu.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,21 +34,26 @@ import org.maternalcare.modules.intro.IntroNav
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.menu.model.MenuItem
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
+import org.maternalcare.ui.theme.backgroundLight
 
 @Composable
 fun MenuUI(navController: NavController) {
-    Surface {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color.White
+    ) {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.logout),
                 contentDescription = "Logout Icon",
                 tint = Color.Black,
                 modifier = Modifier
-                    .size(30.dp)
-                    .align(Alignment.TopEnd)
-                    .offset(x = (-51).dp, y = (60).dp)
+                    .size(29.dp)
+                    .offset(x = (293).dp, y = (45).dp)
                     .clickable {
                         navController.navigate(IntroNav.Login)
                     }
@@ -94,7 +100,7 @@ private fun Menu(navController: NavController) {
     )
     Column {
         menuItems.forEach { menuItem ->
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             MenuButton(text = menuItem.text, onClick = menuItem.action)
         }
     }
@@ -110,7 +116,7 @@ private fun MenuButton(text: String, onClick: () -> Unit) {
         ),
         modifier = Modifier
             .width(280.dp)
-            .height(60.dp),
+            .height(63.dp),
         elevation = ButtonDefaults.elevatedButtonElevation(
             defaultElevation = 4.dp,
             pressedElevation = 8.dp
