@@ -3,6 +3,7 @@ package org.maternalcare.modules.main.residence.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -29,32 +32,36 @@ import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
 
-//@Preview(showSystemUi = true)
-//@Composable
-//fun ChooseCheckupUIPrev() { ChooseCheckupUI(rememberNavController()) }
+@Preview(showSystemUi = true)
+@Composable
+fun ChooseCheckupUIPrev() { ChooseCheckupUI(rememberNavController()) }
 
 @Composable
 fun ChooseCheckupUI(navController: NavController) {
 
-    Column(
+    Surface(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        color = Color.White
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.arrow),
-            contentDescription = "Exit Icon",
-            tint = Color.Black,
+        Box(
             modifier = Modifier
-                .size(30.dp)
-                .offset(x = (-153).dp, y = (-95).dp)
-                .clickable {
-                    navController.navigate(MainNav.Residences(CheckupStatus.ALL.name))
-                }
-        )
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.arrow),
+                contentDescription = "Exit Icon",
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(29.dp)
+                    .offset(x = (10).dp, y = (45).dp)
+                    .clickable {
+                        navController.navigate(MainNav.Residences(CheckupStatus.ALL.name))
+                    }
+            )
+        }
         Column(
-            modifier = Modifier
-            .padding(16.dp),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -67,7 +74,6 @@ fun ChooseCheckupUI(navController: NavController) {
             Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = "No. Of Check-up", fontSize = 23.sp,
-//                fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.SansSerif
             )
             CheckUpNavigationButton(navController )

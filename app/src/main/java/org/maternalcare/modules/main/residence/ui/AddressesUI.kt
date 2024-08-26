@@ -44,19 +44,21 @@ fun AddressUIPreview() {
 
 @Composable
 fun AddressesUI(navController: NavController, isArchive: Boolean = false) {
-    Surface {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color.White
+    ) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(16.dp)
+                .size(50.dp)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.arrow),
                 contentDescription = "Exit Icon",
                 tint = Color.Black,
-                modifier = Modifier
+                    modifier = Modifier
                     .size(29.dp)
-                    .align(Alignment.TopStart)
                     .offset(x = (10).dp, y = (45).dp)
                     .clickable {
                         navController.navigate(MainNav)
@@ -64,7 +66,8 @@ fun AddressesUI(navController: NavController, isArchive: Boolean = false) {
             )
         }
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
