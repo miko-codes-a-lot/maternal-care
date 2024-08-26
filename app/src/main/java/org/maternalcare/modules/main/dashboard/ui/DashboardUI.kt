@@ -34,19 +34,22 @@ import org.maternalcare.modules.main.residence.enum.CheckupStatus
 
 @Composable
 fun DashboardUI(navController: NavController) {
-    Surface {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color.White
+    ) {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .padding(16.dp)
+                .size(50.dp)
         ) {
             Icon(
                painter = painterResource(id = R.drawable.arrow),
                contentDescription = "Exit Icon",
                tint = Color.Black,
                modifier = Modifier
-               .size(40.dp)
-               .align(Alignment.TopStart)
-               .padding(start = 12.dp, top = 12.dp)
-               .offset(x = 10.dp, y = 25.dp)
+                   .size(29.dp)
+                   .offset(x = (10).dp, y = (45).dp)
                .clickable {
                    navController.navigate(MainNav.Menu)
                }
@@ -59,11 +62,11 @@ fun DashboardUI(navController: NavController) {
         ) {
              Image(painter = painterResource(id = R.drawable.care),
                    contentDescription = "Logo Image",
-                   modifier = Modifier.size(180.dp)
+                   modifier = Modifier.size(170.dp)
              )
              Spacer(modifier = Modifier.height(10.dp))
              Text(text = "Dashboard", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-             Spacer(modifier = Modifier.height(14.dp))
+             Spacer(modifier = Modifier.height(10.dp))
 
              DashboardMenu(navController)
         }
