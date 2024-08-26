@@ -44,20 +44,24 @@ fun CheckupProgressUI(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp)
     ) {
-       Icon(
-            painter = painterResource(id = R.drawable.arrow),
-            contentDescription = "Exit Icon",
-            tint = Color.Black,
+        Box(
             modifier = Modifier
-                .size(30.dp)
-                .offset(x = (-160).dp, y = (28).dp)
-                .clickable {
-                    navController.navigate(MainNav.Dashboard)
-                }
-       )
+                .size(50.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.arrow),
+                contentDescription = "Exit Icon",
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(29.dp)
+                    .offset(x = (10).dp, y = (45).dp)
+                    .clickable {
+                        navController.navigate(MainNav.Dashboard)
+                    }
+            )
+        }
         Spacer(modifier = Modifier.height(55.dp))
 
         Column (
