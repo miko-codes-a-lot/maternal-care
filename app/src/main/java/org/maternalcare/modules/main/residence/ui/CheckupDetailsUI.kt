@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -53,75 +54,79 @@ import org.maternalcare.modules.main.MainNav
 @Composable
 fun CheckupDetailsUI(navController: NavController) {
     Scaffold(
+        containerColor = Color.White,
         floatingActionButton = {
             FloatingMainIcon(navController)
         }
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.arrow),
+                contentDescription = "Back Arrow Icon",
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(29.dp)
+                    .offset(x = (10).dp, y = (45).dp)
+                    .clickable { navController.navigate(MainNav.ChooseCheckup) }
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Top,
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 48.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.arrow),
-                    contentDescription = "Back Arrow Icon",
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .size(30.dp)
-                        .offset(x = (-110).dp, y = (-2).dp)
-                        .clickable { navController.navigate(MainNav.ChooseCheckup) }
-                )
-                Text(
-                    text = "1st Checkup",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Serif
-                )
-            }
-            Column {
+            Text(
+                text = "1st Checkup",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Serif
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Column{
                 label.zip(value).forEach { (labelItem, valueItem) ->
                     CheckupDetailsList(labelContainer = labelItem, sampleValue = valueItem)
                 }
             }
+            Spacer(modifier = Modifier.height(56.dp))
         }
+
     }
 }
 
 @Composable
 private fun CheckupDetailsList(labelContainer: String, sampleValue: String) {
-    Column(
+    LazyColumn(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(5.dp)
+            .width(318.dp)
+            .padding(4.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(BorderStroke(1.dp, Color.Gray))
-                .padding(9.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth()
+        item {
+            Box(
+                modifier = Modifier
+                    .border(BorderStroke(1.dp, Color.Gray))
+                    .padding(5.dp)
             ) {
-                Text(
-                    text = labelContainer,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.SansSerif
-                )
-                Text(" :  ", fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.padding(horizontal = 1.dp))
-                Text(
-                    text = sampleValue,
-                    fontFamily = FontFamily.SansSerif
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = labelContainer,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.SansSerif
+                    )
+                    Text(" :  ", fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.padding(horizontal = 1.dp))
+                    Text(
+                        text = sampleValue,
+                        fontFamily = FontFamily.SansSerif
+                    )
+                }
             }
         }
     }
