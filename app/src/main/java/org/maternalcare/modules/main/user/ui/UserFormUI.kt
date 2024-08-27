@@ -19,6 +19,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,6 +29,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -84,6 +86,7 @@ fun UserForm(title : String = "Create Account", onSubmit: suspend (UserDto) -> U
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.White)
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -92,12 +95,13 @@ fun UserForm(title : String = "Create Account", onSubmit: suspend (UserDto) -> U
             fontFamily = FontFamily.Serif,
             fontSize = 24.sp,
             modifier = Modifier
-                .padding(bottom = 10.dp, top = 12.dp)
+                .padding(bottom = 3.dp, top = 7.dp)
         )
 
         ContainerLabelValue(statesValue)
 
-        Spacer(modifier = Modifier.padding(top = 30.dp))
+//        Spacer(modifier = Modifier.padding(top = 30.dp))
+        Spacer(modifier = Modifier.padding(top = 10.dp))
 
         FormRadioButton(selectedOption = selectedOption, onOptionSelected =  { selectedOption = it } )
 
@@ -106,14 +110,15 @@ fun UserForm(title : String = "Create Account", onSubmit: suspend (UserDto) -> U
 
         ButtonSubmitData(statesValue, selectedOption, coroutineScope, onSubmit)
 
-        Spacer(modifier = Modifier.padding(top = 13.dp))
+        Spacer(modifier = Modifier.padding(top = 6.dp))
 
         TextButton(onClick = {  navController.navigate(MainNav.User) }) {
             Text(text = "Cancel",
                 modifier = Modifier,
-                    fontSize = 17.sp
+                fontSize = 17.sp
             )
         }
+
     }
 }
 
@@ -139,7 +144,7 @@ fun TextFieldContainer(textFieldLabel: String, textFieldValue: String, onValueCh
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 10.dp)
+                .padding(top = 8.dp)
         ) {
            Row(
                modifier = Modifier.fillMaxWidth(),
@@ -201,7 +206,7 @@ fun FormRadioButton(selectedOption: String, onOptionSelected: (String) -> Unit) 
     Row (
        modifier = Modifier
            .fillMaxWidth()
-           .padding(bottom = 14.dp),
+           .padding(top = 6.dp),
        horizontalArrangement = Arrangement.Center
     ){
        activation.forEach { text ->
@@ -224,16 +229,16 @@ fun FormRadioButton(selectedOption: String, onOptionSelected: (String) -> Unit) 
                     unselectedColor = Color.Gray
                  ),
                  modifier = Modifier
-                    .size(18.dp)
-                    .padding(10.dp)
+                     .size(18.dp)
+                     .padding(10.dp)
              )
              Text(
                  text = text,
-                 fontSize = 17.sp,
+                 fontSize = 15.sp,
                  fontWeight = FontWeight.Bold,
                  modifier = Modifier.padding(start = 8.dp)
              )
-             Spacer(modifier = Modifier.width(19.dp))
+               Spacer(modifier = Modifier.width(10.dp))
            }
        }
    }
@@ -244,7 +249,8 @@ fun SwitchButton(isActiveState: MutableState<Boolean>, scale: Float, switchText 
    Box(
        modifier = Modifier
            .fillMaxWidth()
-           .padding(0.dp)
+           .padding( top = 4.dp)
+           .background(Color.White)
    ){
      Switch(
          checked = isActiveState.value,
@@ -254,12 +260,19 @@ fun SwitchButton(isActiveState: MutableState<Boolean>, scale: Float, switchText 
          modifier = Modifier
              .scale(scale)
              .padding(0.dp),
+         colors = SwitchDefaults.colors(
+             checkedThumbColor = Color(0xFF6650a4),
+             uncheckedThumbColor = Color.Gray,
+             checkedTrackColor = Color(0xFF6650a4).copy(alpha = 0.4f),
+             uncheckedTrackColor = Color.LightGray
+         ),
          thumbContent = if (isActiveState.value) {
              {
                  Icon(
                     imageVector = Icons.Filled.Check,
                     contentDescription = null,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(16.dp),
+                     tint = Color.White
                 )
             }
          } else {
@@ -340,6 +353,7 @@ fun DatePickerField(label: String, dateValue: String, onDateChange: (String) -> 
                    modifier = Modifier
                        .width(202.dp)
                        .height(40.dp)
+                       .background(Color.White)
                ){
                    Text(
                        text = dateValue.ifEmpty { "Select Date" },
@@ -387,9 +401,13 @@ fun ButtonSubmitData(statesValue: Map<String, MutableState<String>>, selectedOpt
             }
         },
         modifier = Modifier
-           .fillMaxWidth()
-           .padding(top = 20.dp)
-           .height(54.dp)
+            .fillMaxWidth()
+            .padding(top = 7.dp)
+            .height(54.dp),
+           colors = ButtonDefaults.buttonColors(
+               containerColor = Color(0xFF6650a4),
+               contentColor = Color(0xFFFFFFFF)
+           )
         ){
         Text("Submit", fontSize = 18.sp)
     }
