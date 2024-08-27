@@ -8,7 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,12 +24,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -69,29 +66,35 @@ fun UsersUI(navController: NavController) {
     val users by produceState<List<UserDto>>(emptyList(), userViewModel) {
         value = userViewModel.fetchUsers()
     }
-    Scaffold(
-        floatingActionButton = {
-            FloatParentFloatingIcon(navController)
-        }
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .background(Color.White)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(15.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
+        Scaffold(
+            floatingActionButton = {
+                FloatParentFloatingIcon(navController)
+            }
         ) {
-            Spacer(modifier = Modifier.padding( top = 55.dp) )
-            UsersSearchIcon(navController)
-            Spacer(modifier = Modifier.height(10.dp))
-            LazyColumn {
-                items(users) { user ->
-                    UserSingleLine(user.email, navController = navController)
-                }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.padding( top = 45.dp) )
+                UsersSearchIcon(navController)
+                LazyColumn {
+                    items(users) { user ->
+                        UserSingleLine(user.email, navController = navController)
+                    }
 
+                }
             }
         }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -146,7 +149,9 @@ fun UserSingleLine(sampleEmailValue: String,navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
-//                .clickable { navController.navigate(MainNav.ChooseCheckup) },
+//                .clickable {
+//                    navController.navigate(MainNav.ChooseCheckup) // Preview
+//                },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -227,10 +232,10 @@ fun FloatParentFloatingIcon(navController: NavController) {
                     .offset(x = (1).dp, y = (7).dp)
             ) {
                 Icon(
-                    imageVector = Icons.Filled.KeyboardArrowUp,
+                    imageVector = Icons.Filled.Add,
                     contentDescription = "Add",
                     modifier = Modifier
-                        .rotate(if (expanded) 540f else 0f)
+                        .rotate(if (expanded) 45f else 0f)
                         .size(30.dp)
                 )
             }
