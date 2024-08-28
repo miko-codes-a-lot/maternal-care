@@ -38,7 +38,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,33 +54,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.UserDto
 import java.util.Calendar
 
-@Preview(showBackground = true)
+@Preview(showSystemUi = true)
 @Composable
-fun UserFormPreview() {
-    UserForm(navController = rememberNavController())
+fun UserFormPrev() {
+    UserForm(onSubmit = { _ ->}, navController = rememberNavController() )
 }
 
 @Composable
-fun UserForm(title : String = "Create Account", onSubmit: suspend (UserDto) -> Unit = {},navController: NavController) {
-    val coroutineScope = rememberCoroutineScope()
-
+fun UserForm(title : String = "Create Account", onSubmit: (UserDto) -> Unit,navController: NavController) {
     val listOfLabel = listOf(
         "First Name", "Middle Name", "Last Name", "Email", "Mobile Number",
         "Date Of Birth", "Password"
     )
-
     val statesValue = remember { listOfLabel.associateWith { mutableStateOf("")} }
-
     var selectedOption by remember { mutableStateOf("") }
-
-    var isActive by remember { mutableStateOf(false) }
+    var isActive by remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
@@ -100,15 +92,13 @@ fun UserForm(title : String = "Create Account", onSubmit: suspend (UserDto) -> U
 
         ContainerLabelValue(statesValue)
 
-//        Spacer(modifier = Modifier.padding(top = 30.dp))
         Spacer(modifier = Modifier.padding(top = 10.dp))
 
         FormRadioButton(selectedOption = selectedOption, onOptionSelected =  { selectedOption = it } )
 
-        SwitchButton(isActiveState = remember { mutableStateOf(isActive) },
-            scale = 0.7f, switchText = "Active")
+        SwitchButton(isActiveState = isActive, onCheckedChange = { isActive = it } ,scale = 0.7f, switchText = "Active")
 
-        ButtonSubmitData(statesValue, selectedOption, coroutineScope, onSubmit)
+        ButtonSubmitData(statesValue, selectedOption,  isActive){ userDto -> onSubmit(userDto) }
 
         Spacer(modifier = Modifier.padding(top = 6.dp))
 
@@ -118,7 +108,6 @@ fun UserForm(title : String = "Create Account", onSubmit: suspend (UserDto) -> U
                 fontSize = 17.sp
             )
         }
-
     }
 }
 
@@ -245,17 +234,17 @@ fun FormRadioButton(selectedOption: String, onOptionSelected: (String) -> Unit) 
 }
 
 @Composable
-fun SwitchButton(isActiveState: MutableState<Boolean>, scale: Float, switchText : String) {
-   Box(
+fun SwitchButton(isActiveState: Boolean,  onCheckedChange: (Boolean) -> Unit, scale: Float, switchText : String) {
+    Box(
        modifier = Modifier
            .fillMaxWidth()
-           .padding( top = 4.dp)
+           .padding(top = 4.dp)
            .background(Color.White)
    ){
      Switch(
-         checked = isActiveState.value,
+         checked = isActiveState,
          onCheckedChange = {
-             isActiveState.value = it
+             onCheckedChange(it)
          },
          modifier = Modifier
              .scale(scale)
@@ -266,7 +255,7 @@ fun SwitchButton(isActiveState: MutableState<Boolean>, scale: Float, switchText 
              checkedTrackColor = Color(0xFF6650a4).copy(alpha = 0.4f),
              uncheckedTrackColor = Color.LightGray
          ),
-         thumbContent = if (isActiveState.value) {
+         thumbContent = if (isActiveState) {
              {
                  Icon(
                     imageVector = Icons.Filled.Check,
@@ -378,9 +367,7 @@ fun DatePickerField(label: String, dateValue: String, onDateChange: (String) -> 
 
 @Composable
 fun ButtonSubmitData(statesValue: Map<String, MutableState<String>>, selectedOption: String,
-     coroutineScope: CoroutineScope, onSubmit: suspend (UserDto) -> Unit) {
-    val isActiveState = remember { mutableStateOf(false) }
-
+      isActiveState: Boolean, onSubmit: (UserDto) -> Unit) {
     Button(
         onClick = {
             val userDto = UserDto(
@@ -394,11 +381,9 @@ fun ButtonSubmitData(statesValue: Map<String, MutableState<String>>, selectedOpt
                 isSuperAdmin = selectedOption == "SuperAdmin",
                 isAdmin = selectedOption == "Admin",
                 isResidence = selectedOption == "Residence",
-                isActive = isActiveState.value
+                isActive = isActiveState
             )
-            coroutineScope.launch {
-                onSubmit(userDto)
-            }
+            onSubmit(userDto)
         },
         modifier = Modifier
             .fillMaxWidth()
@@ -407,7 +392,7 @@ fun ButtonSubmitData(statesValue: Map<String, MutableState<String>>, selectedOpt
            colors = ButtonDefaults.buttonColors(
                containerColor = Color(0xFF6650a4),
                contentColor = Color(0xFFFFFFFF)
-           )
+           ),
         ){
         Text("Submit", fontSize = 18.sp)
     }
