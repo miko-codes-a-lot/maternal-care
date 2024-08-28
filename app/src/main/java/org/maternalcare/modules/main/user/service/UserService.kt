@@ -1,6 +1,6 @@
 package org.maternalcare.modules.main.user.service
 
-import org.maternalcare.modules.main.user.model.UserDto
+import org.maternalcare.modules.main.user.model.dto.UserDto
 import java.util.UUID
 import javax.inject.Inject
 

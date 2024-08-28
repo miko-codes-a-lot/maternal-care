@@ -55,7 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
-import org.maternalcare.modules.main.user.model.UserDto
+import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

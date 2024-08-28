@@ -33,11 +33,11 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.maternalcare.modules.main.MainNav
-import org.maternalcare.modules.main.user.model.UserDto
+import org.maternalcare.modules.main.user.model.dto.UserDto
 
 
 @Composable
-fun UserPreviewUI(title: String,navController: NavController, user: UserDto, onSave: suspend (UserDto) -> Unit)
+fun UserPreviewUI(title: String, navController: NavController, user: UserDto, onSave: suspend (UserDto) -> Unit)
 {
     val coroutineScope = rememberCoroutineScope()
     val isSaving = remember { mutableStateOf(false) }
@@ -144,7 +144,7 @@ fun TextContainer(textLabel: String, textValue: String) {
 
 @Composable
 fun ButtonPreview(navController: NavController, user: UserDto, coroutineScope: CoroutineScope,
-        onSave: suspend (UserDto) -> Unit, isSaving: MutableState<Boolean>) {
+                  onSave: suspend (UserDto) -> Unit, isSaving: MutableState<Boolean>) {
     Button(onClick = {
         if (!isSaving.value) {
             isSaving.value = true

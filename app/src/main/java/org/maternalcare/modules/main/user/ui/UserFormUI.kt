@@ -56,7 +56,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
-import org.maternalcare.modules.main.user.model.UserDto
+import org.maternalcare.modules.main.user.model.dto.UserDto
 import java.util.Calendar
 
 @Preview(showSystemUi = true)
@@ -66,7 +66,7 @@ fun UserFormPrev() {
 }
 
 @Composable
-fun UserForm(title : String = "Create Account", onSubmit: (UserDto) -> Unit,navController: NavController) {
+fun UserForm(title : String = "Create Account", onSubmit: (UserDto) -> Unit, navController: NavController) {
     val listOfLabel = listOf(
         "First Name", "Middle Name", "Last Name", "Email", "Mobile Number",
         "Date Of Birth", "Password"

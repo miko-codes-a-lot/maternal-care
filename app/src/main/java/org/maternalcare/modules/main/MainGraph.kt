@@ -17,7 +17,7 @@ import org.maternalcare.modules.main.residence.ui.ChooseCheckupUI
 import org.maternalcare.modules.main.residence.ui.EditCheckupUI
 import org.maternalcare.modules.main.residence.ui.ResidencesUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
-import org.maternalcare.modules.main.user.model.UserDto
+import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.ui.UserCreateUI
 import org.maternalcare.modules.main.user.ui.UserPreviewUI
 import org.maternalcare.modules.main.user.ui.UsersUI
@@ -61,7 +61,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.UserPreview> {
             val userViewModel: UserViewModel = hiltViewModel()
-            UserPreviewUI(navController = navController, user = UserDto(), title = "Preview Account", onSave = {userDto ->
+            UserPreviewUI(navController = navController, user = UserDto(), title = "Preview Account", onSave = { userDto ->
                 userViewModel.viewModelScope.launch {
                     val result = userViewModel.createUser(userDto)
                     if (result.isSuccess) { navController.popBackStack() }

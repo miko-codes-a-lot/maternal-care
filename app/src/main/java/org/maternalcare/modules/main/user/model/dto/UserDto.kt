@@ -1,4 +1,4 @@
-package org.maternalcare.modules.main.user.model
+package org.maternalcare.modules.main.user.model.dto
 
 data class UserDto(
     var id: String = "",

@@ -2,7 +2,7 @@ package org.maternalcare.modules.main.user.viewmodel
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.maternalcare.modules.main.user.model.UserDto
+import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.service.UserService
 import javax.inject.Inject
 
