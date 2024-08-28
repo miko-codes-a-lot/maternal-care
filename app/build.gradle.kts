@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.android.dagger.hilt)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.realm.kotlin)
     id("kotlin-kapt")
 }
 
@@ -70,6 +71,9 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     kapt(libs.android.hilt.compiler)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.realm.kotlin.base)
+    implementation(libs.realm.kotlin.sync)
+    implementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
