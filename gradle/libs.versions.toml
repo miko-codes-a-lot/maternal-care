@@ -1,7 +1,6 @@
 [versions]
 agp = "8.5.2"
 kotlin = "2.0.0"
-google-services = "4.4.2"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -13,14 +12,12 @@ uiTextGoogleFonts = "1.6.8"
 navigationRuntimeKtx = "2.7.7"
 navigationCompose = "2.8.0-alpha08"
 serialization = "1.6.3"
-firebaseBom = "33.1.2"
 android-dagger-hilt = "2.49"
 hilt-navigation-compose = "1.2.0"
 kotlinx-coroutines-android = "1.7.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-google-services = { module = "com.google.gms:google-services", version.ref = "google-services" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -38,8 +35,6 @@ androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
-firebase-database = { group = "com.google.firebase", name = "firebase-database" }
 android-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "android-dagger-hilt" }
 android-hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "android-dagger-hilt" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
@@ -47,7 +42,6 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 android-dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "android-dagger-hilt" }

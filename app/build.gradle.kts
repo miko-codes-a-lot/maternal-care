@@ -66,8 +66,6 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.database)
     implementation(libs.android.hilt)
     implementation(libs.hilt.navigation.compose)
     kapt(libs.android.hilt.compiler)
@@ -84,5 +82,3 @@ dependencies {
 kapt {
     correctErrorTypes = true
 }
-
-apply(plugin = "com.google.gms.google-services")
