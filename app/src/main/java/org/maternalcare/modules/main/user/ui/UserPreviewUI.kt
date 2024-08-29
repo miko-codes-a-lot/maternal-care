@@ -142,8 +142,12 @@ fun TextContainer(textLabel: String, textValue: String) {
 }
 
 @Composable
-fun ButtonPreview(navController: NavController, user: UserDto, coroutineScope: CoroutineScope,
-                  onSave: suspend (UserDto) -> Unit, isSaving: MutableState<Boolean>) {
+fun ButtonPreview(
+    navController: NavController,
+    user: UserDto,
+    coroutineScope: CoroutineScope,
+    onSave: suspend (UserDto) -> Unit, isSaving: MutableState<Boolean>
+) {
     Button(onClick = {
         if (!isSaving.value) {
             isSaving.value = true
