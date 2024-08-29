@@ -56,8 +56,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
-import org.maternalcare.modules.main.user.model.UserDto
+import org.maternalcare.modules.main.user.model.dto.UserDto
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 
 @Preview(showSystemUi = true)
 @Composable
@@ -66,7 +69,7 @@ fun UserFormPrev() {
 }
 
 @Composable
-fun UserForm(title : String = "Create Account", onSubmit: (UserDto) -> Unit,navController: NavController) {
+fun UserForm(title : String = "Create Account", onSubmit: (UserDto) -> Unit, navController: NavController) {
     val listOfLabel = listOf(
         "First Name", "Middle Name", "Last Name", "Email", "Mobile Number",
         "Date Of Birth", "Password"
@@ -98,7 +101,7 @@ fun UserForm(title : String = "Create Account", onSubmit: (UserDto) -> Unit,navC
 
         SwitchButton(isActiveState = isActive, onCheckedChange = { isActive = it } ,scale = 0.7f, switchText = "Active")
 
-        ButtonSubmitData(statesValue, selectedOption,  isActive){ userDto -> onSubmit(userDto) }
+        ButtonSubmitData(statesValue, selectedOption,  isActive, onSubmit = onSubmit)
 
         Spacer(modifier = Modifier.padding(top = 6.dp))
 
@@ -290,8 +293,11 @@ fun DatePickerField(label: String, dateValue: String, onDateChange: (String) -> 
         android.app.DatePickerDialog(
             context,
             { _, year, month, dayOfMonth ->
-                val selectedDate = "$dayOfMonth/${month + 1}/$year"
-                onDateChange(selectedDate)
+                calendar.set(year, month, dayOfMonth)
+                val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+                isoFormat.timeZone = TimeZone.getTimeZone("UTC")
+                val dateISO = isoFormat.format(calendar.time)
+                onDateChange(dateISO)
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),

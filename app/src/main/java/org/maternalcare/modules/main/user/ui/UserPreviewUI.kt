@@ -1,6 +1,5 @@
 package org.maternalcare.modules.main.user.ui
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,21 +32,21 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.maternalcare.modules.main.MainNav
-import org.maternalcare.modules.main.user.model.UserDto
+import org.maternalcare.modules.main.user.model.dto.UserDto
 
 
 @Composable
-fun UserPreviewUI(title: String,navController: NavController, user: UserDto, onSave: suspend (UserDto) -> Unit)
+fun UserPreviewUI(title: String, navController: NavController, user: UserDto, onSave: suspend (UserDto) -> Unit)
 {
     val coroutineScope = rememberCoroutineScope()
     val isSaving = remember { mutableStateOf(false) }
     val statesValue = remember(user) {
         listOf(
             "First Name" to user.firstName,
-            "Middle Name" to user.middleName,
+            "Middle Name" to (user.middleName ?: ""),
             "Last Name" to user.lastName,
-            "Email" to user.email,
-            "Mobile Number" to user.mobileNumber,
+            "Email" to (user.email ?: ""),
+            "Mobile Number" to (user.mobileNumber ?: ""),
             "Date Of Birth" to user.dateOfBirth,
             "User Type" to (if (user.isSuperAdmin) "SuperAdmin" else if (user.isAdmin) "Admin" else "Residence"),
             "Active" to (if (user.isActive) "Yes" else "No")
@@ -144,21 +143,13 @@ fun TextContainer(textLabel: String, textValue: String) {
 
 @Composable
 fun ButtonPreview(navController: NavController, user: UserDto, coroutineScope: CoroutineScope,
-        onSave: suspend (UserDto) -> Unit, isSaving: MutableState<Boolean>) {
+                  onSave: suspend (UserDto) -> Unit, isSaving: MutableState<Boolean>) {
     Button(onClick = {
         if (!isSaving.value) {
             isSaving.value = true
             coroutineScope.launch {
-                try {
-                    onSave(user)
-                    navController.navigate(MainNav.User){
-                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                    }
-                } catch (e: Exception) {
-                    Log.e("ButtonPreview", "Error during save: ${e.message}")
-                } finally {
-                    isSaving.value = false
-                }
+                onSave(user)
+                isSaving.value = false
             }
         }
     },

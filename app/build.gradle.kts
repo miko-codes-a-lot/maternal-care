@@ -1,9 +1,11 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.android.dagger.hilt)
-    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.realm.kotlin)
     id("kotlin-kapt")
 }
 
@@ -13,10 +15,20 @@ android {
 
     defaultConfig {
         applicationId = "org.maternalcare"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+        val envFile = project.rootProject.file("local.properties")
+        val properties = Properties()
+        properties.load(envFile.inputStream())
+
+        val realmAppId: String = properties.getProperty("realm.app.id") ?: ""
+        buildConfigField("String", "REALM_APP_ID", realmAppId)
+
+        val realmApiKey: String = properties.getProperty("realm.app.api.key") ?: ""
+        buildConfigField("String", "REALM_API_KEY", realmApiKey)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -70,6 +82,10 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     kapt(libs.android.hilt.compiler)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.realm.kotlin.base)
+    implementation(libs.realm.kotlin.sync)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.jbcrypt)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -77,7 +93,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
     implementation(libs.coil.compose)
 }
 
