@@ -20,6 +20,16 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        val envFile = project.rootProject.file("local.properties")
+        val properties = Properties()
+        properties.load(envFile.inputStream())
+
+        val realmAppId: String = properties.getProperty("realm.app.id") ?: ""
+        buildConfigField("String", "REALM_APP_ID", realmAppId)
+
+        val realmApiKey: String = properties.getProperty("realm.app.api.key") ?: ""
+        buildConfigField("String", "REALM_API_KEY", realmApiKey)
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
