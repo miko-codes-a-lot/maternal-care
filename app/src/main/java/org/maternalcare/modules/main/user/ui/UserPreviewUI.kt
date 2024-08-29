@@ -1,6 +1,5 @@
 package org.maternalcare.modules.main.user.ui
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -149,16 +148,8 @@ fun ButtonPreview(navController: NavController, user: UserDto, coroutineScope: C
         if (!isSaving.value) {
             isSaving.value = true
             coroutineScope.launch {
-                try {
-                    onSave(user)
-                    navController.navigate(MainNav.User){
-                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                    }
-                } catch (e: Exception) {
-                    Log.e("ButtonPreview", "Error during save: ${e.message}")
-                } finally {
-                    isSaving.value = false
-                }
+                onSave(user)
+                isSaving.value = false
             }
         }
     },
