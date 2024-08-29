@@ -44,10 +44,10 @@ fun UserPreviewUI(title: String, navController: NavController, user: UserDto, on
     val statesValue = remember(user) {
         listOf(
             "First Name" to user.firstName,
-            "Middle Name" to user.middleName,
+            "Middle Name" to (user.middleName ?: ""),
             "Last Name" to user.lastName,
-            "Email" to user.email,
-            "Mobile Number" to user.mobileNumber,
+            "Email" to (user.email ?: ""),
+            "Mobile Number" to (user.mobileNumber ?: ""),
             "Date Of Birth" to user.dateOfBirth,
             "User Type" to (if (user.isSuperAdmin) "SuperAdmin" else if (user.isAdmin) "Admin" else "Residence"),
             "Active" to (if (user.isActive) "Yes" else "No")
