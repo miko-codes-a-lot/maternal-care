@@ -24,7 +24,6 @@ fun UserCreateUI(navController: NavController) {
 
     if (showForm) {
         val onSubmit: suspend (UserDto) -> Unit = { user ->
-            userViewModel.createUser(user)
             userDetails = user
             showForm = false
         }

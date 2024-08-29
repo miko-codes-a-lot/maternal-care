@@ -101,7 +101,7 @@ fun UserForm(title : String = "Create Account", onSubmit: (UserDto) -> Unit, nav
 
         SwitchButton(isActiveState = isActive, onCheckedChange = { isActive = it } ,scale = 0.7f, switchText = "Active")
 
-        ButtonSubmitData(statesValue, selectedOption,  isActive){ userDto -> onSubmit(userDto) }
+        ButtonSubmitData(statesValue, selectedOption,  isActive, onSubmit = onSubmit)
 
         Spacer(modifier = Modifier.padding(top = 6.dp))
 
