@@ -1,9 +1,10 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.android.dagger.hilt)
-    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.realm.kotlin)
     id("kotlin-kapt")
 }
@@ -14,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "org.maternalcare"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -74,6 +75,7 @@ dependencies {
     implementation(libs.realm.kotlin.base)
     implementation(libs.realm.kotlin.sync)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.jbcrypt)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
