@@ -57,7 +57,10 @@ import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserDto
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 
 @Preview(showSystemUi = true)
 @Composable
@@ -290,8 +293,11 @@ fun DatePickerField(label: String, dateValue: String, onDateChange: (String) -> 
         android.app.DatePickerDialog(
             context,
             { _, year, month, dayOfMonth ->
-                val selectedDate = "$dayOfMonth/${month + 1}/$year"
-                onDateChange(selectedDate)
+                calendar.set(year, month, dayOfMonth)
+                val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+                isoFormat.timeZone = TimeZone.getTimeZone("UTC")
+                val dateISO = isoFormat.format(calendar.time)
+                onDateChange(dateISO)
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
