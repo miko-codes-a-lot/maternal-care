@@ -1,25 +1,27 @@
 package org.maternalcare.modules.main.user.service
 
+import io.realm.kotlin.Realm
+import io.realm.kotlin.ext.query
 import org.maternalcare.modules.main.user.model.dto.UserDto
-import java.util.UUID
+import org.maternalcare.modules.main.user.model.entity.UserEntity
+import org.maternalcare.modules.main.user.model.mapper.UserMapper
 import javax.inject.Inject
 
-class UserService @Inject constructor() {
-    suspend fun fetch(): List<UserDto> {
-        return emptyList()
+class UserService @Inject constructor(private val realm: Realm) {
+    fun fetch(): List<UserDto> {
+        return realm.query<UserEntity>()
+            .find()
+            .map { user -> UserMapper.toDTO(user) }
     }
 
-    suspend fun create(user: UserDto): Result<UserDto> {
+    suspend fun create(data: UserDto): Result<UserDto> {
         return try {
-            user.id = UUID.randomUUID().toString()
-
-            if (user.id.isNotEmpty()) {
-                throw Exception("Testing")
+            realm.write {
+                val user = copyToRealm(UserMapper.toEntity(data))
+                Result.success(UserMapper.toDTO(user));
             }
-
-            Result.success(user)
-        } catch (exception: Exception) {
-            Result.failure(exception)
+        } catch (error: Exception) {
+            Result.failure(error)
         }
     }
 }
