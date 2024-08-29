@@ -87,7 +87,7 @@ fun UsersUI(navController: NavController) {
                 UsersSearchIcon(navController)
                 LazyColumn {
                     items(users) { user ->
-                        UserSingleLine(user.email, navController = navController)
+                        UserSingleLine(user.email ?: "", navController = navController)
                     }
 
                 }
