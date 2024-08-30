@@ -20,8 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -304,6 +304,14 @@ fun DatePickerField(label: String, dateValue: String, onDateChange: (String) -> 
             calendar.get(Calendar.DAY_OF_MONTH)
         )
     }
+    val displayFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    val displayDate = try {
+        val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateValue)
+        date?.let { displayFormat.format(it) } ?: "Select Date"
+    } catch (e: Exception) {
+        "Select Date"
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -351,19 +359,19 @@ fun DatePickerField(label: String, dateValue: String, onDateChange: (String) -> 
                        .background(Color.White)
                ){
                    Text(
-                       text = dateValue.ifEmpty { "Select Date" },
+                       text = displayDate,
                        fontFamily = FontFamily.SansSerif,
                        modifier = Modifier
                            .padding(10.dp)
                            .align(Alignment.CenterStart)
                            , fontSize = 17.sp
                    )
-                   Divider(
-                       color = Color.Gray,
-                       thickness = 1.dp,
+                   HorizontalDivider(
                        modifier = Modifier
                            .align(Alignment.BottomStart)
-                           .fillMaxWidth()
+                           .fillMaxWidth(),
+                       thickness = 1.dp,
+                       color = Color.Gray
                    )
                }
            }
