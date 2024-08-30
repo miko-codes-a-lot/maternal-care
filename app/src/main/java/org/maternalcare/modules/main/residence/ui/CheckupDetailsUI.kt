@@ -8,9 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,12 +19,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,11 +41,19 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+
+@Preview(showSystemUi = true)
+@Composable
+fun CheckPreview() {
+    CheckupDetailsUI(navController = rememberNavController())
+}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -59,21 +64,6 @@ fun CheckupDetailsUI(navController: NavController) {
             FloatingMainIcon(navController)
         }
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.arrow),
-                contentDescription = "Back Arrow Icon",
-                tint = Color.Black,
-                modifier = Modifier
-                    .size(29.dp)
-                    .offset(x = (10).dp, y = (45).dp)
-                    .clickable { navController.navigate(MainNav.ChooseCheckup) }
-            )
-        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -81,21 +71,32 @@ fun CheckupDetailsUI(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "1st Checkup",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Serif
-            )
-            Spacer(modifier = Modifier.height(10.dp))
+            NumberOfCheckUp()
+            Spacer(modifier = Modifier.height(18.dp))
             Column{
                 label.zip(value).forEach { (labelItem, valueItem) ->
                     CheckupDetailsList(labelContainer = labelItem, sampleValue = valueItem)
                 }
             }
-            Spacer(modifier = Modifier.height(56.dp))
+            Spacer(modifier = Modifier.height(52.dp))
         }
+    }
+}
 
+@Composable
+fun NumberOfCheckUp() {
+    val numberOfCheckUp = listOf( "1st CheckUp" )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        numberOfCheckUp.forEach { checkUp ->
+            Text(
+                text = checkUp,
+                fontSize = 22.sp,
+                fontFamily = FontFamily.SansSerif
+            )
+        }
     }
 }
 
@@ -103,28 +104,37 @@ fun CheckupDetailsUI(navController: NavController) {
 private fun CheckupDetailsList(labelContainer: String, sampleValue: String) {
     LazyColumn(
         modifier = Modifier
-            .width(318.dp)
+            .fillMaxWidth()
             .padding(4.dp)
     ) {
         item {
-            Box(
-                modifier = Modifier
-                    .border(BorderStroke(1.dp, Color.Gray))
-                    .padding(5.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = labelContainer,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.SansSerif
-                    )
-                    Text(" :  ", fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.padding(horizontal = 1.dp))
+                Text(
+                    text = labelContainer,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.SansSerif
+                )
+                Text(" :  ", fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.padding(horizontal = 1.dp))
+                Column(
+                   modifier = Modifier,
+                    horizontalAlignment = Alignment.Start
+                ){
                     Text(
                         text = sampleValue,
-                        fontFamily = FontFamily.SansSerif
+                        fontFamily = FontFamily.SansSerif,
+                        modifier = Modifier
+                            .padding( start = 5.dp)
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        thickness = 1.dp,
+                        color = Color.Gray
                     )
                 }
             }
@@ -153,16 +163,13 @@ fun FloatingMainIcon(navController: NavController) {
 @Composable
 fun ParentFloatingIcon(navController: NavController) {
     var expanded by remember { mutableStateOf(false) }
-
     val items = listOf(
-        painterResource(id = R.drawable.editicon),
-        painterResource(id = R.drawable.delete)
+        painterResource(id = R.drawable.editicon)
     )
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            .fillMaxSize(),
         contentAlignment = Alignment.BottomEnd
     ) {
         Column(horizontalAlignment = Alignment.End) {
@@ -183,12 +190,6 @@ fun ParentFloatingIcon(navController: NavController) {
                             ) {
                                 navController.navigate(MainNav.EditCheckup)
                             }
-                            1 -> ChildIcon(
-                                painter = items[index],
-                                navController = navController
-                            ) {
-//                                navController.navigate(MainNav.EditCheckupUI)
-                            }
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                     }
@@ -201,7 +202,7 @@ fun ParentFloatingIcon(navController: NavController) {
                 shape = CircleShape,
                 modifier = Modifier
                     .size(72.dp)
-                    .offset(x = 5.dp, y = 15.dp)
+                    .offset(x = (-13).dp, y = (-8).dp)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
@@ -222,11 +223,12 @@ fun ChildIcon(painter: Painter, navController: NavController, onClick: () -> Uni
         horizontalArrangement = Arrangement.End,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(end = 5.dp)
+            .padding(top = 20.dp)
     ) {
         FloatingActionButton(
             onClick = onClick,
-            modifier = Modifier.size(52.dp),
+            modifier = Modifier.size(52.dp)
+                .offset(x = (-23).dp, y = (-19).dp),
             containerColor = Color(0xFF6650a4),
             contentColor = Color(0xFFFFFFFF)
         ) {
