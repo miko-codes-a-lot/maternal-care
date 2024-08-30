@@ -1,21 +1,16 @@
 package org.maternalcare.modules.main.menu.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,11 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import org.maternalcare.R
-import org.maternalcare.modules.intro.IntroNav
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.menu.model.MenuItem
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
-import org.maternalcare.ui.theme.backgroundLight
 
 @Composable
 fun MenuUI(navController: NavController) {
@@ -42,25 +35,10 @@ fun MenuUI(navController: NavController) {
         modifier = Modifier.fillMaxSize(),
         color = Color.White
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.logout),
-                contentDescription = "Logout Icon",
-                tint = Color.Black,
-                modifier = Modifier
-                    .size(29.dp)
-                    .offset(x = (293).dp, y = (45).dp)
-                    .clickable {
-                        navController.navigate(IntroNav.Login)
-                    }
-            )
-        }
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -70,10 +48,12 @@ fun MenuUI(navController: NavController) {
                 modifier = Modifier.size(100.dp)
             )
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "Super Admin", fontSize = 30.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Cursive)
-
+            Text(text = "Super Admin",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Cursive
+            )
             Spacer(modifier = Modifier.height(10.dp))
-
             Menu(navController)
         }
     }
@@ -88,7 +68,7 @@ private fun Menu(navController: NavController) {
         MenuItem(text = "Dashboard") {
             navController.navigate(MainNav.Dashboard)
         },
-        MenuItem(text = "Archive") {
+        MenuItem(text = "Data Storage") {
             navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name, isArchive = true))
         },
         MenuItem(text = "Manage User") {
