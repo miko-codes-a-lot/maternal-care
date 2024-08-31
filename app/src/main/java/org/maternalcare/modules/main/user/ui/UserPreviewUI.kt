@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -33,6 +33,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserDto
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 @Composable
@@ -47,7 +49,7 @@ fun UserPreviewUI(title: String, navController: NavController, user: UserDto, on
             "Last Name" to user.lastName,
             "Email" to (user.email ?: ""),
             "Mobile Number" to (user.mobileNumber ?: ""),
-            "Date Of Birth" to user.dateOfBirth,
+            "Date Of Birth" to dateFormatContainer(user.dateOfBirth),
             "User Type" to (if (user.isSuperAdmin) "SuperAdmin" else if (user.isAdmin) "Admin" else "Residence"),
             "Active" to (if (user.isActive) "Yes" else "No")
         ).associate { (label, value) -> label to mutableStateOf(value) }
@@ -130,14 +132,25 @@ fun TextContainer(textLabel: String, textValue: String) {
                             fontSize = 17.sp,
                              fontFamily = FontFamily.SansSerif,
                     )
-                    Divider(
-                        color = Color.Gray,
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(),
                         thickness = 1.dp,
-                        modifier = Modifier.fillMaxWidth()
+                        color = Color.Gray
                     )
                 }
             }
         }
+    }
+}
+
+fun dateFormatContainer(dateString: String): String {
+    return try {
+        val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val displayFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val dates = isoFormat.parse(dateString)
+        displayFormat.format(dates)
+    } catch (e: Exception) {
+        "Select Date"
     }
 }
 
