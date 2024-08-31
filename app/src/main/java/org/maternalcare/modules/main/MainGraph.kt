@@ -20,6 +20,7 @@ import org.maternalcare.modules.main.settings.ui.EditSettingsUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.ui.UserCreateUI
+import org.maternalcare.modules.main.user.ui.UserEditUI
 import org.maternalcare.modules.main.user.ui.UserPreviewUI
 import org.maternalcare.modules.main.user.ui.UsersUI
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
@@ -50,6 +51,12 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.CreateUser> {
             UserCreateUI(navController)
+        }
+        composable<MainNav.EditUser> {
+            val args = it.toRoute<MainNav.EditUser>()
+            val userViewModel: UserViewModel = hiltViewModel()
+            val userDto = userViewModel.fetchUser(args.userId)
+            UserEditUI(navController = navController, userDto = userDto)
         }
         composable<MainNav.Settings> {
             SettingsUI(navController)
