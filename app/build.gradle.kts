@@ -24,11 +24,8 @@ android {
         val properties = Properties()
         properties.load(envFile.inputStream())
 
-        val realmAppId: String = properties.getProperty("realm.app.id") ?: ""
-        buildConfigField("String", "REALM_APP_ID", realmAppId)
-
-        val realmApiKey: String = properties.getProperty("realm.app.api.key") ?: ""
-        buildConfigField("String", "REALM_API_KEY", realmApiKey)
+        buildConfigField("String", "REALM_APP_ID", properties.getProperty("realm.app.id"))
+        buildConfigField("String", "REALM_API_KEY", properties.getProperty("realm.app.api.key"))
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

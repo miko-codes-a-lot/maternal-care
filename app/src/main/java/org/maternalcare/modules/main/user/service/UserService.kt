@@ -3,14 +3,14 @@ package org.maternalcare.modules.main.user.service
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import org.maternalcare.modules.main.user.model.dto.UserDto
-import org.maternalcare.modules.main.user.model.entity.UserEntity
+import org.maternalcare.modules.main.user.model.entity.User
 import org.maternalcare.modules.main.user.model.mapper.UserMapper
 import org.mongodb.kbson.ObjectId
 import javax.inject.Inject
 
 class UserService @Inject constructor(private val realm: Realm) {
-    fun fetch(): List<UserDto> {
-        return realm.query<UserEntity>()
+    fun fetch(isResidence: Boolean = false): List<UserDto> {
+        return realm.query<User>("isResidence == $0", isResidence)
             .find()
             .map { user -> UserMapper.toDTO(user) }
     }
@@ -27,7 +27,7 @@ class UserService @Inject constructor(private val realm: Realm) {
     }
 
     fun fetchOne(userId: String): UserDto {
-        return realm.query<UserEntity>("_id == $0", ObjectId(userId))
+        return realm.query<User>("_id == $0", ObjectId(userId))
             .find()
             .first()
             .run {

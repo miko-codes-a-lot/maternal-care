@@ -5,7 +5,7 @@ import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
 
-class UserEntity : RealmObject {
+class User : RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId()
     var firstName: String = ""
@@ -15,11 +15,11 @@ class UserEntity : RealmObject {
     var mobileNumber: String? = ""
     var dateOfBirth: RealmInstant = RealmInstant.now()
     var password: String = ""
-    var createdBy: UserEntity? = null
+    var createdBy: User? = null
     var createdAt: RealmInstant = RealmInstant.now()
-    var lastUpdatedBy: UserEntity? = null
+    var lastUpdatedBy: User? = null
     var lastUpdatedAt: RealmInstant = RealmInstant.now()
-    var deletedBy: UserEntity? = null
+    var deletedBy: User? = null
     var deletedAt: RealmInstant? = null
     var isActive: Boolean = true
     var isSuperAdmin: Boolean = false

@@ -11,7 +11,7 @@ import io.realm.kotlin.mongodb.Credentials
 import io.realm.kotlin.mongodb.sync.SyncConfiguration
 import kotlinx.coroutines.runBlocking
 import org.maternalcare.BuildConfig
-import org.maternalcare.modules.main.user.model.entity.UserEntity
+import org.maternalcare.modules.main.user.model.entity.User
 import javax.inject.Singleton
 
 @Module
@@ -28,11 +28,11 @@ object AppModule {
             val config = SyncConfiguration
                 .Builder(
                     user,
-                    setOf(UserEntity::class)
+                    setOf(User::class)
                 )
                 .initialSubscriptions { realm ->
                     add(
-                        realm.query<UserEntity>("_id <> $0", null),
+                        realm.query<User>("_id <> $0", null),
                         name = "Users"
                     )
                 }
