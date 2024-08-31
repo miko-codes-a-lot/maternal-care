@@ -11,7 +11,7 @@ import org.mongodb.kbson.ObjectId
 object UserMapper {
     fun toDTO(user: UserEntity): UserDto {
         return UserDto(
-            id = user._id.toString(),
+            id = user._id.toHexString(),
             firstName = user.firstName,
             middleName = user.middleName,
             lastName = user.lastName,

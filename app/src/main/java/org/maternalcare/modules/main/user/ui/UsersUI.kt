@@ -9,6 +9,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,9 +28,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -49,14 +50,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
+
+@Preview(showSystemUi = true)
+@Composable
+fun UserPreview(){
+    UsersUI(navController = rememberNavController())
+}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -67,7 +76,8 @@ fun UsersUI(navController: NavController) {
         value = userViewModel.fetchUsers()
     }
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .background(Color.White)
     ) {
         Scaffold(
@@ -87,9 +97,8 @@ fun UsersUI(navController: NavController) {
                 UsersSearchIcon(navController)
                 LazyColumn {
                     items(users) { user ->
-                        UserSingleLine(user.email ?: "", navController = navController)
+                        UserSingleLine(userDto = user, navController = navController)
                     }
-
                 }
             }
         }
@@ -139,7 +148,10 @@ fun UsersSearchIcon(navController: NavController) {
 }
 
 @Composable
-fun UserSingleLine(sampleEmailValue: String,navController: NavController) {
+fun UserSingleLine(
+    userDto: UserDto,
+    navController: NavController
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -148,11 +160,11 @@ fun UserSingleLine(sampleEmailValue: String,navController: NavController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
-//                .clickable {
-//                    navController.navigate(MainNav.ChooseCheckup) // Preview
-//                },
-            verticalAlignment = Alignment.CenterVertically
+                .padding(10.dp)
+                .clickable {
+                    navController.navigate(MainNav.EditUser(userId = userDto.id!!))
+                },
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.adminicon),
@@ -161,7 +173,7 @@ fun UserSingleLine(sampleEmailValue: String,navController: NavController) {
                 modifier = Modifier.size(26.dp)
             )
             Text(
-                text = sampleEmailValue,
+                text = userDto.email ?: "${userDto.firstName} ${userDto.lastName}",
                 fontSize = 18.sp,
                 fontFamily = FontFamily.SansSerif,
                 modifier = Modifier
@@ -169,10 +181,10 @@ fun UserSingleLine(sampleEmailValue: String,navController: NavController) {
                     .weight(1f)
             )
         }
-        Divider(
-            color = Color(0xFF6650a4),
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
             thickness = 1.dp,
-            modifier = Modifier.fillMaxWidth()
+            color = Color(0xFF6650a4)
         )
     }
 }
