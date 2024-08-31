@@ -28,11 +28,15 @@ fun UserCreateUI(navController: NavController) {
             showForm = false
         }
 
-        UserForm(title = "Create Account", onSubmit = { user ->
-            coroutineScope.launch {
-                onSubmit(user)
-            }
-        } , navController)
+        UserForm(
+            title = "Create Account",
+            onSubmit = { user ->
+                coroutineScope.launch {
+                    onSubmit(user)
+                }
+            },
+            navController = navController
+        )
     } else {
         val onSave: suspend (UserDto) -> Unit = { userDto ->
             val result = userViewModel.createUser(userDto)

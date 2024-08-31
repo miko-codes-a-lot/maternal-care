@@ -29,6 +29,9 @@ object MainNav {
     object CreateUser
 
     @Serializable
+    data class EditUser(val userId: String)
+
+    @Serializable
     object Settings
 
     @Serializable

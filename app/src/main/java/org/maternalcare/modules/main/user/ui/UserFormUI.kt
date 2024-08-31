@@ -69,12 +69,32 @@ fun UserFormPrev() {
 }
 
 @Composable
-fun UserForm(title : String = "Create Account", onSubmit: (UserDto) -> Unit, navController: NavController) {
+fun UserForm(
+    title : String = "Create Account",
+    userDto: UserDto? = null,
+    onSubmit: (UserDto) -> Unit,
+    navController: NavController
+) {
     val listOfLabel = listOf(
         "First Name", "Middle Name", "Last Name", "Email", "Mobile Number",
         "Date Of Birth", "Password"
     )
-    val statesValue = remember { listOfLabel.associateWith { mutableStateOf("")} }
+    val statesValue = remember {
+        listOfLabel.associateWith {
+            mutableStateOf(
+                when (it) {
+                    "First Name" -> userDto?.firstName ?: ""
+                    "Middle Name" -> userDto?.middleName ?: ""
+                    "Last Name" -> userDto?.lastName ?: ""
+                    "Email" -> userDto?.email ?: ""
+                    "Mobile Number" -> userDto?.mobileNumber ?: ""
+                    "Date Of Birth" -> userDto?.dateOfBirth ?: ""
+                    "Password" -> userDto?.password ?: ""
+                    else -> ""
+                }
+            )
+        }
+    }
     var selectedOption by remember { mutableStateOf("") }
     var isActive by remember { mutableStateOf(true) }
 
@@ -92,7 +112,7 @@ fun UserForm(title : String = "Create Account", onSubmit: (UserDto) -> Unit, nav
             modifier = Modifier
                 .padding(bottom = 3.dp, top = 7.dp)
         )
-
+//        " ${userDto?.firstName ?: ""}"
         ContainerLabelValue(statesValue)
 
         Spacer(modifier = Modifier.padding(top = 10.dp))
