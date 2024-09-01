@@ -39,7 +39,7 @@ fun UserCreateUI(navController: NavController) {
         )
     } else {
         val onSave: suspend (UserDto) -> Unit = { userDto ->
-            val result = userViewModel.createUser(userDto)
+            val result = userViewModel.upsertUser(userDto)
 
             if (result.isSuccess) {
                 navController.navigate(MainNav.User){

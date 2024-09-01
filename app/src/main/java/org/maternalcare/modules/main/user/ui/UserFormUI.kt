@@ -57,6 +57,7 @@ import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.shared.ext.hashPassword
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -79,6 +80,9 @@ fun UserForm(
         "First Name", "Middle Name", "Last Name", "Email", "Mobile Number",
         "Date Of Birth", "Password"
     )
+    val userId by remember {
+        mutableStateOf(userDto?.id ?: "")
+    }
     val statesValue = remember {
         listOfLabel.associateWith {
             mutableStateOf(
@@ -121,7 +125,13 @@ fun UserForm(
 
         SwitchButton(isActiveState = isActive, onCheckedChange = { isActive = it } ,scale = 0.7f, switchText = "Active")
 
-        ButtonSubmitData(statesValue, selectedOption,  isActive, onSubmit = onSubmit)
+        ButtonSubmitData(
+            statesValue = statesValue,
+            userId = userId,
+            selectedOption = selectedOption,
+            isActiveState = isActive,
+            onSubmit = onSubmit
+        )
 
         Spacer(modifier = Modifier.padding(top = 6.dp))
 
@@ -400,8 +410,13 @@ fun DatePickerField(label: String, dateValue: String, onDateChange: (String) -> 
 }
 
 @Composable
-fun ButtonSubmitData(statesValue: Map<String, MutableState<String>>, selectedOption: String,
-      isActiveState: Boolean, onSubmit: (UserDto) -> Unit) {
+fun ButtonSubmitData(
+    statesValue: Map<String, MutableState<String>>,
+    selectedOption: String,
+    isActiveState: Boolean,
+    userId: String,
+    onSubmit: (UserDto) -> Unit
+) {
     Button(
         onClick = {
             val userDto = UserDto(
@@ -411,12 +426,23 @@ fun ButtonSubmitData(statesValue: Map<String, MutableState<String>>, selectedOpt
                 email = statesValue["Email"]?.value ?: "",
                 mobileNumber = statesValue["Mobile Number"]?.value ?: "",
                 dateOfBirth = statesValue["Date Of Birth"]?.value ?: "",
-                password = statesValue["Password"]?.value ?: "",
                 isSuperAdmin = selectedOption == "SuperAdmin",
                 isAdmin = selectedOption == "Admin",
                 isResidence = selectedOption == "Residence",
                 isActive = isActiveState
             )
+
+            val password = statesValue["Password"]?.value
+            if (userId.isEmpty()) {
+                // hash password
+                userDto.password = password?.hashPassword() ?: ""
+            } else {
+                // set user id if exists
+                userDto.id = userId
+                userDto.password = password ?: ""
+            }
+
+            // invoke callback listener
             onSubmit(userDto)
         },
         modifier = Modifier
@@ -427,7 +453,7 @@ fun ButtonSubmitData(statesValue: Map<String, MutableState<String>>, selectedOpt
                containerColor = Color(0xFF6650a4),
                contentColor = Color(0xFFFFFFFF)
            ),
-        ){
+        ) {
         Text("Submit", fontSize = 18.sp)
     }
 }

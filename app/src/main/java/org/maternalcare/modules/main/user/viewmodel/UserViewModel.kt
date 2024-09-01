@@ -14,8 +14,8 @@ class UserViewModel @Inject constructor(
         return this.userService.fetch()
     }
 
-    suspend fun createUser(userDto: UserDto): Result<UserDto> {
-        return this.userService.create(userDto)
+    suspend fun upsertUser(userDto: UserDto): Result<UserDto> {
+        return this.userService.upsert(userDto)
     }
 
     fun fetchUser(userId: String): UserDto {

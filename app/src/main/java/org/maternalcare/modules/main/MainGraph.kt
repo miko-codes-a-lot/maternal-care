@@ -75,7 +75,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             val userViewModel: UserViewModel = hiltViewModel()
             UserPreviewUI(navController = navController, user = UserDto(), title = "Preview Account", onSave = { userDto ->
                 userViewModel.viewModelScope.launch {
-                    val result = userViewModel.createUser(userDto)
+                    val result = userViewModel.upsertUser(userDto)
                     if (result.isSuccess) { navController.popBackStack() }
                 }
             })
