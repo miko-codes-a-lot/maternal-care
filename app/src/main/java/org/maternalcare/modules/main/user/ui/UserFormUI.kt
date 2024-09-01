@@ -76,10 +76,11 @@ fun UserForm(
     onSubmit: (UserDto) -> Unit,
     navController: NavController
 ) {
-    val listOfLabel = listOf(
-        "First Name", "Middle Name", "Last Name", "Email", "Mobile Number",
-        "Date Of Birth", "Password"
-    )
+    val listOfLabel = if (userDto == null) {
+        listOf("First Name", "Middle Name", "Last Name", "Email", "Mobile Number", "Date Of Birth", "Password")
+    } else {
+        listOf("First Name", "Middle Name", "Last Name", "Email", "Mobile Number", "Date Of Birth")
+    }
     val userId by remember {
         mutableStateOf(userDto?.id ?: "")
     }
@@ -99,7 +100,14 @@ fun UserForm(
             )
         }
     }
-    var selectedOption by remember { mutableStateOf("") }
+
+    val initialOption = when {
+        userDto?.isSuperAdmin == true -> "SuperAdmin"
+        userDto?.isAdmin == true -> "Admin"
+        userDto?.isResidence == true -> "Residence"
+        else -> ""
+    }
+    var selectedOption by remember { mutableStateOf(initialOption) }
     var isActive by remember { mutableStateOf(true) }
 
     Column(
@@ -116,7 +124,6 @@ fun UserForm(
             modifier = Modifier
                 .padding(bottom = 3.dp, top = 7.dp)
         )
-//        " ${userDto?.firstName ?: ""}"
         ContainerLabelValue(statesValue)
 
         Spacer(modifier = Modifier.padding(top = 10.dp))
@@ -168,56 +175,56 @@ fun TextFieldContainer(textFieldLabel: String, textFieldValue: String, onValueCh
                 .fillMaxWidth()
                 .padding(top = 8.dp)
         ) {
-           Row(
-               modifier = Modifier.fillMaxWidth(),
-               verticalAlignment = Alignment.CenterVertically
-           ) {
-               Text(
-                   text = textFieldLabel,
-                   fontWeight = FontWeight.Bold,
-                   fontFamily = FontFamily.SansSerif,
-                   fontSize = 17.sp
-               )
-               Spacer(modifier = Modifier.width(8.dp))
-               Text(" : ", fontWeight = FontWeight.Bold)
-               Spacer(modifier = Modifier.width(8.dp))
-               TextField(
-                   value = textFieldValue,
-                   onValueChange = {
-                       if (isPhoneNumberField) {
-                           if (it.length <= 11 && it.all { char -> char.isDigit() }) {
-                               onValueChange(it)
-                           }
-                       } else {
-                           onValueChange(it)
-                       }
-                   },
-                   placeholder = { Text("Enter value") },
-                   modifier = Modifier
-                       .fillMaxWidth()
-                       .height(51.dp),
-                   visualTransformation = if (isPasswordField && !isPasswordVisible) {
-                       PasswordVisualTransformation()
-                   } else {
-                       VisualTransformation.None
-                   },
-                   trailingIcon = {
-                       if (isPasswordField) {
-                           IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
-                               Icon(
-                                   painter = painterResource(
-                                       id = if (isPasswordVisible) R.drawable.visibilityon else R.drawable.visibility_off
-                                   ),
-                                   contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
-                               )
-                           }
-                       }
-                   },
-                   colors = OutlinedTextFieldDefaults.colors(
-                       unfocusedContainerColor = Color.Transparent
-                   )
-               )
-           }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = textFieldLabel,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.SansSerif,
+                    fontSize = 17.sp
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(" : ", fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(8.dp))
+                TextField(
+                    value = textFieldValue,
+                    onValueChange = {
+                        if (isPhoneNumberField) {
+                            if (it.length <= 11 && it.all { char -> char.isDigit() }) {
+                                onValueChange(it)
+                            }
+                        } else {
+                            onValueChange(it)
+                        }
+                    },
+                    placeholder = { Text("Enter value") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(51.dp),
+                    visualTransformation = if (isPasswordField && !isPasswordVisible) {
+                        PasswordVisualTransformation()
+                    } else {
+                        VisualTransformation.None
+                    },
+                    trailingIcon = {
+                        if (isPasswordField) {
+                            IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                                Icon(
+                                    painter = painterResource(
+                                        id = if (isPasswordVisible) R.drawable.visibilityon else R.drawable.visibility_off
+                                    ),
+                                    contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
+                                )
+                            }
+                        }
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.Transparent
+                    )
+                )
+            }
         }
     }
 }
@@ -226,90 +233,90 @@ fun TextFieldContainer(textFieldLabel: String, textFieldValue: String, onValueCh
 fun FormRadioButton(selectedOption: String, onOptionSelected: (String) -> Unit) {
     val activation = listOf( "SuperAdmin", "Admin", "Residence")
     Row (
-       modifier = Modifier
-           .fillMaxWidth()
-           .padding(top = 6.dp),
-       horizontalArrangement = Arrangement.Center
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 6.dp),
+        horizontalArrangement = Arrangement.Center
     ){
-       activation.forEach { text ->
-           Row(
-               Modifier
-                  .selectable(
-                      selected = (text == selectedOption),
-                      onClick = {
-                         onOptionSelected(text)
-                      }
-                  )
-           ){
-             RadioButton(
-                 selected = (text == selectedOption),
-                 onClick = {
-                    onOptionSelected(text)
-                 },
-                 colors = RadioButtonDefaults.colors(
-                    selectedColor = Color.Blue,
-                    unselectedColor = Color.Gray
-                 ),
-                 modifier = Modifier
-                     .size(18.dp)
-                     .padding(10.dp)
-             )
-             Text(
-                 text = text,
-                 fontSize = 15.sp,
-                 fontWeight = FontWeight.Bold,
-                 modifier = Modifier.padding(start = 8.dp)
-             )
-               Spacer(modifier = Modifier.width(10.dp))
-           }
-       }
-   }
+        activation.forEach { text ->
+            Row(
+                Modifier
+                    .selectable(
+                        selected = (text == selectedOption),
+                        onClick = {
+                            onOptionSelected(text)
+                        }
+                    )
+            ){
+                RadioButton(
+                    selected = (text == selectedOption),
+                    onClick = {
+                        onOptionSelected(text)
+                    },
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = Color.Blue,
+                        unselectedColor = Color.Gray
+                    ),
+                    modifier = Modifier
+                        .size(18.dp)
+                        .padding(10.dp)
+                )
+                Text(
+                    text = text,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+            }
+        }
+    }
 }
 
 @Composable
 fun SwitchButton(isActiveState: Boolean,  onCheckedChange: (Boolean) -> Unit, scale: Float, switchText : String) {
     Box(
-       modifier = Modifier
-           .fillMaxWidth()
-           .padding(top = 4.dp)
-           .background(Color.White)
-   ){
-     Switch(
-         checked = isActiveState,
-         onCheckedChange = {
-             onCheckedChange(it)
-         },
-         modifier = Modifier
-             .scale(scale)
-             .padding(0.dp),
-         colors = SwitchDefaults.colors(
-             checkedThumbColor = Color(0xFF6650a4),
-             uncheckedThumbColor = Color.Gray,
-             checkedTrackColor = Color(0xFF6650a4).copy(alpha = 0.4f),
-             uncheckedTrackColor = Color.LightGray
-         ),
-         thumbContent = if (isActiveState) {
-             {
-                 Icon(
-                    imageVector = Icons.Filled.Check,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                     tint = Color.White
-                )
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp)
+            .background(Color.White)
+    ){
+        Switch(
+            checked = isActiveState,
+            onCheckedChange = {
+                onCheckedChange(it)
+            },
+            modifier = Modifier
+                .scale(scale)
+                .padding(0.dp),
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color(0xFF6650a4),
+                uncheckedThumbColor = Color.Gray,
+                checkedTrackColor = Color(0xFF6650a4).copy(alpha = 0.4f),
+                uncheckedTrackColor = Color.LightGray
+            ),
+            thumbContent = if (isActiveState) {
+                {
+                    Icon(
+                        imageVector = Icons.Filled.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = Color.White
+                    )
+                }
+            } else {
+                null
             }
-         } else {
-           null
-        }
-     )
-       Text(text = switchText,
-           fontSize = 16.sp,
-           fontFamily = FontFamily.SansSerif,
-           fontWeight = FontWeight.Bold,
-           modifier = Modifier
-               .align(Alignment.CenterStart)
-               .offset(x = 53.dp)
-       )
-   }
+        )
+        Text(text = switchText,
+            fontSize = 16.sp,
+            fontFamily = FontFamily.SansSerif,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .offset(x = 53.dp)
+        )
+    }
 }
 
 @SuppressLint("RememberReturnType")
@@ -350,63 +357,63 @@ fun DatePickerField(label: String, dateValue: String, onDateChange: (String) -> 
                 datePickerDialog.show()
             }
     ){
-       Row(
-           modifier = Modifier.fillMaxWidth(),
-           horizontalArrangement = Arrangement.Center,
-           verticalAlignment = Alignment.CenterVertically
-       ) {
-           Text(
-               text = label,
-               fontWeight = FontWeight.Bold,
-               fontFamily = FontFamily.SansSerif,
-               fontSize = 17.sp
-           )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = label,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.SansSerif,
+                fontSize = 17.sp
+            )
 
-           Spacer(modifier = Modifier.width(18.dp))
+            Spacer(modifier = Modifier.width(18.dp))
 
-           Icon(
-               painter = painterResource(id = R.drawable.calendar_icon),
-               contentDescription = "Calendar Icon",
-               modifier = Modifier.size(24.dp)
-           )
+            Icon(
+                painter = painterResource(id = R.drawable.calendar_icon),
+                contentDescription = "Calendar Icon",
+                modifier = Modifier.size(24.dp)
+            )
 
-           Text(" : ", fontWeight = FontWeight.Bold)
+            Text(" : ", fontWeight = FontWeight.Bold)
 
-           Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(10.dp))
 
-           Surface(
-               modifier = Modifier
-                   .clickable {
-                       datePickerDialog.show()
-                   }
-                   .padding(4.dp)
-                   .background(Color.Transparent),
-           ) {
-               Box(
-                   modifier = Modifier
-                       .width(202.dp)
-                       .height(40.dp)
-                       .background(Color.White)
-               ){
-                   Text(
-                       text = displayDate,
-                       fontFamily = FontFamily.SansSerif,
-                       modifier = Modifier
-                           .padding(10.dp)
-                           .align(Alignment.CenterStart)
-                           , fontSize = 17.sp
-                   )
-                   HorizontalDivider(
-                       modifier = Modifier
-                           .align(Alignment.BottomStart)
-                           .fillMaxWidth(),
-                       thickness = 1.dp,
-                       color = Color.Gray
-                   )
-               }
-           }
-       }
-   }
+            Surface(
+                modifier = Modifier
+                    .clickable {
+                        datePickerDialog.show()
+                    }
+                    .padding(4.dp)
+                    .background(Color.Transparent),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(202.dp)
+                        .height(40.dp)
+                        .background(Color.White)
+                ){
+                    Text(
+                        text = displayDate,
+                        fontFamily = FontFamily.SansSerif,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .align(Alignment.CenterStart)
+                        , fontSize = 17.sp
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .fillMaxWidth(),
+                        thickness = 1.dp,
+                        color = Color.Gray
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -449,11 +456,11 @@ fun ButtonSubmitData(
             .fillMaxWidth()
             .padding(top = 7.dp)
             .height(54.dp),
-           colors = ButtonDefaults.buttonColors(
-               containerColor = Color(0xFF6650a4),
-               contentColor = Color(0xFFFFFFFF)
-           ),
-        ) {
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF6650a4),
+            contentColor = Color(0xFFFFFFFF)
+        ),
+    ) {
         Text("Submit", fontSize = 18.sp)
     }
 }
