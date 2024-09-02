@@ -70,7 +70,7 @@ fun ResidencesUI(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(40.dp))
             SearchIcon(navController)
-
+            Spacer(modifier = Modifier.padding(bottom = 3.dp))
             LazyColumn {
                 items(residencesList) { residence ->
                     SingleItemCard(residenceName = residence,navController = navController)
@@ -83,11 +83,11 @@ fun ResidencesUI(navController: NavController) {
 @Composable
 fun UsersImageContainer(imageUri: Uri? = null) {
     Box(
-        Modifier.height(35.dp)
+        Modifier.height(45.dp)
     ){
        Box(
            modifier = Modifier
-               .size(35.dp)
+               .size(40.dp)
                .clip(CircleShape)
                .background(Color(0xFF6650a4))
                .border(3.dp, Color(0xFF6650a4), CircleShape),
@@ -106,7 +106,7 @@ fun UsersImageContainer(imageUri: Uri? = null) {
                Icon(
                    painter = painterResource(id = R.drawable.person),
                    contentDescription = "Default placeholder",
-                   modifier = Modifier.size(23.dp),
+                   modifier = Modifier.size(30.dp),
                    tint = Color.White
                )
            }
@@ -129,12 +129,12 @@ fun SingleItemCard(residenceName: String,navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .height(60.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
+                .padding(start = 10.dp, end = 10.dp)
                 .clickable { navController.navigate(MainNav.ChooseCheckup) },
             verticalAlignment = Alignment.CenterVertically
         ) {
