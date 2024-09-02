@@ -26,6 +26,9 @@ object MainNav {
     object Messages
 
     @Serializable
+    object ReminderLists
+
+    @Serializable
     object Dashboard
 
     @Serializable

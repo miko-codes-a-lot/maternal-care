@@ -97,6 +97,9 @@ private fun Menu(navController: NavController) {
         MenuItem(text = "Messages") {
             navController.navigate(MainNav.MessagesList)
         },
+        MenuItem(text = "Reminder") {
+            navController.navigate(MainNav.ReminderLists)
+        },
         MenuItem(text = "Dashboard") {
             navController.navigate(MainNav.Dashboard)
         },
