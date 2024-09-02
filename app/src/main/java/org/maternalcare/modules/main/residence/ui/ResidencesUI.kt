@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -129,15 +130,16 @@ fun SingleItemCard(residenceName: String,navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .height(58.dp),
+        verticalArrangement = Arrangement.Center
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp)
                 .clickable { navController.navigate(MainNav.ChooseCheckup) },
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Spacer(modifier = Modifier.width(10.dp))
             UsersImageContainer()
             Text(
                 text = residenceName,

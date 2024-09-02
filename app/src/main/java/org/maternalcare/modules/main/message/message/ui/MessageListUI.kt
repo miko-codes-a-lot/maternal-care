@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -86,7 +87,6 @@ fun MessageListUI(navController: NavController) {
             }
         }
     }
-
 }
 
 @Composable
@@ -94,12 +94,12 @@ fun ListOfMessages(usersName: String,navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .height(55.dp),
+        verticalArrangement = Arrangement.Center
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 10.dp, top = 10.dp)
                 .clickable {
                     navController.navigate(MainNav.Messages)
                 },

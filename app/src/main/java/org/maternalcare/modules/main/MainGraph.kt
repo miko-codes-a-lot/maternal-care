@@ -13,6 +13,7 @@ import org.maternalcare.modules.main.dashboard.ui.DashboardUI
 import org.maternalcare.modules.main.menu.ui.MenuUI
 import org.maternalcare.modules.main.message.message.ui.MessageListUI
 import org.maternalcare.modules.main.message.message.ui.MessageUI
+import org.maternalcare.modules.main.reminder.ui.ReminderListUI
 import org.maternalcare.modules.main.residence.ui.AddressesUI
 import org.maternalcare.modules.main.residence.ui.CheckupDetailsUI
 import org.maternalcare.modules.main.residence.ui.ChooseCheckupUI
@@ -50,6 +51,9 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.Messages> {
             MessageUI(navController)
+        }
+        composable<MainNav.ReminderLists> {
+            ReminderListUI(navController)
         }
         composable<MainNav.Dashboard> {
             DashboardUI(navController)
