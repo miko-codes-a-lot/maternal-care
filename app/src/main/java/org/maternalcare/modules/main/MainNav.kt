@@ -20,6 +20,9 @@ object MainNav {
     object CheckupDetails
 
     @Serializable
+    object MessagesList
+
+    @Serializable
     object Messages
 
     @Serializable

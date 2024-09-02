@@ -95,7 +95,7 @@ private fun Menu(navController: NavController) {
             navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
         },
         MenuItem(text = "Messages") {
-            navController.navigate(MainNav.Messages)
+            navController.navigate(MainNav.MessagesList)
         },
         MenuItem(text = "Dashboard") {
             navController.navigate(MainNav.Dashboard)
