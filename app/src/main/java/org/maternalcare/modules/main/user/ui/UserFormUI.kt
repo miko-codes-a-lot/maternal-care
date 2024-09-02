@@ -128,7 +128,9 @@ fun UserForm(
 
         Spacer(modifier = Modifier.padding(top = 10.dp))
 
-        FormRadioButton(selectedOption = selectedOption, onOptionSelected =  { selectedOption = it } )
+        if (userDto == null) {
+            FormRadioButton(selectedOption = selectedOption, onOptionSelected = { selectedOption = it })
+        }
 
         SwitchButton(isActiveState = isActive, onCheckedChange = { isActive = it } ,scale = 0.7f, switchText = "Active")
 
@@ -141,12 +143,13 @@ fun UserForm(
         )
 
         Spacer(modifier = Modifier.padding(top = 6.dp))
-
-        TextButton(onClick = {  navController.navigate(MainNav.User) }) {
-            Text(text = "Cancel",
-                modifier = Modifier,
-                fontSize = 17.sp
-            )
+        if (userDto == null) {
+            TextButton(onClick = { navController.navigate(MainNav.User) }) {
+                Text(text = "Cancel",
+                    modifier = Modifier,
+                    fontSize = 17.sp
+                )
+            }
         }
     }
 }
