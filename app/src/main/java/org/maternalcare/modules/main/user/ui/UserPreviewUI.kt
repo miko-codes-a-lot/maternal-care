@@ -31,14 +31,18 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-
 @Composable
-fun UserPreviewUI(title: String, navController: NavController, user: UserDto, onSave: suspend (UserDto) -> Unit)
+fun UserPreviewUI(
+    title: String,
+    navController: NavController,
+    user: UserDto,
+    onSave: suspend (UserDto) -> Unit,
+    onCancel: () -> Unit
+)
 {
     val coroutineScope = rememberCoroutineScope()
     val isSaving = remember { mutableStateOf(false) }
@@ -76,7 +80,7 @@ fun UserPreviewUI(title: String, navController: NavController, user: UserDto, on
 
         Spacer(modifier = Modifier.padding(top = 9.dp))
 
-        TextButton(onClick = {navController.navigate(MainNav.CreateUser)}) {
+        TextButton(onClick = onCancel) {
             Text(text = "cancel", modifier = Modifier,fontSize = 15.sp)
         }
     }

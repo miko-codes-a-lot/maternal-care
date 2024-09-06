@@ -74,9 +74,10 @@ fun UserForm(
     title : String = "Create Account",
     userDto: UserDto? = null,
     onSubmit: (UserDto) -> Unit,
-    navController: NavController
+    navController: NavController,
+    includePassword: Boolean = true
 ) {
-    val listOfLabel = if (userDto == null) {
+    val listOfLabel = if (includePassword) {
         listOf("First Name", "Middle Name", "Last Name", "Email", "Mobile Number", "Date Of Birth", "Password")
     } else {
         listOf("First Name", "Middle Name", "Last Name", "Email", "Mobile Number", "Date Of Birth")
@@ -105,11 +106,12 @@ fun UserForm(
         userDto?.isSuperAdmin == true -> "SuperAdmin"
         userDto?.isAdmin == true -> "Admin"
         userDto?.isResidence == true -> "Residence"
+        userDto == null -> "Admin"
         else -> ""
     }
     var selectedOption by remember { mutableStateOf(initialOption) }
     var isActive by remember { mutableStateOf(true) }
-
+    var isButtonEnabled by remember { mutableStateOf(true) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -122,14 +124,24 @@ fun UserForm(
             fontFamily = FontFamily.Serif,
             fontSize = 24.sp,
             modifier = Modifier
-                .padding(bottom = 3.dp, top = 7.dp)
+                .offset(y = (-11).dp)
         )
-        ContainerLabelValue(statesValue)
+
+        val errors = remember {
+            listOfLabel.associateWith { mutableStateOf("") }
+        }
+        ContainerLabelValue(statesValue, errors = errors)
 
         Spacer(modifier = Modifier.padding(top = 10.dp))
 
         if (userDto == null) {
-            FormRadioButton(selectedOption = selectedOption, onOptionSelected = { selectedOption = it })
+            FormRadioButton(
+                selectedOption = selectedOption,
+                onOptionSelected = { option ->
+                    selectedOption = option
+                },
+                showRadioButtons = false
+            )
         }
 
         SwitchButton(isActiveState = isActive, onCheckedChange = { isActive = it } ,scale = 0.7f, switchText = "Active")
@@ -139,7 +151,17 @@ fun UserForm(
             userId = userId,
             selectedOption = selectedOption,
             isActiveState = isActive,
-            onSubmit = onSubmit
+            onSubmit = {
+                isButtonEnabled = false
+                val hasError = validateForm(errors, statesValue)
+                if  (hasError) {
+                    isButtonEnabled = true
+                } else {
+                    onSubmit(it)
+                }
+            },
+            errors = errors,
+            isEnableSubmit = isButtonEnabled,
         )
 
         Spacer(modifier = Modifier.padding(top = 6.dp))
@@ -155,28 +177,76 @@ fun UserForm(
 }
 
 @Composable
-fun ContainerLabelValue(statesValue: Map<String, MutableState<String>>) {
-    statesValue.forEach { (labels, states) ->
-        TextFieldContainer(textFieldLabel = labels, textFieldValue = states.value) { newValues ->
-            states.value = newValues
+fun ContainerLabelValue(statesValue: Map<String, MutableState<String>>, errors: Map<String, MutableState<String>>) {
+    statesValue.forEach { (label, state) ->
+        if (label == "Date Of Birth") {
+            DatePickerField(
+                label = label,
+                dateValue = state.value,
+                onDateChange = { newValue ->
+                    state.value = newValue
+                    errors[label]?.value = if (newValue.isEmpty()) "This field is required" else ""
+                },
+                isError = errors[label]?.value?.isNotEmpty() == true,
+                onErrorChange = { hasError ->
+                    errors[label]?.value = if (hasError) "This field is required" else ""
+                },
+                errorMessage = errors[label]?.value ?: ""
+            )
+        }else{
+            TextFieldContainer(
+                textFieldLabel = label,
+                textFieldValue = state.value,
+                onValueChange = { newValue -> state.value = newValue },
+                isError = errors[label]?.value?.isNotEmpty() == true,
+                onErrorChange = { hasError ->
+                    errors[label]?.value = if (hasError) "This field is required" else ""
+                },
+                errorMessage = errors[label]?.value ?: ""
+            )
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TextFieldContainer(textFieldLabel: String, textFieldValue: String, onValueChange: (String) -> Unit) {
+fun TextFieldContainer(
+    textFieldLabel: String,
+    textFieldValue: String,
+    onValueChange: (String) -> Unit,
+    isError: Boolean,
+    onErrorChange: (Boolean) -> Unit,
+    errorMessage: String = ""
+) {
     var isPasswordField = textFieldLabel == "Password"
     var isPasswordVisible by remember { mutableStateOf(false) }
     val isPhoneNumberField = textFieldLabel == "Mobile Number"
 
+    val colors = if (isError) {
+        OutlinedTextFieldDefaults.colors(
+            unfocusedContainerColor = Color.Red,
+        )
+    } else {
+        OutlinedTextFieldDefaults.colors(
+            unfocusedContainerColor = Color.Transparent
+        )
+    }
+
     if (textFieldLabel == "Date Of Birth") {
-        DatePickerField(label = textFieldLabel, dateValue = textFieldValue, onDateChange = onValueChange)
+
+        DatePickerField(
+            label = textFieldLabel,
+            dateValue = textFieldValue,
+            onDateChange = onValueChange,
+            isError = isError,
+            onErrorChange = onErrorChange,
+            errorMessage = "Invalid date format"
+        )
     } else {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp)
+                .padding(top = 4.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -188,24 +258,39 @@ fun TextFieldContainer(textFieldLabel: String, textFieldValue: String, onValueCh
                     fontFamily = FontFamily.SansSerif,
                     fontSize = 17.sp
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(5.dp))
                 Text(" : ", fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.width(8.dp))
                 TextField(
                     value = textFieldValue,
                     onValueChange = {
                         if (isPhoneNumberField) {
-                            if (it.length <= 11 && it.all { char -> char.isDigit() }) {
+                            if (it.all { char -> char.isDigit() }) {
                                 onValueChange(it)
+                                onErrorChange(false)
+                            } else {
+                                onErrorChange(true)
                             }
                         } else {
                             onValueChange(it)
+                            onErrorChange(it.isEmpty())
                         }
                     },
-                    placeholder = { Text("Enter value") },
+                    placeholder = if (!isError) {
+                        { Text("Enter value") }
+                    } else null,
+                    label = if (isError) {
+                        {
+                            Text(
+                                text = errorMessage,
+                                color = Color.Red,
+                                fontSize = 12.sp,
+                                modifier = Modifier.offset(y = (-3).dp)
+                            )
+                        }
+                    } else null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(51.dp),
+                        .height(50.dp),
                     visualTransformation = if (isPasswordField && !isPasswordVisible) {
                         PasswordVisualTransformation()
                     } else {
@@ -223,9 +308,8 @@ fun TextFieldContainer(textFieldLabel: String, textFieldValue: String, onValueCh
                             }
                         }
                     },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedContainerColor = Color.Transparent
-                    )
+                    colors = colors,
+                    isError = isError
                 )
             }
         }
@@ -233,14 +317,23 @@ fun TextFieldContainer(textFieldLabel: String, textFieldValue: String, onValueCh
 }
 
 @Composable
-fun FormRadioButton(selectedOption: String, onOptionSelected: (String) -> Unit) {
-    val activation = listOf( "SuperAdmin", "Admin", "Residence")
-    Row (
+fun FormRadioButton(
+    selectedOption: String = "Admin",
+    onOptionSelected: (String) -> Unit,
+    showRadioButtons: Boolean = false
+) {
+    val activation = when (selectedOption) {
+        "SuperAdmin", "Admin" -> listOf("SuperAdmin", "Admin")
+        "Residence" -> listOf("Residence")
+        else -> listOf("Admin")
+    }
+    if (showRadioButtons) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 6.dp),
-        horizontalArrangement = Arrangement.Center
-    ){
+            .padding(top = 4.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
         activation.forEach { text ->
             Row(
                 Modifier
@@ -250,7 +343,7 @@ fun FormRadioButton(selectedOption: String, onOptionSelected: (String) -> Unit) 
                             onOptionSelected(text)
                         }
                     )
-            ){
+            ) {
                 RadioButton(
                     selected = (text == selectedOption),
                     onClick = {
@@ -268,11 +361,12 @@ fun FormRadioButton(selectedOption: String, onOptionSelected: (String) -> Unit) 
                     text = text,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier.padding(start = 8.dp, top = 3.dp)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
             }
         }
+    }
     }
 }
 
@@ -325,7 +419,13 @@ fun SwitchButton(isActiveState: Boolean,  onCheckedChange: (Boolean) -> Unit, sc
 @SuppressLint("RememberReturnType")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePickerField(label: String, dateValue: String, onDateChange: (String) -> Unit) {
+fun DatePickerField(
+    label: String, dateValue: String,
+    onDateChange: (String) -> Unit,
+    isError: Boolean,
+    onErrorChange: (Boolean) -> Unit,
+    errorMessage: String = ""
+) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
 
@@ -338,6 +438,7 @@ fun DatePickerField(label: String, dateValue: String, onDateChange: (String) -> 
                 isoFormat.timeZone = TimeZone.getTimeZone("UTC")
                 val dateISO = isoFormat.format(calendar.time)
                 onDateChange(dateISO)
+                onErrorChange(false)
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
@@ -398,14 +499,22 @@ fun DatePickerField(label: String, dateValue: String, onDateChange: (String) -> 
                         .height(40.dp)
                         .background(Color.White)
                 ){
-                    Text(
-                        text = displayDate,
-                        fontFamily = FontFamily.SansSerif,
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .align(Alignment.CenterStart)
-                        , fontSize = 17.sp
-                    )
+                    if (isError) {
+                        Text(
+                            text = errorMessage,
+                            color = Color.Red,
+                            modifier = Modifier.padding(top = 4.dp),
+                            fontSize = 12.sp
+                        )
+                    }else {
+                        Text(
+                            text = displayDate,
+                            fontFamily = FontFamily.SansSerif,
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .align(Alignment.CenterStart), fontSize = 17.sp
+                        )
+                    }
                     HorizontalDivider(
                         modifier = Modifier
                             .align(Alignment.BottomStart)
@@ -425,39 +534,44 @@ fun ButtonSubmitData(
     selectedOption: String,
     isActiveState: Boolean,
     userId: String,
-    onSubmit: (UserDto) -> Unit
+    onSubmit: (UserDto) -> Unit,
+    errors: Map<String, MutableState<String>>,
+    isEnableSubmit: Boolean,
 ) {
     Button(
         onClick = {
-            val userDto = UserDto(
-                firstName = statesValue["First Name"]?.value ?: "",
-                middleName = statesValue["Middle Name"]?.value ?: "",
-                lastName = statesValue["Last Name"]?.value ?: "",
-                email = statesValue["Email"]?.value ?: "",
-                mobileNumber = statesValue["Mobile Number"]?.value ?: "",
-                dateOfBirth = statesValue["Date Of Birth"]?.value ?: "",
-                isSuperAdmin = selectedOption == "SuperAdmin",
-                isAdmin = selectedOption == "Admin",
-                isResidence = selectedOption == "Residence",
-                isActive = isActiveState
-            )
 
-            val password = statesValue["Password"]?.value
-            if (userId.isEmpty()) {
-                // hash password
-                userDto.password = password?.hashPassword() ?: ""
-            } else {
-                // set user id if exists
-                userDto.id = userId
-                userDto.password = password ?: ""
+            val hasError = validateForm(errors, statesValue)
+            if (!hasError) {
+                val userDto = UserDto(
+                    firstName = statesValue["First Name"]?.value ?: "",
+                    middleName = statesValue["Middle Name"]?.value ?: "",
+                    lastName = statesValue["Last Name"]?.value ?: "",
+                    email = statesValue["Email"]?.value ?: "",
+                    mobileNumber = statesValue["Mobile Number"]?.value ?: "",
+                    dateOfBirth = statesValue["Date Of Birth"]?.value ?: "",
+                    isSuperAdmin = selectedOption == "SuperAdmin",
+                    isAdmin = selectedOption == "Admin",
+                    isResidence = selectedOption == "Residence",
+                    isActive = isActiveState
+                )
+
+                val password = statesValue["Password"]?.value
+                if (userId.isEmpty()) {
+                    userDto.password = password?.hashPassword() ?: ""
+                } else {
+                    userDto.id = userId
+                    userDto.password = password ?: ""
+                }
+
+                // Invoke callback listener
+                onSubmit(userDto)
             }
-
-            // invoke callback listener
-            onSubmit(userDto)
         },
+        enabled = isEnableSubmit,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 7.dp)
+            .padding(top = 4.dp)
             .height(54.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(0xFF6650a4),
@@ -467,3 +581,70 @@ fun ButtonSubmitData(
         Text("Submit", fontSize = 18.sp)
     }
 }
+
+fun validateForm(
+    errors: Map<String,MutableState<String>>,
+    statesValue: Map<String,MutableState<String>>,
+): Boolean {
+    var hasError = false
+    val emailPattern = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")
+    statesValue.forEach { (label, state) ->
+        when (label) {
+            "First Name", "Last Name", "Middle Name", -> {
+                if (state.value.isBlank()) {
+                    errors[label]?.value = "Cannot be empty"
+                    hasError = true
+                } else if (state.value.any { it.isDigit() }) {
+                    errors[label]?.value = "Cannot contain numbers"
+                    hasError = true
+                } else if (state.value.contains(" ")) {
+                    errors[label]?.value = "Cannot contain spaces"
+                    hasError = true
+                } else {
+                    errors[label]?.value = ""
+                }
+            }
+            "Email" -> {
+                if (!emailPattern.matches(state.value)) {
+                    errors[label]?.value = "Invalid email address"
+                    hasError = true
+                }else {
+                    errors[label]?.value = ""
+                }
+            }
+            "Mobile Number" -> {
+                if (state.value.length != 11) {
+                    errors[label]?.value = "Must be 11 digits"
+                    hasError = true
+                }else if (!state.value.startsWith("09")) {
+                    errors[label]?.value = "Must start with '09'"
+                    hasError = true
+                }else {
+                    errors[label]?.value = ""
+                }
+            }
+            "Password" -> {
+                if (state.value.length < 6) {
+                    errors[label]?.value = "Must be at least 6 characters"
+                    hasError = true
+                }else if (state.value.contains(" ")) {
+                    errors[label]?.value = "Cannot contain spaces"
+                    hasError = true
+                }else {
+                    errors[label]?.value = ""
+                }
+            }
+            "Date Of Birth" -> {
+                if (state.value.isEmpty()) {
+                    errors[label]?.value = "Date of birth is required"
+                    hasError = true
+                } else {
+                    errors[label]?.value = ""
+                }
+            }
+        }
+    }
+    return hasError
+}
+
+
