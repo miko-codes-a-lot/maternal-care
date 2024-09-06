@@ -29,9 +29,11 @@ fun UserCreateUI(navController: NavController) {
         }
 
         UserForm(
+            userDto = userDetails,
             title = "Create Account",
             onSubmit = { user ->
                 coroutineScope.launch {
+                    userDetails = user
                     onSubmit(user)
                 }
             },
@@ -54,7 +56,11 @@ fun UserCreateUI(navController: NavController) {
             navController = navController,
             user = userDetails,
             title = "Preview Account",
-            onSave = onSave
+            onSave = onSave,
+            onCancel = {
+                userDetails.password = ""
+                showForm = true
+            }
         )
     }
 }
