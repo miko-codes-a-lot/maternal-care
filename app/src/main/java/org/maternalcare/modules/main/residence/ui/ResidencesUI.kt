@@ -1,5 +1,6 @@
 package org.maternalcare.modules.main.residence.ui
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,8 +10,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -18,15 +21,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,26 +61,40 @@ fun ResidencePreview() {
     ResidencesUI(navController = rememberNavController())
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ResidencesUI(navController: NavController) {
-    Box(
+    Column(
         modifier = Modifier
+            .fillMaxSize()
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(5.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(40.dp))
-            SearchIcon(navController)
-            Spacer(modifier = Modifier.padding(bottom = 3.dp))
-            LazyColumn {
-                items(residencesList) { residence ->
-                    SingleItemCard(residenceName = residence,navController = navController)
+        Scaffold(
+            floatingActionButton = {
+                FloatingIcon(navController)
+            }
+        ){
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .padding(5.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(40.dp))
+                SearchIcon(navController)
+                Spacer(modifier = Modifier.padding(bottom = 3.dp))
+                LazyColumn(
+                    modifier = Modifier
+                        .height(588.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    items(residencesList) { residence ->
+                        SingleItemCard(residenceName = residence,navController = navController)
+                    }
                 }
             }
         }
@@ -186,7 +206,7 @@ fun SearchIcon(navController: NavController) {
                 )
             }
         },
-        colors = TextFieldDefaults.outlinedTextFieldColors(
+        colors = OutlinedTextFieldDefaults.colors(
             unfocusedBorderColor = Color.Black,
             focusedBorderColor = Color.Black,
             disabledBorderColor = Color.Gray,
@@ -199,4 +219,33 @@ fun SearchIcon(navController: NavController) {
     )
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Composable
+fun FloatingIcon(navController: NavController) {
+    Box(
+        modifier = Modifier,
+        contentAlignment = Alignment.BottomEnd
+    ){
+        Column(
+            horizontalAlignment = Alignment.End
+        ) {
+            FloatingActionButton(
+                onClick = { navController.navigate(MainNav.CreateUser) },
+                containerColor = Color(0xFF6650a4),
+                contentColor = Color(0xFFFFFFFF),
+                shape = CircleShape,
+                modifier = Modifier
+                    .size(75.dp)
+                    .offset(x = (1).dp, y = (7).dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add",
+                    modifier = Modifier
+                        .size(30.dp)
+                )
+            }
+        }
+    }
+}
 
