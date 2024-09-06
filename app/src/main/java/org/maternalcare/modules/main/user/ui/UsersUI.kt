@@ -1,13 +1,6 @@
 package org.maternalcare.modules.main.user.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,9 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
@@ -71,7 +62,6 @@ fun UserPreview(){
 @Composable
 fun UsersUI(navController: NavController) {
     val userViewModel: UserViewModel = hiltViewModel()
-
     val users by produceState<List<UserDto>>(emptyList(), userViewModel) {
         value = userViewModel.fetchUsers()
     }
@@ -95,7 +85,12 @@ fun UsersUI(navController: NavController) {
             ) {
                 Spacer(modifier = Modifier.padding( top = 45.dp) )
                 UsersSearchIcon(navController)
-                LazyColumn {
+                LazyColumn(
+                    modifier = Modifier
+                        .height(588.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     items(users) { user ->
                         UserSingleLine(userDto = user, navController = navController)
                     }
@@ -103,7 +98,6 @@ fun UsersUI(navController: NavController) {
             }
         }
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -192,13 +186,6 @@ fun UserSingleLine(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FloatParentFloatingIcon(navController: NavController) {
-    var expanded by remember { mutableStateOf(false) }
-
-    val items = listOf(
-        painterResource(id = R.drawable.editicon),
-        painterResource(id = R.drawable.delete)
-    )
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -206,36 +193,8 @@ fun FloatParentFloatingIcon(navController: NavController) {
         contentAlignment = Alignment.BottomEnd
     ) {
         Column(horizontalAlignment = Alignment.End) {
-            AnimatedVisibility(
-                visible = expanded,
-                enter = fadeIn() + slideInVertically(initialOffsetY = { it }) + expandVertically(),
-                exit = fadeOut() + slideOutVertically(targetOffsetY = { it }) + shrinkVertically()
-            ) {
-                LazyColumn(
-                    modifier = Modifier.offset(y = 4.dp),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    items(items.size) { index ->
-                        when (index) {
-                            0 -> FloatChildIcon(
-                                painter = items[index],
-                                navController = navController
-                            ) {
-                                navController.navigate(MainNav.CreateUser)
-                            }
-                            1 -> FloatChildIcon(
-                                painter = items[index],
-                                navController = navController
-                            ) {
-                            // Navigate controller for deletion
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-                }
-            }
             FloatingActionButton(
-                onClick = { expanded = !expanded },
+                onClick = { navController.navigate(MainNav.CreateUser) },
                 containerColor = Color(0xFF6650a4),
                 contentColor = Color(0xFFFFFFFF),
                 shape = CircleShape,
@@ -247,34 +206,9 @@ fun FloatParentFloatingIcon(navController: NavController) {
                     imageVector = Icons.Filled.Add,
                     contentDescription = "Add",
                     modifier = Modifier
-                        .rotate(if (expanded) 45f else 0f)
                         .size(30.dp)
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun FloatChildIcon(painter: Painter, navController: NavController, onClick: () -> Unit) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(end = 11.dp)
-    ) {
-        FloatingActionButton(
-            onClick = onClick,
-            modifier = Modifier.size(52.dp),
-            containerColor = Color(0xFF6650a4),
-            contentColor = Color(0xFFFFFFFF)
-        ) {
-            Icon(
-                painter = painter,
-                contentDescription = "childIcon",
-                modifier = Modifier.size(24.dp)
-            )
         }
     }
 }
