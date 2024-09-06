@@ -100,6 +100,7 @@ fun ListOfMessages(usersName: String,navController: NavController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(start = 10.dp, end = 10.dp)
                 .clickable {
                     navController.navigate(MainNav.Messages)
                 },
@@ -117,13 +118,13 @@ fun ListOfMessages(usersName: String,navController: NavController) {
             Box(
                 modifier = Modifier
                     .background(
-                        color = Color(0xFF6650a4),
+                        color = Color.Red,
                         shape = CircleShape
                     )
                     .size(13.dp)
                     .border(
                         width = 1.dp,
-                        color = Color(0xFF6650a4),
+                        color = Color.Red,
                         shape = CircleShape
                     ),
             )

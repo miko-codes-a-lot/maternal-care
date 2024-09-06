@@ -26,7 +26,8 @@ fun UserEditUI(navController: NavController, userDto: UserDto) {
                 userDetails = user
                 showForm = false
             },
-            navController = navController
+            navController = navController,
+            includePassword = false
         )
     } else {
         UserPreviewUI(
@@ -43,6 +44,9 @@ fun UserEditUI(navController: NavController, userDto: UserDto) {
                 } else {
                     Log.e("micool", "Something went wrong: ${result.exceptionOrNull()}")
                 }
+            },
+            onCancel = {
+                showForm = true
             }
         )
     }
