@@ -75,16 +75,17 @@ fun UserForm(
     userDto: UserDto? = null,
     onSubmit: (UserDto) -> Unit,
     navController: NavController,
-    includePassword: Boolean = true
+    includePassword: Boolean = true,
+    isInitialOptionShow: Boolean = true
 ) {
     val listOfLabel = if (includePassword) {
         listOf("First Name", "Middle Name", "Last Name", "Email", "Mobile Number", "Date Of Birth", "Password")
     } else {
         listOf("First Name", "Middle Name", "Last Name", "Email", "Mobile Number", "Date Of Birth")
     }
-    val userId by remember {
-        mutableStateOf(userDto?.id ?: "")
-    }
+    val userId by remember { mutableStateOf(userDto?.id ?: "") }
+    var radioError by remember { mutableStateOf(false) }
+
     val statesValue = remember {
         listOfLabel.associateWith {
             mutableStateOf(
@@ -102,14 +103,15 @@ fun UserForm(
         }
     }
 
-    val initialOption = when {
-        userDto?.isSuperAdmin == true -> "SuperAdmin"
-        userDto?.isAdmin == true -> "Admin"
-        userDto?.isResidence == true -> "Residence"
-        userDto == null -> "Admin"
-        else -> ""
-    }
-    var selectedOption by remember { mutableStateOf(initialOption) }
+    var selectedOption by remember { mutableStateOf(
+        when {
+            userDto?.isSuperAdmin == true -> "SuperAdmin"
+            userDto?.isAdmin == true -> "Admin"
+            userDto?.isResidence == true -> "Residence"
+            else -> ""
+        }
+    )}
+
     var isActive by remember { mutableStateOf(true) }
     var isButtonEnabled by remember { mutableStateOf(true) }
     Column(
@@ -132,15 +134,15 @@ fun UserForm(
         }
         ContainerLabelValue(statesValue, errors = errors)
 
-        Spacer(modifier = Modifier.padding(top = 10.dp))
-
-        if (userDto == null) {
+        if (isInitialOptionShow) {
+            val radioErrorMessage = if (radioError) "Please select an option" else ""
             FormRadioButton(
                 selectedOption = selectedOption,
                 onOptionSelected = { option ->
                     selectedOption = option
+                    radioError = false
                 },
-                showRadioButtons = false
+                errorMsg = radioErrorMessage
             )
         }
 
@@ -154,7 +156,13 @@ fun UserForm(
             onSubmit = {
                 isButtonEnabled = false
                 val hasError = validateForm(errors, statesValue)
-                if  (hasError) {
+
+                if (selectedOption.isEmpty()) {
+                    radioError = true
+                    isButtonEnabled = true
+                }
+
+                if (hasError || radioError) {
                     isButtonEnabled = true
                 } else {
                     onSubmit(it)
@@ -318,20 +326,34 @@ fun TextFieldContainer(
 
 @Composable
 fun FormRadioButton(
-    selectedOption: String = "Admin",
+    selectedOption: String,
     onOptionSelected: (String) -> Unit,
-    showRadioButtons: Boolean = false
+    errorMsg : String
 ) {
     val activation = when (selectedOption) {
-        "SuperAdmin", "Admin" -> listOf("SuperAdmin", "Admin")
         "Residence" -> listOf("Residence")
-        else -> listOf("Admin")
+        "SuperAdmin", "Admin" -> listOf("SuperAdmin", "Admin")
+        else -> listOf("Residence")
     }
-    if (showRadioButtons) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        if (errorMsg.isNotEmpty()) {
+            Text(
+                text = errorMsg,
+                color = Color.Red,
+                fontSize = 11.sp,
+            )
+        }
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 4.dp),
+            .padding(top = 2.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         activation.forEach { text ->
@@ -367,7 +389,6 @@ fun FormRadioButton(
             }
         }
     }
-    }
 }
 
 @Composable
@@ -375,7 +396,7 @@ fun SwitchButton(isActiveState: Boolean,  onCheckedChange: (Boolean) -> Unit, sc
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 4.dp)
+            .padding(2.dp)
             .background(Color.White)
     ){
         Switch(
@@ -590,25 +611,33 @@ fun validateForm(
     val emailPattern = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")
     statesValue.forEach { (label, state) ->
         when (label) {
-            "First Name", "Last Name", "Middle Name", -> {
-                if (state.value.isBlank()) {
+            "First Name", "Last Name", "Middle Name" -> {
+                val name = state.value
+                if (name.isBlank()) {
                     errors[label]?.value = "Cannot be empty"
                     hasError = true
-                } else if (state.value.any { it.isDigit() }) {
+                } else if (name.any { it.isDigit() }) {
                     errors[label]?.value = "Cannot contain numbers"
                     hasError = true
-                } else if (state.value.contains(" ")) {
+                } else if (name.contains(" ")) {
                     errors[label]?.value = "Cannot contain spaces"
+                    hasError = true
+                } else if (!name.first().isUpperCase()) {
+                    errors[label]?.value = "First letter uppercase"
                     hasError = true
                 } else {
                     errors[label]?.value = ""
                 }
             }
             "Email" -> {
-                if (!emailPattern.matches(state.value)) {
+                val email = state.value
+                if (!emailPattern.matches(email)) {
                     errors[label]?.value = "Invalid email address"
                     hasError = true
-                }else {
+                } else if (email != email.lowercase()) {
+                    errors[label]?.value = "Email must be lowercase"
+                    hasError = true
+                } else {
                     errors[label]?.value = ""
                 }
             }
@@ -616,10 +645,10 @@ fun validateForm(
                 if (state.value.length != 11) {
                     errors[label]?.value = "Must be 11 digits"
                     hasError = true
-                }else if (!state.value.startsWith("09")) {
+                } else if (!state.value.startsWith("09")) {
                     errors[label]?.value = "Must start with '09'"
                     hasError = true
-                }else {
+                } else {
                     errors[label]?.value = ""
                 }
             }
@@ -627,10 +656,10 @@ fun validateForm(
                 if (state.value.length < 6) {
                     errors[label]?.value = "Must be at least 6 characters"
                     hasError = true
-                }else if (state.value.contains(" ")) {
+                } else if (state.value.contains(" ")) {
                     errors[label]?.value = "Cannot contain spaces"
                     hasError = true
-                }else {
+                } else {
                     errors[label]?.value = ""
                 }
             }

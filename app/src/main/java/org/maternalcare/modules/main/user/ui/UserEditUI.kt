@@ -27,7 +27,8 @@ fun UserEditUI(navController: NavController, userDto: UserDto) {
                 showForm = false
             },
             navController = navController,
-            includePassword = false
+            includePassword = false,
+            isInitialOptionShow = false
         )
     } else {
         UserPreviewUI(
