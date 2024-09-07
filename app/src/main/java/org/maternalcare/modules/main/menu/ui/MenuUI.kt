@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -196,7 +198,7 @@ fun ReminderAlert(
             ),
             modifier = Modifier
                 .fillMaxWidth(0.95f)
-                .height(169.dp)
+                .heightIn(min = 162.dp, max = 300.dp)
                 .border(
                     4.dp,
                     color = Color(0xFF6650a4),
@@ -205,39 +207,45 @@ fun ReminderAlert(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(top = 15.dp, bottom = 15.dp)
-                    .fillMaxWidth(),
+                    .padding(
+                        top = 15.dp,
+                        bottom = 15.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    )
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                listOfText.forEach{ text ->
+                listOfText.forEach { text ->
                     TextContainer(text = text)
                 }
 
                 CheckUpDateContainer()
-            }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Button(
-                    onClick = { onDismiss() },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF6650a4),
-                        contentColor = Color.White
-                    ),
+                Row(
                     modifier = Modifier
-                        .height(32.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Close",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                    )
+                    Button(
+                        onClick = { onDismiss() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF6650a4),
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier
+                            .height(32.dp)
+                    ) {
+                        Text(
+                            text = "Close",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
                 }
             }
         }
