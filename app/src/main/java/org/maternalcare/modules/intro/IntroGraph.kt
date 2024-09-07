@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import org.maternalcare.modules.intro.login.LoginUI
 import org.maternalcare.modules.intro.splash.SplashUI
+import org.maternalcare.modules.main.user.model.dto.UserDto
 
 fun NavGraphBuilder.introGraph(navController: NavController) {
     navigation<IntroNav>(startDestination = IntroNav.Splash) {
@@ -14,7 +15,7 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
         }
 
         composable<IntroNav.Login> {
-            LoginUI(navController)
+            LoginUI(userDto = UserDto(), navController)
         }
     }
 }
