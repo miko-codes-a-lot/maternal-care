@@ -26,6 +26,6 @@ fun String.hashPassword(): String {
     return BCrypt.hashpw(this, BCrypt.gensalt())
 }
 
-fun String.verifyPassword(hashedPassword: String): Boolean {
-    return BCrypt.checkpw(this, hashedPassword)
+fun String.verifyPassword(password: String): Boolean {
+    return BCrypt.checkpw(this, password.hashPassword())
 }
