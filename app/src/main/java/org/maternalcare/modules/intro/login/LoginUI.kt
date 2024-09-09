@@ -79,19 +79,22 @@ fun LoginUI(
         Image(
             painter = painterResource(id = R.drawable.care),
             contentDescription = "Login Image",
-            modifier = Modifier.size(155.dp)
+            modifier = Modifier.size(140.dp)
         )
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(text = "Login to your account", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+        Text(text = "Login to your account",
+            fontSize = 23.sp,
+            fontFamily = FontFamily.Serif
+        )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
         ContainerLabelAndValue( statesValue = statesValue)
 
         ButtonLogin(navController = navController)
 
-        Spacer(modifier = Modifier.height(110.dp))
+        Spacer(modifier = Modifier.height(100.dp))
 
     }
 }
