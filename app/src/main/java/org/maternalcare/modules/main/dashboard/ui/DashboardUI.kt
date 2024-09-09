@@ -1,20 +1,16 @@
 package org.maternalcare.modules.main.dashboard.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,35 +34,24 @@ fun DashboardUI(navController: NavController) {
         modifier = Modifier.fillMaxSize(),
         color = Color.White
     ) {
-        Box(
-            modifier = Modifier
-                .padding(16.dp)
-                .size(50.dp)
-        ) {
-            Icon(
-               painter = painterResource(id = R.drawable.arrow),
-               contentDescription = "Exit Icon",
-               tint = Color.Black,
-               modifier = Modifier
-                   .size(29.dp)
-                   .offset(x = (10).dp, y = (45).dp)
-               .clickable {
-                   navController.navigate(MainNav.Menu)
-               }
-            )
-        }
         Column (
-             modifier = Modifier.fillMaxSize(),
+             modifier = Modifier
+                 .padding(16.dp)
+                 .fillMaxSize(),
              verticalArrangement = Arrangement.Center,
              horizontalAlignment = Alignment.CenterHorizontally
         ) {
              Image(painter = painterResource(id = R.drawable.care),
                    contentDescription = "Logo Image",
-                   modifier = Modifier.size(170.dp)
+                   modifier = Modifier.size(140.dp)
              )
-             Spacer(modifier = Modifier.height(10.dp))
-             Text(text = "Dashboard", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-             Spacer(modifier = Modifier.height(10.dp))
+             Spacer(modifier = Modifier.height(15.dp))
+             Text(
+                 text = "Dashboard",
+                 fontSize = 25.sp,
+                 fontFamily = FontFamily.Serif
+             )
+             Spacer(modifier = Modifier.height(15.dp))
 
              DashboardMenu(navController)
         }
