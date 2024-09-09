@@ -4,6 +4,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -28,6 +30,11 @@ import androidx.compose.ui.window.DialogProperties
 import org.maternalcare.modules.main.menu.ui.CheckUpDateContainer
 import org.maternalcare.modules.main.menu.ui.TextContainer
 
+@Preview(showSystemUi = true)
+@Composable
+fun ReminderAlertUIPreview() {
+    ReminderAlertUI(onDismiss = {})
+}
 
 @Composable
 fun ReminderAlertUI (
@@ -60,25 +67,20 @@ fun ReminderAlertUI (
         ) {
             Column(
                 modifier = Modifier
-                    .padding(
-                        top = 15.dp,
-                        bottom = 15.dp,
-                        start = 16.dp,
-                        end = 16.dp
-                    )
+                    .padding(16.dp)
                     .fillMaxWidth()
                     .wrapContentHeight(),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Spacer(modifier = Modifier.height(10.dp))
                 listOfText.forEach { text ->
                     TextContainer(text = text)
                 }
-
                 CheckUpDateContainer()
-
                 Row(
                     modifier = Modifier
+                        .padding(top = 15.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
