@@ -25,6 +25,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,17 +40,22 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
+import org.maternalcare.modules.intro.login.dto.LoginDto
+import org.maternalcare.modules.intro.login.viewmodel.LoginViewModel
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.shared.ui.ReminderAlertUI
 
 @Preview(showSystemUi = true)
 @Composable
 fun LoginUIPreview() {
     LoginUI(navController = rememberNavController())
 }
+
 @Composable
 fun LoginUI(
     userDto: UserDto? = null,
@@ -92,7 +98,7 @@ fun LoginUI(
 
         ContainerLabelAndValue( statesValue = statesValue)
 
-        ButtonLogin(navController = navController)
+        ButtonLogin(navController = navController, statesValue = statesValue)
 
         Spacer(modifier = Modifier.height(100.dp))
 
@@ -113,13 +119,40 @@ fun ContainerLabelAndValue(
         )
     }
 }
-    @Composable
+
+@Composable
 fun ButtonLogin(
-        navController: NavController
+        navController: NavController,
+        statesValue: Map<String, MutableState<String>>
 ) {
+    val loginViewModel: LoginViewModel = hiltViewModel()
+
+    val showAlert = rememberSaveable { mutableStateOf(false) }
+    val messages = remember { mutableListOf<String>() }
+
+    if (showAlert.value) {
+        ReminderAlertUI(
+            isReminderAlert = true,
+            listOfText = messages,
+            onDismiss = { showAlert.value = false }
+        )
+    }
+
     ElevatedButton(
         onClick = {
-            navController.navigate(MainNav.Menu)
+            val loginDto = LoginDto(
+                username = statesValue["Email Account"]?.value ?: "",
+                password = statesValue["Password"]?.value ?: "",
+            )
+            val isSuccess = loginViewModel.login(loginDto)
+
+            if (isSuccess) {
+                navController.navigate(MainNav.Menu)
+            } else {
+                showAlert.value = true
+                messages.clear()
+                messages.add("Incorrect email or password")
+            }
         },
         modifier = Modifier
             .width(275.dp)
