@@ -1,5 +1,6 @@
 package org.maternalcare.modules.intro.login
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +27,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,7 +46,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.launch
 import org.maternalcare.R
+import org.maternalcare.modules.intro.UserState
 import org.maternalcare.modules.intro.login.model.dto.LoginDto
 import org.maternalcare.modules.intro.login.viewmodel.LoginViewModel
 import org.maternalcare.modules.main.MainNav
@@ -85,19 +90,26 @@ fun LoginUI(
         Image(
             painter = painterResource(id = R.drawable.care),
             contentDescription = "Login Image",
-            modifier = Modifier.size(155.dp)
+            modifier = Modifier.size(140.dp)
         )
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(text = "Login to your account", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+        Text(text = "Login to your account",
+            fontSize = 23.sp,
+            fontFamily = FontFamily.Serif
+        )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
         ContainerLabelAndValue( statesValue = statesValue)
 
-        ButtonLogin(navController = navController, statesValue = statesValue)
+        ButtonLogin(
+            navController = navController,
+            statesValue = statesValue
+        )
 
-        Spacer(modifier = Modifier.height(110.dp))
+
+        Spacer(modifier = Modifier.height(100.dp))
 
     }
 }
@@ -117,13 +129,17 @@ fun ContainerLabelAndValue(
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun ButtonLogin(
         navController: NavController,
         statesValue: Map<String, MutableState<String>>
 ) {
-    val loginViewModel: LoginViewModel = hiltViewModel()
+    val vm = UserState.current
+    val coroutineScope = rememberCoroutineScope()
+    var showButton by remember { mutableStateOf(true) }
 
+    val loginViewModel: LoginViewModel = hiltViewModel()
     val showAlert = rememberSaveable { mutableStateOf(false) }
     val messages = remember { mutableListOf<String>() }
 
@@ -135,40 +151,62 @@ fun ButtonLogin(
         )
     }
 
-    ElevatedButton(
-        onClick = {
-            val loginDto = LoginDto(
-                username = statesValue["Email Account"]?.value ?: "",
-                password = statesValue["Password"]?.value ?: "",
-            )
-            val isSuccess = loginViewModel.login(loginDto)
+    if(showButton) {
+        ElevatedButton(
+            onClick = {
+                val loginDto = LoginDto(
+                    username = statesValue["Email Account"]?.value ?: "",
+                    password = statesValue["Password"]?.value ?: "",
+                )
+                val isSuccess = loginViewModel.login(loginDto)
 
-            if (isSuccess) {
-                navController.navigate(MainNav.Menu)
-            } else {
-                showAlert.value = true
-                messages.clear()
-                messages.add("Incorrect email or password")
+                if (isSuccess) {
+                    coroutineScope.launch {
+                        showButton = false
+                        vm.signIn()
+                        navController.navigate(MainNav.Menu) {
+                            popUpTo(0)
+                        }
+                    }
+                } else {
+                    showAlert.value = true
+                    messages.clear()
+                    messages.add("Incorrect email or password")
+                }
+            },
+            modifier = Modifier
+                .width(275.dp)
+                .height(55.dp), shape = RectangleShape,
+            colors = ButtonDefaults.filledTonalButtonColors(
+                containerColor = Color(0xFF6650a4),
+                contentColor = Color(0xFFFFFFFF)
+            ),
+            enabled = true,
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 3.dp
+            )
+        ) {
+            if(vm.isLoggedIn){
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(24.dp),
+                    color = Color(0xFF6650a4),
+                )
+            }else{
+                Text(
+                    text = "Login",
+                    fontSize = 14.sp,
+                    fontFamily = FontFamily.Serif,
+                    fontWeight = FontWeight.Bold
+                )
             }
-        },
-        modifier = Modifier
-            .width(275.dp)
-            .height(55.dp)
-        , shape = RectangleShape,
-        colors = ButtonDefaults.filledTonalButtonColors(
-            containerColor = Color(0xFF6650a4),
-            contentColor = Color(0xFFFFFFFF)
-        ),
-        enabled = true,
-        elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 3.dp
-        )
-    ) {
-        Text(
-            text = "Login",
-            fontSize = 14.sp,
-            fontFamily = FontFamily.Serif,
-            fontWeight = FontWeight.Bold
+        }
+    }else{
+        CircularProgressIndicator(
+            modifier = Modifier
+                .padding(top = 15.dp)
+                .size(40.dp),
+            color = Color(0xFF6650a4),
         )
     }
 }

@@ -1,7 +1,11 @@
 package org.maternalcare.modules.main.menu.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Surface
@@ -125,18 +130,33 @@ private fun Menu(navController: NavController) {
             navController.navigate(MainNav.Settings)
         }
     )
-    LazyColumn(
+    Box(
         modifier = Modifier
-            .height(380.dp)
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .height(395.dp)
+            .border(
+                BorderStroke(2.dp, Color(0xFF6650a4)),
+                RoundedCornerShape(14.dp),
+            )
+            .background(
+                Color(0xFFf3f0fc),
+                shape =  RoundedCornerShape(14.dp)
+            )
+
     ) {
-        items(menuItems) { menuItem ->
-            Spacer(modifier = Modifier.padding(top = 4.dp))
+        LazyColumn(
+            modifier = Modifier
+                .padding(top = 10.dp, bottom = 10.dp)
+                .height(380.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            items(menuItems) { menuItem ->
+                Spacer(modifier = Modifier.padding(top = 4.dp))
 
-            MenuButton(text = menuItem.text, onClick = menuItem.action)
+                MenuButton(text = menuItem.text, onClick = menuItem.action)
 
-            Spacer(modifier = Modifier.padding(bottom = 10.dp))
+                Spacer(modifier = Modifier.padding(bottom = 10.dp))
+            }
         }
     }
 }
@@ -170,7 +190,9 @@ private fun MenuButton(text: String, onClick: () -> Unit) {
 fun CheckUpDateContainer() {
     var checkUpDetails = listOf( "August 24, 2024" )
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .padding(top = 10.dp)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
         checkUpDetails.forEach { dates ->
@@ -200,7 +222,8 @@ fun TextContainer(text: String) {
                 color =Color(0xFF6650a4),
                 fontSize = 19.sp,
                 fontWeight = FontWeight.Bold,
-                fontFamily = (FontFamily.SansSerif)
+                fontFamily = (FontFamily.SansSerif),
+                modifier = Modifier.padding(bottom = 10.dp)
             )
         }else{
             Text(

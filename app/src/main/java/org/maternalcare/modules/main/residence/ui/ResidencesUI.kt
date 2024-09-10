@@ -64,37 +64,31 @@ fun ResidencePreview() {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ResidencesUI(navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .fillMaxWidth()
-            .padding(16.dp)
+    Scaffold(
+        floatingActionButton = {
+            FloatingIcon(navController)
+        }
     ) {
-        Scaffold(
-            floatingActionButton = {
-                FloatingIcon(navController)
-            }
-        ){
-            Column(
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .background(Color.White),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(40.dp))
+            SearchIcon(navController)
+            Spacer(modifier = Modifier.padding(bottom = 3.dp))
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .background(Color.White)
-                    .padding(5.dp),
-                verticalArrangement = Arrangement.Top,
+                    .height(600.dp)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(40.dp))
-                SearchIcon(navController)
-                Spacer(modifier = Modifier.padding(bottom = 3.dp))
-                LazyColumn(
-                    modifier = Modifier
-                        .height(588.dp)
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    items(residencesList) { residence ->
-                        SingleItemCard(residenceName = residence,navController = navController)
-                    }
+                items(residencesList) { residence ->
+                    SingleItemCard(residenceName = residence,navController = navController)
                 }
             }
         }
@@ -104,7 +98,8 @@ fun ResidencesUI(navController: NavController) {
 @Composable
 fun UsersImageContainer(imageUri: Uri? = null) {
     Box(
-        Modifier.height(45.dp)
+        Modifier
+            .height(45.dp)
     ){
        Box(
            modifier = Modifier
@@ -143,7 +138,8 @@ val residencesList = listOf(
     "Benedict Cumberbatch", "Chadwick Boseman", "Chris Pratt",
     "Benedict Cumberbatch", "Chadwick Boseman", "Chris Pratt",
     "Benedict Cumberbatch", "Chadwick Boseman", "Chris Pratt",
-    "Benedict Cumberbatch", "Chadwick Boseman", "Chris Pratt",
+    "Benedict Cumberbatch", "Chadwick" +
+            " Boseman", "Chris Pratt",
 )
 @Composable
 fun SingleItemCard(residenceName: String,navController: NavController) {
@@ -167,7 +163,8 @@ fun SingleItemCard(residenceName: String,navController: NavController) {
                 fontFamily = FontFamily.SansSerif,
                 modifier = Modifier
                     .padding(start = 8.dp)
-                    .weight(1f)
+                    .weight(1f),
+                color = Color.Black
             )
         }
         HorizontalDivider(
@@ -222,29 +219,26 @@ fun SearchIcon(navController: NavController) {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FloatingIcon(navController: NavController) {
-    Box(
-        modifier = Modifier,
-        contentAlignment = Alignment.BottomEnd
-    ){
-        Column(
-            horizontalAlignment = Alignment.End
+    Column(
+        modifier = Modifier
+            .background(Color.Transparent),
+        horizontalAlignment = Alignment.End
+    ) {
+        FloatingActionButton(
+            onClick = { navController.navigate(MainNav.CreateUser) },
+            containerColor = Color(0xFF6650a4),
+            contentColor = Color(0xFFFFFFFF),
+            shape = CircleShape,
+            modifier = Modifier
+                .size(75.dp)
+                .offset(x = (-5).dp, y = (-7).dp)
         ) {
-            FloatingActionButton(
-                onClick = { navController.navigate(MainNav.CreateUser) },
-                containerColor = Color(0xFF6650a4),
-                contentColor = Color(0xFFFFFFFF),
-                shape = CircleShape,
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "Add",
                 modifier = Modifier
-                    .size(75.dp)
-                    .offset(x = (1).dp, y = (7).dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "Add",
-                    modifier = Modifier
-                        .size(30.dp)
-                )
-            }
+                    .size(30.dp)
+            )
         }
     }
 }

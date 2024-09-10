@@ -1,11 +1,13 @@
 package org.maternalcare.modules.intro.splash
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,16 +20,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.intro.IntroNav
+
+@Preview
+@Composable
+fun SplashUIPreview() {
+    SplashUI(navController = rememberNavController())
+}
 
 @Composable
 fun SplashUI(navController: NavController) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .background(Color.White)
+            .padding(16.dp)
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -51,7 +64,10 @@ fun SplashUI(navController: NavController) {
                 defaultElevation = 30.dp
             )
         ){
-            Text(text = "Get Started")
+            Text(
+                text = "Get Started",
+                color = Color.White
+            )
         }
     }
 }
