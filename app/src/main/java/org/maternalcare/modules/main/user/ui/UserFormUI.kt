@@ -284,7 +284,7 @@ fun TextFieldContainer(
                         }
                     },
                     placeholder = if (!isError) {
-                        { Text("Enter value") }
+                        { Text("Enter value", color = Color.Black) }
                     } else null,
                     label = if (isError) {
                         {
@@ -533,7 +533,9 @@ fun DatePickerField(
                             fontFamily = FontFamily.SansSerif,
                             modifier = Modifier
                                 .padding(10.dp)
-                                .align(Alignment.CenterStart), fontSize = 17.sp
+                                .align(Alignment.CenterStart),
+                            fontSize = 17.sp,
+                            color = Color.Black
                         )
                     }
                     HorizontalDivider(

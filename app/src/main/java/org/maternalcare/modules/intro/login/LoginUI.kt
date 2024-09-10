@@ -1,5 +1,6 @@
 package org.maternalcare.modules.intro.login
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -128,6 +129,7 @@ fun ContainerLabelAndValue(
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun ButtonLogin(
         navController: NavController,
