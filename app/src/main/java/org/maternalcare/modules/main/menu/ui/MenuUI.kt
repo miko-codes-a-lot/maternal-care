@@ -41,6 +41,7 @@ import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.menu.model.MenuItem
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
+import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.shared.ui.ReminderAlertUI
 
 @Preview(showSystemUi = true)
@@ -78,17 +79,23 @@ fun MenuUI(navController: NavController) {
                     onDismiss = { isReminderAlertVisible.value = false }
                 )
             }
+
             Spacer(modifier = Modifier.height(20.dp))
-            UserPosition()
+            UserPosition(userDto = UserDto())
             Spacer(modifier = Modifier.height(13.dp))
-            Menu(navController)
+            Menu(navController, userDto = UserDto())
         }
     }
 }
 
 @Composable
-fun UserPosition() {
-    val userDetails = listOf( "Super Admin" )
+fun UserPosition(userDto: UserDto) {
+    val userDetails = when {
+        userDto.isSuperAdmin -> listOf("Super Admin")
+        userDto.isAdmin -> listOf("Admin")
+        userDto.isResidence -> listOf("Residence")
+        else -> listOf("Unknown")
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,30 +113,8 @@ fun UserPosition() {
 }
 
 @Composable
-private fun Menu(navController: NavController) {
-    val menuItems = listOf(
-        MenuItem(text = "Profile") {
-            navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
-        },
-        MenuItem(text = "Messages") {
-            navController.navigate(MainNav.MessagesList)
-        },
-        MenuItem(text = "Reminder") {
-            navController.navigate(MainNav.ReminderLists)
-        },
-        MenuItem(text = "Dashboard") {
-            navController.navigate(MainNav.Dashboard)
-        },
-        MenuItem(text = "Data Storage") {
-            navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name, isArchive = true))
-        },
-        MenuItem(text = "Manage User") {
-            navController.navigate(MainNav.User)
-        },
-        MenuItem(text = "Settings") {
-            navController.navigate(MainNav.Settings)
-        }
-    )
+private fun Menu(navController: NavController, userDto: UserDto) {
+    val menuItems = getMenuItems(userDto, navController)
     Box(
         modifier = Modifier
             .height(395.dp)
@@ -139,9 +124,8 @@ private fun Menu(navController: NavController) {
             )
             .background(
                 Color(0xFFf3f0fc),
-                shape =  RoundedCornerShape(14.dp)
+                shape = RoundedCornerShape(14.dp)
             )
-
     ) {
         LazyColumn(
             modifier = Modifier
@@ -158,6 +142,54 @@ private fun Menu(navController: NavController) {
                 Spacer(modifier = Modifier.padding(bottom = 10.dp))
             }
         }
+    }
+}
+
+fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem> {
+    val commonItems = listOf(
+        MenuItem(text = "Profile") {
+            navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
+        },
+        MenuItem(text = "Settings") {
+            navController.navigate(MainNav.Settings)
+        }
+    )
+
+    return when {
+        userDto.isSuperAdmin -> commonItems + listOf(
+            MenuItem(text = "Dashboard") {
+                navController.navigate(MainNav.Dashboard)
+            },
+            MenuItem(text = "Manage User") {
+                navController.navigate(MainNav.User)
+            },
+            MenuItem(text = "Data Storage") {
+                navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name, isArchive = true))
+            }
+        )
+        userDto.isAdmin -> commonItems + listOf(
+            MenuItem(text = "Messages") {
+                navController.navigate(MainNav.MessagesList)
+            },
+            MenuItem(text = "User Management") {
+                navController.navigate(MainNav.User)
+            },
+            MenuItem(text = "Reminders") {
+                navController.navigate(MainNav.ReminderLists)
+            },
+            MenuItem(text = "Data Storage") {
+                navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name, isArchive = true))
+            }
+        )
+        userDto.isResidence -> commonItems + listOf(
+            MenuItem(text = "Messages") {
+                navController.navigate(MainNav.MessagesList)
+            },
+            MenuItem(text = "Reminders") {
+                navController.navigate(MainNav.ReminderLists)
+            }
+        )
+        else -> listOf()
     }
 }
 

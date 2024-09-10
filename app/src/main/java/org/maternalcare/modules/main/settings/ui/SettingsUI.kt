@@ -49,7 +49,7 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import org.maternalcare.R
 import org.maternalcare.modules.intro.IntroNav
-import org.maternalcare.modules.intro.UserState
+import org.maternalcare.modules.intro.login.viewmodel.UserState
 import org.maternalcare.modules.main.MainNav
 
 @Preview(showSystemUi = true)

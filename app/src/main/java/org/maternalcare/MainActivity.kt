@@ -10,9 +10,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import org.maternalcare.modules.intro.IntroNav
-import org.maternalcare.modules.intro.UserState
-import org.maternalcare.modules.intro.UserStateViewModel
 import org.maternalcare.modules.intro.introGraph
+import org.maternalcare.modules.intro.login.viewmodel.UserState
+import org.maternalcare.modules.intro.login.viewmodel.UserStateViewModel
 import org.maternalcare.modules.main.mainGraph
 import org.maternalcare.ui.theme.AppTheme
 
