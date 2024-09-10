@@ -66,6 +66,7 @@ fun ResidencePreview() {
 fun ResidencesUI(navController: NavController) {
     Column(
         modifier = Modifier
+            .background(Color.White)
             .fillMaxSize()
             .fillMaxWidth()
             .padding(16.dp)
@@ -88,6 +89,7 @@ fun ResidencesUI(navController: NavController) {
                 Spacer(modifier = Modifier.padding(bottom = 3.dp))
                 LazyColumn(
                     modifier = Modifier
+                        .background(Color.White)
                         .height(588.dp)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -167,7 +169,8 @@ fun SingleItemCard(residenceName: String,navController: NavController) {
                 fontFamily = FontFamily.SansSerif,
                 modifier = Modifier
                     .padding(start = 8.dp)
-                    .weight(1f)
+                    .weight(1f),
+                color = Color.Black
             )
         }
         HorizontalDivider(
@@ -236,7 +239,7 @@ fun FloatingIcon(navController: NavController) {
                 shape = CircleShape,
                 modifier = Modifier
                     .size(75.dp)
-                    .offset(x = (1).dp, y = (7).dp)
+                    .offset(x = (1).dp, y = (-35).dp)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
