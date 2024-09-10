@@ -13,12 +13,14 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,22 +44,33 @@ fun CheckPreview() {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CheckupDetailsUI(navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Scaffold(
+        floatingActionButton = {
+            ParentFloatingIcon(navController)
+        }
     ) {
-        NumberOfCheckUp()
-        Spacer(modifier = Modifier.height(20.dp))
-        Column{
-            label.zip(value).forEach { (labelItem, valueItem) ->
-                CheckupDetailsList(labelContainer = labelItem, sampleValue = valueItem)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            NumberOfCheckUp()
+            LazyColumn(
+                modifier = Modifier
+                    .background(Color.White)
+                    .height(470.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                items(label.zip(value)) { (labelItem, valueItem) ->
+                    CheckupDetailsList(labelContainer = labelItem, sampleValue = valueItem)
+                }
             }
         }
-        ParentFloatingIcon(navController)
     }
 }
 
@@ -65,7 +78,9 @@ fun CheckupDetailsUI(navController: NavController) {
 fun NumberOfCheckUp() {
     val numberOfCheckUp = listOf( "1st CheckUp" )
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
         numberOfCheckUp.forEach { checkUp ->
@@ -80,42 +95,42 @@ fun NumberOfCheckUp() {
 
 @Composable
 private fun CheckupDetailsList(labelContainer: String, sampleValue: String) {
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(4.dp)
+            .height(50.dp),
+        verticalArrangement = Arrangement.Center
     ) {
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+        Row(
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = labelContainer,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.SansSerif,
+                fontSize = 17.sp
+            )
+            Text(" :  ", fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.padding(horizontal = 1.dp))
+            Column(
+                modifier = Modifier,
+                horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = labelContainer,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.SansSerif
+                    text = sampleValue,
+                    fontFamily = FontFamily.SansSerif,
+                    modifier = Modifier
+                        .padding(start = 5.dp),
+                    fontSize = 18.sp
                 )
-                Text(" :  ", fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.padding(horizontal = 1.dp))
-                Column(
-                   modifier = Modifier,
-                    horizontalAlignment = Alignment.Start
-                ){
-                    Text(
-                        text = sampleValue,
-                        fontFamily = FontFamily.SansSerif,
-                        modifier = Modifier
-                            .padding( start = 5.dp)
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        thickness = 1.dp,
-                        color = Color.Gray
-                    )
-                }
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    thickness = 1.dp,
+                    color = Color.Gray
+                )
             }
         }
     }
@@ -135,20 +150,26 @@ val value = listOf(
 
 @Composable
 fun ParentFloatingIcon(navController: NavController) {
-    FloatingActionButton(
-        onClick = { navController.navigate(MainNav.EditCheckup) },
-        containerColor = Color(0xFF6650a4),
-        contentColor = Color(0xFFFFFFFF),
-        shape = CircleShape,
+    Column(
         modifier = Modifier
-            .size(72.dp)
-            .offset(x = (132).dp, y = (-8).dp)
+            .background(Color.Transparent),
+        horizontalAlignment = Alignment.End
     ) {
-        Icon(
-            imageVector = Icons.Filled.Edit,
-            contentDescription = "Navigate",
+        FloatingActionButton(
+            onClick = { navController.navigate(MainNav.EditCheckup) },
+            containerColor = Color(0xFF6650a4),
+            contentColor = Color(0xFFFFFFFF),
+            shape = CircleShape,
             modifier = Modifier
-                .size(30.dp)
-        )
+                .size(72.dp)
+                .offset(x = (-7).dp, y = (-5).dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Edit,
+                contentDescription = "Navigate",
+                modifier = Modifier
+                    .size(30.dp)
+            )
+        }
     }
 }
