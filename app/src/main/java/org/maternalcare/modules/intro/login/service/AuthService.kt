@@ -2,7 +2,7 @@ package org.maternalcare.modules.intro.login.service
 
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
-import org.maternalcare.modules.intro.login.dto.LoginDto
+import org.maternalcare.modules.intro.login.model.dto.LoginDto
 import org.maternalcare.modules.main.user.model.entity.User
 import org.maternalcare.modules.main.user.model.mapper.toDTO
 import org.maternalcare.shared.ext.verifyPassword

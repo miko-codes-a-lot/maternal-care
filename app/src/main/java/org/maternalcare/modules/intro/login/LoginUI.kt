@@ -44,7 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
-import org.maternalcare.modules.intro.login.dto.LoginDto
+import org.maternalcare.modules.intro.login.model.dto.LoginDto
 import org.maternalcare.modules.intro.login.viewmodel.LoginViewModel
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserDto
