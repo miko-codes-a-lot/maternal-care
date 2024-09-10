@@ -1,4 +1,4 @@
-package org.maternalcare.modules.intro
+package org.maternalcare.modules.intro.login.viewmodel
 
 import android.annotation.SuppressLint
 import androidx.compose.runtime.compositionLocalOf
