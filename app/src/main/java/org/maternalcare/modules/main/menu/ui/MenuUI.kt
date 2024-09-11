@@ -47,12 +47,13 @@ import org.maternalcare.shared.ui.ReminderAlertUI
 @Preview(showSystemUi = true)
 @Composable
 fun MenuUIPreview() {
-    MenuUI(navController = rememberNavController())
+    MenuUI(navController = rememberNavController(), currentUser = UserDto())
 }
 
 @Composable
-fun MenuUI(navController: NavController) {
+fun MenuUI(navController: NavController, currentUser: UserDto) {
     val isReminderAlertVisible = rememberSaveable { mutableStateOf(true) }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
@@ -81,9 +82,9 @@ fun MenuUI(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-            UserPosition(userDto = UserDto())
+            UserPosition(userDto = currentUser)
             Spacer(modifier = Modifier.height(13.dp))
-            Menu(navController, userDto = UserDto())
+            Menu(navController = navController, userDto = currentUser)
         }
     }
 }
@@ -114,7 +115,7 @@ fun UserPosition(userDto: UserDto) {
 
 @Composable
 private fun Menu(navController: NavController, userDto: UserDto) {
-    val menuItems = getMenuItems(userDto, navController)
+    val menuItems = getMenuItems(navController = navController, userDto = userDto)
     Box(
         modifier = Modifier
             .height(395.dp)

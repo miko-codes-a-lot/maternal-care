@@ -24,5 +24,5 @@ class User : RealmObject {
     var isActive: Boolean = true
     var isSuperAdmin: Boolean = false
     var isAdmin: Boolean = false
-    var isResidence: Boolean = true
+    var isResidence: Boolean = false
 }
