@@ -94,13 +94,13 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.Settings> {
             Guard(navController = navController) { currentUser ->
-                SettingsUI(navController)
+                SettingsUI(navController, currentUser)
             }
         }
         composable("${MainNav.EditSettings}/{settingType}") { backStackEntry ->
             val settingType = backStackEntry.arguments?.getString("settingType") ?: ""
             Guard(navController = navController) { currentUser ->
-                EditSettingsUI(navController, settingType)
+                EditSettingsUI(navController, settingType, currentUser)
             }
         }
         composable<MainNav.MonitoringCheckup> {

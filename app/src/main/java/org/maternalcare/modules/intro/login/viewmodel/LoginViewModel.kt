@@ -56,7 +56,8 @@ class LoginViewModel @Inject constructor(
 
     fun logout(navController: NavController) {
         sharedPreferences.edit().remove("logged_in_user_id").apply()
-        navController.navigate(IntroNav)
-
+        navController.navigate(IntroNav) {
+            popUpTo(0)
+        }
     }
 }
