@@ -13,7 +13,7 @@ import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 
 @Composable
-fun UserEditUI(navController: NavController, userDto: UserDto) {
+fun UserEditUI(navController: NavController, userDto: UserDto, currentUser: UserDto) {
     val userViewModel: UserViewModel = hiltViewModel()
     var userDetails by remember { mutableStateOf(UserDto()) }
     var showForm by remember { mutableStateOf(true) }
