@@ -1,5 +1,7 @@
 package org.maternalcare.modules.main.settings.ui
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -16,10 +18,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,10 +30,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import org.maternalcare.R
@@ -39,13 +43,25 @@ import org.maternalcare.modules.intro.IntroNav
 import org.maternalcare.modules.intro.login.viewmodel.UserState
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.modules.main.user.ui.UserImageUI
+import org.maternalcare.modules.main.user.ui.getBytesFromUri
+import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 
 @Composable
-fun SettingsUI(navController: NavController, currentUserDto: UserDto) {
+fun SettingsUI(navController: NavController,
+               currentUser: UserDto,
+               userService: UserService = hiltViewModel<UserViewModel>().userService
+) {
     val vm = UserState.current
     val coroutineScope = rememberCoroutineScope()
     var showButton by remember { mutableStateOf(true) }
+    var profileImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    LaunchedEffect(currentUser.id) {
+        profileImageUri = currentUser.imageBase64?.let { Uri.parse(it) }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -55,7 +71,7 @@ fun SettingsUI(navController: NavController, currentUserDto: UserDto) {
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-        Profile(navController, currentUserDto)
+        Profile(navController, currentUser, userService)
         Spacer(
             modifier = Modifier
                 .height(30.dp)
@@ -66,9 +82,11 @@ fun SettingsUI(navController: NavController, currentUserDto: UserDto) {
                     coroutineScope.launch {
                         showButton = false
                         vm.signOut()
-
                         navController.navigate(IntroNav.Login) {
-                            popUpTo(0)
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
                         }
                     }
                 },
@@ -108,20 +126,40 @@ fun SettingsUI(navController: NavController, currentUserDto: UserDto) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Profile(navController: NavController, currentUserDto: UserDto){
+fun Profile(
+        navController: NavController,
+        currentUser: UserDto,
+        userService: UserService
+){
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    var selectedProfileImageUri by remember { mutableStateOf<Uri?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        UserImageUI()
+        UserImageUI(
+            onImageSelected = { newUri ->
+                selectedProfileImageUri = newUri
+                coroutineScope.launch {
+                    val byteArray = getBytesFromUri(context, newUri)
+                    Log.d("getBytesFromUri", "ByteArray: ${byteArray?.size ?: "null"}")
+                    if (byteArray != null) {
+                        userService.saveProfilePicture(currentUser.id!!, byteArray)
+                    }
+                }
+            },
+            currentUserId = currentUser.id!!,
+            userService = userService
+        )
 
         Spacer(modifier = Modifier.padding(vertical = 15.dp))
 
-        UserDetails(currentUserDto)
+        UserDetails(currentUser)
 
         Spacer(modifier = Modifier.padding(vertical = 5.dp))
 
@@ -130,11 +168,11 @@ fun Profile(navController: NavController, currentUserDto: UserDto){
 }
 
 @Composable
-fun UserDetails(currentUserDto: UserDto) {
+fun UserDetails(currentUser: UserDto) {
     val userDetails = listOf(
-        currentUserDto.firstName,
-        currentUserDto.middleName,
-        currentUserDto.lastName
+        currentUser.firstName,
+        currentUser.middleName,
+        currentUser.lastName
     )
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -173,7 +211,7 @@ fun Setting(navController: NavController){
 }
 
 @Composable
-fun SettingButton(text: String, onClick: () -> Unit){
+fun SettingButton(text: String, onClick: () -> Unit) {
     Button(onClick = onClick,
         modifier = Modifier
             .width(290.dp)

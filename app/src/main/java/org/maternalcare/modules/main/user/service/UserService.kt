@@ -36,4 +36,22 @@ class UserService @Inject constructor(private val realm: Realm) {
                 toDTO()
             }
     }
+
+    suspend fun saveProfilePicture(userId: String, imageUri: ByteArray?): Result<UserDto> {
+        return try {
+            realm.write {
+                val user = query<User>("_id == $0", ObjectId(userId)).find().firstOrNull()
+                if (user != null && imageUri != null) {
+                    val base64Image = android.util.Base64.encodeToString(imageUri, android.util.Base64.DEFAULT)
+                    user.imageBase64 = base64Image
+                    copyToRealm(user, UpdatePolicy.ALL)
+                    Result.success(user.toDTO())
+                } else {
+                    Result.failure(Exception())
+                }
+            }
+        } catch (error: Exception) {
+            Result.failure(error)
+        }
+    }
 }

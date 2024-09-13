@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val userService: UserService
+    val userService: UserService
 ): ViewModel()  {
     fun fetchUsers(): List<UserDto> {
         return this.userService.fetch()

@@ -25,4 +25,5 @@ class User : RealmObject {
     var isSuperAdmin: Boolean = false
     var isAdmin: Boolean = false
     var isResidence: Boolean = false
+    var imageBase64: String? = null
 }

@@ -19,6 +19,7 @@ import org.maternalcare.modules.main.residence.ui.EditCheckupUI
 import org.maternalcare.modules.main.residence.ui.ResidencesUI
 import org.maternalcare.modules.main.settings.ui.EditSettingsUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
+import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.modules.main.user.ui.UserCreateUI
 import org.maternalcare.modules.main.user.ui.UserEditUI
 import org.maternalcare.modules.main.user.ui.UsersUI
@@ -94,7 +95,8 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.Settings> {
             Guard(navController = navController) { currentUser ->
-                SettingsUI(navController, currentUser)
+                val userService: UserService = hiltViewModel<UserViewModel>().userService
+                SettingsUI(navController = navController, currentUser = currentUser, userService = userService)
             }
         }
         composable("${MainNav.EditSettings}/{settingType}") { backStackEntry ->
