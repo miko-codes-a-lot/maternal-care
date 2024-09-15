@@ -15,11 +15,11 @@ class User : RealmObject {
     var mobileNumber: String? = ""
     var dateOfBirth: RealmInstant = RealmInstant.now()
     var password: String = ""
-    var createdBy: User? = null
+    var createdBy: ObjectId? = null
     var createdAt: RealmInstant = RealmInstant.now()
-    var lastUpdatedBy: User? = null
+    var lastUpdatedBy: ObjectId? = null
     var lastUpdatedAt: RealmInstant = RealmInstant.now()
-    var deletedBy: User? = null
+    var deletedBy: ObjectId? = null
     var deletedAt: RealmInstant? = null
     var isActive: Boolean = true
     var isSuperAdmin: Boolean = false

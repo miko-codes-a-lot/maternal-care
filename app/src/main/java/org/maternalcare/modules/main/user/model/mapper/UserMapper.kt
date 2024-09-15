@@ -6,7 +6,6 @@ import org.maternalcare.modules.main.user.model.entity.User
 import org.maternalcare.shared.ext.toObjectId
 import org.maternalcare.shared.ext.toRealmInstant
 import org.maternalcare.shared.util.DateUtil
-import org.mongodb.kbson.BsonObjectId.Companion.invoke
 
 fun User.toDTO(): UserDto {
     return UserDto(
@@ -18,11 +17,11 @@ fun User.toDTO(): UserDto {
         mobileNumber = mobileNumber,
         dateOfBirth = DateUtil.from(dateOfBirth),
         password = password,
-        createdBy = createdBy?._id?.toString(),
+        createdBy = createdBy?.toString(),
         createdAt = DateUtil.from(createdAt),
-        lastUpdatedBy = lastUpdatedBy?._id?.toString(),
+        lastUpdatedBy = lastUpdatedBy?.toString(),
         lastUpdatedAt = DateUtil.from(lastUpdatedAt),
-        deletedBy = deletedBy?._id?.toString(),
+        deletedBy = deletedBy?.toString(),
         deletedAt = deletedAt?.run { DateUtil.from(this) },
         isSuperAdmin = isSuperAdmin,
         isAdmin = isAdmin,
@@ -31,6 +30,8 @@ fun User.toDTO(): UserDto {
         imageBase64 = imageBase64
     )
 }
+
+
 
 fun UserDto.toEntity(): User {
     val userDto = this
@@ -43,17 +44,11 @@ fun UserDto.toEntity(): User {
         mobileNumber = userDto.mobileNumber
         dateOfBirth = DateUtil.parse(userDto.dateOfBirth)
         password = userDto.password
-        createdBy = userDto.createdBy?.run { User().apply { _id =
-            org.mongodb.kbson.BsonObjectId(this@run)
-        } }
+        createdBy = userDto.createdBy?.toObjectId()
         createdAt = userDto.createdAt.toRealmInstant() ?: RealmInstant.now()
-        lastUpdatedBy = userDto.lastUpdatedBy?.run { User().apply { _id =
-            org.mongodb.kbson.BsonObjectId(this@run)
-        }}
+        lastUpdatedBy = userDto.lastUpdatedBy?.toObjectId()
         lastUpdatedAt = userDto.createdAt.toRealmInstant() ?: RealmInstant.now()
-        deletedBy = userDto.deletedBy?.run { User().apply { _id =
-            org.mongodb.kbson.BsonObjectId(this@run)
-        } }
+        deletedBy = userDto.deletedBy?.toObjectId()
         deletedAt = userDto.deletedAt?.run { DateUtil.parse(this) }
         isSuperAdmin = userDto.isSuperAdmin
         isAdmin = userDto.isAdmin
