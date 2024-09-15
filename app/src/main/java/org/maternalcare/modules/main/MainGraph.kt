@@ -19,65 +19,101 @@ import org.maternalcare.modules.main.residence.ui.EditCheckupUI
 import org.maternalcare.modules.main.residence.ui.ResidencesUI
 import org.maternalcare.modules.main.settings.ui.EditSettingsUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
+import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.modules.main.user.ui.UserCreateUI
 import org.maternalcare.modules.main.user.ui.UserEditUI
 import org.maternalcare.modules.main.user.ui.UsersUI
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
+import org.maternalcare.shared.Guard
 
 fun NavGraphBuilder.mainGraph(navController: NavController) {
     navigation<MainNav>(startDestination = MainNav.Menu) {
         composable<MainNav.Menu> {
-            MenuUI(navController)
+            Guard(navController = navController) { currentUser ->
+                MenuUI(navController, currentUser)
+            }
         }
         composable<MainNav.Addresses> {
             val args = it.toRoute<MainNav.Residences>()
-            AddressesUI(navController, isArchive = args.isArchive)
+
+            Guard(navController = navController) { currentUser ->
+                AddressesUI(navController, isArchive = args.isArchive)
+            }
         }
         composable<MainNav.Residences> {
-            ResidencesUI(navController)
+            Guard(navController = navController) { currentUser ->
+                ResidencesUI(navController)
+            }
         }
         composable<MainNav.ChooseCheckup> {
-            ChooseCheckupUI(navController)
+            Guard(navController = navController) { currentUser ->
+                ChooseCheckupUI(navController)
+            }
         }
         composable<MainNav.CheckupDetails> {
-            CheckupDetailsUI(navController)
+            Guard(navController = navController) { currentUser ->
+                CheckupDetailsUI(navController)
+            }
         }
         composable<MainNav.MessagesList> {
-            MessageListUI(navController)
+            Guard(navController = navController) { currentUser ->
+                MessageListUI(navController)
+            }
         }
         composable<MainNav.Messages> {
-            MessageUI(navController)
+            Guard(navController = navController) { currentUser ->
+                MessageUI(navController)
+            }
         }
         composable<MainNav.ReminderLists> {
-            ReminderListUI(navController)
+            Guard(navController = navController) { currentUser ->
+                ReminderListUI(navController)
+            }
         }
         composable<MainNav.Dashboard> {
-            DashboardUI(navController)
+            Guard(navController = navController) { currentUser ->
+                DashboardUI(navController)
+            }
         }
         composable<MainNav.User> {
-            UsersUI(navController)
+            Guard(navController = navController) { currentUser ->
+                UsersUI(navController)
+            }
         }
         composable<MainNav.CreateUser> {
-            UserCreateUI(navController)
+            Guard(navController = navController) { currentUser ->
+                UserCreateUI(navController)
+            }
         }
         composable<MainNav.EditUser> {
             val args = it.toRoute<MainNav.EditUser>()
             val userViewModel: UserViewModel = hiltViewModel()
             val userDto = userViewModel.fetchUser(args.userId)
-            UserEditUI(navController = navController, userDto = userDto)
+            Guard(navController = navController) { currentUser ->
+                UserEditUI(navController = navController, currentUser = currentUser, userDto = userDto)
+            }
         }
         composable<MainNav.Settings> {
-            SettingsUI(navController)
+            Guard(navController = navController) { currentUser ->
+                val userService: UserService = hiltViewModel<UserViewModel>().userService
+                SettingsUI(navController = navController, currentUser = currentUser, userService = userService)
+            }
         }
         composable("${MainNav.EditSettings}/{settingType}") { backStackEntry ->
             val settingType = backStackEntry.arguments?.getString("settingType") ?: ""
-            EditSettingsUI(navController, settingType)
+            Guard(navController = navController) { currentUser ->
+                EditSettingsUI(navController, settingType, currentUser)
+            }
         }
         composable<MainNav.MonitoringCheckup> {
-            CheckupProgressUI(navController)
+            Guard(navController = navController) { currentUser ->
+                CheckupProgressUI(navController)
+            }
         }
         composable<MainNav.EditCheckup> {
-            EditCheckupUI(navController)
+            Guard(navController = navController) { currentUser ->
+                EditCheckupUI(navController)
+            }
         }
         composable<MainNav.UserPreview> {
             val userViewModel: UserViewModel = hiltViewModel()

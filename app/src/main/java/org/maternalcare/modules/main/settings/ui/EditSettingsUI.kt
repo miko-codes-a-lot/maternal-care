@@ -1,5 +1,6 @@
 package org.maternalcare.modules.main.settings.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -22,11 +23,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,12 +39,17 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.modules.main.user.viewmodel.UserViewModel
+import org.mindrot.jbcrypt.BCrypt
 
 @Composable
-fun EditSettingsUI(navController: NavController, settingType: String) {
+fun EditSettingsUI(navController: NavController, settingType: String, currentDto: UserDto) {
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -56,8 +62,8 @@ fun EditSettingsUI(navController: NavController, settingType: String) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (settingType) {
-                "email" -> EmailEdit(navController)
-                "password" -> PasswordEdit(navController)
+                "email" -> EmailEdit(navController, currentDto)
+                "password" -> PasswordEdit(navController, currentDto)
                 else -> Text(text = "Invalid setting type")
             }
         }
@@ -66,9 +72,11 @@ fun EditSettingsUI(navController: NavController, settingType: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailEdit(navController: NavController) {
-    var email: String by remember { mutableStateOf("Sample@gmail.com") }
-    var editEmail: String by remember { mutableStateOf("") }
+fun EmailEdit(navController: NavController, currentDto: UserDto) {
+    val viewModel: UserViewModel = hiltViewModel()
+    val coroutineScope = rememberCoroutineScope()
+
+    var editEmail by remember { mutableStateOf(currentDto.email ?: "") }
     var editEmailMode by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -84,7 +92,10 @@ fun EmailEdit(navController: NavController) {
                 OutlinedTextField(
                     value = editEmail,
                     onValueChange = { editEmail = it },
-                    label = { Text(text = "Email", fontFamily = FontFamily.SansSerif, color = Color(0xFF6650a4), fontSize = 14.sp) },
+                    label = { Text(text = "Email",
+                        fontFamily = FontFamily.SansSerif,
+                        color = Color(0xFF6650a4), fontSize = 14.sp)
+                    },
                     textStyle = TextStyle(
                         color = Color(0xFF6650a4),
                         fontSize = 14.sp,
@@ -118,9 +129,11 @@ fun EmailEdit(navController: NavController) {
                             color = (Color(0xFF6650a4))
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = email,color = (Color(0xFF6650a4)),
+                        Text(
+                            text = currentDto.email ?: "No email",
                             fontSize = 15.sp,
                             fontFamily = FontFamily.SansSerif,
+                            color = Color(0xFF6650a4)
                         )
                     }
                 }
@@ -134,10 +147,21 @@ fun EmailEdit(navController: NavController) {
             Button(
                 onClick = {
                     if (editEmailMode) {
-                        email = editEmail
-                        navController.navigate(MainNav.Settings)
+                        currentDto.email = editEmail
+                        coroutineScope.launch {
+                            try {
+                                val result = viewModel.upsertUser(currentDto.copy(email = currentDto.email))
+                                if (result.isSuccess) {
+                                    navController.navigate(MainNav.Settings)
+                                } else {
+                                    Log.e("EmailEdit", "Failed to update email")
+                                }
+                            } catch (error: Exception) {
+                                Log.e("EmailEdit", "Failed to update email: ${error.message}")
+                            }
+                        }
                     }
-                    editEmailMode = true
+                    editEmailMode = !editEmailMode
                 },
                 modifier = Modifier
                     .width(280.dp)
@@ -160,17 +184,19 @@ fun EmailEdit(navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordEdit(navController: NavController) {
+fun PasswordEdit(navController: NavController, currentDto: UserDto) {
+    val viewModel: UserViewModel = hiltViewModel()
+    val coroutineScope = rememberCoroutineScope()
+
     val fieldLabels = listOf( "Current Password", "New Password", "Re-Type New Password")
     val fieldStates = remember { fieldLabels.associateWith { mutableStateOf("") } }
 
     var currentPasswordError: String? by remember { mutableStateOf(null) }
     var newPasswordError: String? by remember { mutableStateOf(null) }
-    val simulatedCurrentPassword = "sample"
+
     val passwordVisibilityStates = remember {
         fieldLabels.associateWith { mutableStateOf(false) }.toMutableMap()
     }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -189,7 +215,13 @@ fun PasswordEdit(navController: NavController) {
                         newPasswordError = null
                     }
                 },
-                label = { Text(text = label, color = Color(0xFF6650a4), fontFamily = FontFamily.SansSerif, fontSize = 14.sp) },
+                label = {
+                    Text(
+                        text = label,
+                        color = Color(0xFF6650a4),
+                        fontFamily = FontFamily.SansSerif,
+                        fontSize = 14.sp)
+                        },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = {
@@ -212,7 +244,7 @@ fun PasswordEdit(navController: NavController) {
                     fontSize = 14.sp,
                     fontFamily = FontFamily.SansSerif,
                 ),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color(0xFF6650a4),
                     unfocusedBorderColor = Color(0xFF6650a4),
                     cursorColor = Color.Gray
@@ -221,7 +253,7 @@ fun PasswordEdit(navController: NavController) {
                     when (label) {
                         "Current Password" -> currentPasswordError?.let { Text(it, color = Color.Red) }
                         "New Password", "Re-Type New Password" -> newPasswordError?.let { Text(it, color = Color.Red) }
-                        else -> null
+                        else -> Spacer(modifier = Modifier.height(0.dp))
                     }
                 }
             )
@@ -229,20 +261,34 @@ fun PasswordEdit(navController: NavController) {
         }
         Button(
             onClick = {
-                val currentPassword = fieldStates["Current Password"]?.value
-                val newPassword = fieldStates["New Password"]?.value
-                val retypePassword = fieldStates["Re-Type New Password"]?.value
+                val currentPassword = fieldStates["Current Password"]?.value?.trim()
+                val newPassword = fieldStates["New Password"]?.value?.trim()
+                val retypePassword = fieldStates["Re-Type New Password"]?.value?.trim()
 
                 when {
-                    currentPassword != simulatedCurrentPassword -> {
+                    currentPassword == null || !BCrypt.checkpw(currentPassword, currentDto.password) -> {
                         currentPasswordError = "Current password is incorrect"
                     }
                     newPassword != retypePassword -> {
                         newPasswordError = "New passwords do not match"
                     }
                     else -> {
-                        fieldStates.forEach { (label, state) -> state.value = "" }
-                        navController.navigate(MainNav.Settings)
+                        val hashedNewPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt())
+
+                        coroutineScope.launch {
+                            try {
+                                val result = viewModel.upsertUser(currentDto.copy(password = hashedNewPassword))
+                                if (result.isSuccess) {
+                                    navController.navigate(MainNav.Settings)
+                                } else {
+                                    Log.e("PasswordEdit", "Failed to update password")
+                                }
+                            } catch (error: Exception) {
+                                Log.e("PasswordEdit", "Failed to update password: ${error.message}")
+                            }
+                        }
+
+                        fieldStates.forEach { (_, state) -> state.value = "" }
                     }
                 }
             },
@@ -250,7 +296,11 @@ fun PasswordEdit(navController: NavController) {
                 .width(280.dp)
                 .height(54.dp)
                 .background(Color(0xFF6650a4))
-                .border(2.dp, color = Color(0xFF6650a4), shape = RoundedCornerShape(5.dp)),
+                .border(
+                    2.dp,
+                    color = Color(0xFF6650a4),
+                    shape = RoundedCornerShape(5.dp)
+                ),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent,
                 contentColor = Color.White

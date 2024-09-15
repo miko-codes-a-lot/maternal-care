@@ -48,9 +48,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import org.maternalcare.R
-import org.maternalcare.modules.intro.UserState
 import org.maternalcare.modules.intro.login.model.dto.LoginDto
 import org.maternalcare.modules.intro.login.viewmodel.LoginViewModel
+import org.maternalcare.modules.intro.login.viewmodel.UserState
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.shared.ui.ReminderAlertUI
@@ -107,10 +107,7 @@ fun LoginUI(
             navController = navController,
             statesValue = statesValue
         )
-
-
         Spacer(modifier = Modifier.height(100.dp))
-
     }
 }
 
