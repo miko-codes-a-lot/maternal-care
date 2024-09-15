@@ -1,4 +1,4 @@
-package org.maternalcare.modules.main.message.message.ui
+package org.maternalcare.modules.main.message.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

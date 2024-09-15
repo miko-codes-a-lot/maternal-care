@@ -9,7 +9,7 @@ import androidx.navigation.toRoute
 import org.maternalcare.modules.main.dashboard.ui.CheckupProgressUI
 import org.maternalcare.modules.main.dashboard.ui.DashboardUI
 import org.maternalcare.modules.main.menu.ui.MenuUI
-import org.maternalcare.modules.main.message.message.ui.MessageListUI
+import org.maternalcare.modules.main.message.ui.MessageListUI
 import org.maternalcare.modules.main.message.message.ui.MessageUI
 import org.maternalcare.modules.main.reminder.ui.ReminderListUI
 import org.maternalcare.modules.main.residence.ui.AddressesUI
