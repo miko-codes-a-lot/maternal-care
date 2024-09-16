@@ -61,8 +61,13 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             }
         }
         composable<MainNav.Messages> {
+            val args = it.toRoute<MainNav.Messages>()
+
+            val userViewModel: UserViewModel = hiltViewModel()
+            val userDto = userViewModel.fetchUser(args.userId)
+
             Guard(navController = navController) { currentUser ->
-                MessageUI(navController)
+                MessageUI(navController, currentUser = currentUser,  userDto = userDto)
             }
         }
         composable<MainNav.ReminderLists> {
@@ -82,7 +87,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.CreateUser> {
             Guard(navController = navController) { currentUser ->
-                UserCreateUI(navController)
+                UserCreateUI(navController, currentUser)
             }
         }
         composable<MainNav.EditUser> {

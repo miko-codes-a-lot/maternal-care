@@ -52,7 +52,7 @@ fun MessageListUIPreview() {
 fun MessageListUI(navController: NavController, currentUser: UserDto) {
     val messageViewModel: MessageViewModel = hiltViewModel()
     val users by produceState<List<UserDto>>(emptyList(), messageViewModel) {
-        value = messageViewModel.getResidences()
+        value = messageViewModel.getResidences(currentUser.id!!)
     }
     Column(
         modifier = Modifier
@@ -103,7 +103,7 @@ fun ListOfMessages(userDto: UserDto, navController: NavController) {
                 .fillMaxWidth()
                 .padding(start = 10.dp, end = 10.dp)
                 .clickable {
-                    navController.navigate(MainNav.Messages)
+                    navController.navigate(MainNav.Messages(userId = userDto.id!!))
                 },
             verticalAlignment = Alignment.CenterVertically,
         ) {

@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
+import org.maternalcare.modules.main.user.model.dto.UserDto
 
 data class SMSMessage(
     val type: Int,
@@ -49,11 +50,15 @@ data class SMSMessage(
 @Preview(showSystemUi = true)
 @Composable
 fun MessageUIPreview() {
-    MessageUI(navController = rememberNavController())
+    MessageUI(
+        navController = rememberNavController(),
+        currentUser = UserDto(),
+        userDto = UserDto()
+    )
 }
 
 @Composable
-fun MessageUI(navController: NavController) {
+fun MessageUI(navController: NavController, currentUser: UserDto, userDto: UserDto) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,12 +66,12 @@ fun MessageUI(navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        MessageContainer()
+        MessageContainer(userDto = userDto, currentUser = currentUser)
     }
 }
 
 @Composable
-fun MessageContainer() {
+fun MessageContainer(currentUser: UserDto, userDto: UserDto) {
     val messages = listOf(
         SMSMessage(type = 1, message = "Hello from User sdfsdfsdfsdfdsf", date = "2024-09-01 10:00:00"),
         SMSMessage(type = 2, message = "Hello from Client", date = "2024-09-01 10:05:00"),
