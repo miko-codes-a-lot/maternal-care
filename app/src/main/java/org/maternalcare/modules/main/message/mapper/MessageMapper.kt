@@ -1,5 +1,6 @@
 package org.maternalcare.modules.main.message.mapper
 
+import io.realm.kotlin.types.RealmInstant
 import org.maternalcare.modules.main.message.model.dto.MessageDto
 import org.maternalcare.modules.main.message.model.entity.Message
 import org.maternalcare.shared.ext.toInstantStringNullable
@@ -23,7 +24,7 @@ fun MessageDto.toEntity(): Message {
         senderId = messageDto.senderId.toObjectId()
         receiverId = messageDto.receiverId.toObjectId()
         content = messageDto.content
-        date = messageDto.date?.toRealmInstant()
+        date = messageDto.date?.toRealmInstant() ?: RealmInstant.now()
     }
 }
 

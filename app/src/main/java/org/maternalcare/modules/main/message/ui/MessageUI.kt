@@ -1,5 +1,6 @@
 package org.maternalcare.modules.main.message.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -36,9 +37,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.launch
 import org.maternalcare.R
+import org.maternalcare.modules.main.message.model.dto.MessageDto
+import org.maternalcare.modules.main.message.viewmodel.MessageViewModel
 import org.maternalcare.modules.main.user.model.dto.UserDto
 
 data class SMSMessage(
@@ -72,6 +77,9 @@ fun MessageUI(navController: NavController, currentUser: UserDto, userDto: UserD
 
 @Composable
 fun MessageContainer(currentUser: UserDto, userDto: UserDto) {
+    val messageViewModel: MessageViewModel = hiltViewModel()
+    val coroutineScope = rememberCoroutineScope()
+
     val messages = listOf(
         SMSMessage(type = 1, message = "Hello from User sdfsdfsdfsdfdsf", date = "2024-09-01 10:00:00"),
         SMSMessage(type = 2, message = "Hello from Client", date = "2024-09-01 10:05:00"),
@@ -95,7 +103,22 @@ fun MessageContainer(currentUser: UserDto, userDto: UserDto) {
                 MessageView(message = message)
             }
         }
-        MessageInputField()
+        MessageInputField { newMessage ->
+            coroutineScope.launch {
+                val messageDto = MessageDto(
+                    senderId = currentUser.id,
+                    receiverId = userDto.id,
+                    content = newMessage,
+                )
+                val result = messageViewModel.sendMessage(messageDto)
+
+                if (result.isSuccess) {
+                    Log.d("micool", "Successful!")
+                } else {
+                    Log.e("micool", "error: " + result.exceptionOrNull())
+                }
+            }
+        }
     }
     LaunchedEffect(messages.size) {
         listState.animateScrollToItem(0)
@@ -146,9 +169,8 @@ fun MessageView(message: SMSMessage) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessageInputField() {
+fun MessageInputField(onSend: (message: String) -> Unit) {
     val messageText = remember { mutableStateOf("") }
     Row(
         modifier = Modifier
@@ -176,7 +198,7 @@ fun MessageInputField() {
                 .padding(8.dp)
                 .size(25.dp)
                 .clickable {
-                    println("Sending message: ${messageText.value}")
+                    onSend(messageText.value)
                     messageText.value = ""
                 },
             tint = Color(0xFF6650a4)
