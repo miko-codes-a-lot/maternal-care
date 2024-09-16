@@ -4,6 +4,7 @@ import io.realm.kotlin.types.RealmInstant
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.model.entity.User
 import org.maternalcare.shared.ext.toInstantString
+import org.maternalcare.shared.ext.toInstantStringNullable
 import org.maternalcare.shared.ext.toObjectId
 import org.maternalcare.shared.ext.toRealmInstant
 import org.maternalcare.shared.ext.toRealmInstantNullable
@@ -19,11 +20,11 @@ fun User.toDTO(): UserDto {
         dateOfBirth = dateOfBirth.toInstantString(),
         password = password,
         createdById = createdById?.toString(),
-        createdAt = createdAt.toInstantString(),
+        createdAt = createdAt.toInstantStringNullable(),
         lastUpdatedById = lastUpdatedById?.toString(),
-        lastUpdatedAt = lastUpdatedAt.toInstantString(),
+        lastUpdatedAt = lastUpdatedAt.toInstantStringNullable(),
         deletedById = deletedById?.toString(),
-        deletedAt = deletedAt?.run { this.toInstantString() },
+        deletedAt = deletedAt?.run { this.toInstantStringNullable() },
         isSuperAdmin = isSuperAdmin,
         isAdmin = isAdmin,
         isResidence = isResidence,

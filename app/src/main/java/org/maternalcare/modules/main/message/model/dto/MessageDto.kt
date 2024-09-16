@@ -4,5 +4,6 @@ data class MessageDto(
     var id: String? = null,
     var senderId: String? = null,
     var receiverId: String? = null,
-    var date: String = "",
+    var content: String? = "",
+    var date: String? = null,
 )

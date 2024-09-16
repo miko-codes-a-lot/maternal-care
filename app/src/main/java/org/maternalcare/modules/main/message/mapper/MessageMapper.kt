@@ -2,7 +2,7 @@ package org.maternalcare.modules.main.message.mapper
 
 import org.maternalcare.modules.main.message.model.dto.MessageDto
 import org.maternalcare.modules.main.message.model.entity.Message
-import org.maternalcare.shared.ext.toInstantString
+import org.maternalcare.shared.ext.toInstantStringNullable
 import org.maternalcare.shared.ext.toObjectId
 import org.maternalcare.shared.ext.toRealmInstant
 
@@ -11,7 +11,8 @@ fun Message.toDTO(): MessageDto {
         id = _id.toHexString(),
         senderId = senderId?.toHexString(),
         receiverId = receiverId?.toHexString(),
-        date = date.toInstantString()
+        content = content,
+        date = date?.toInstantStringNullable()
     )
 }
 
@@ -21,7 +22,8 @@ fun MessageDto.toEntity(): Message {
         _id = messageDto.id.toObjectId()
         senderId = messageDto.senderId.toObjectId()
         receiverId = messageDto.receiverId.toObjectId()
-        date = messageDto.date.toRealmInstant()
+        content = messageDto.content
+        date = messageDto.date?.toRealmInstant()
     }
 }
 

@@ -20,7 +20,6 @@ class MessageViewModel @Inject constructor(
     }
 
     fun fetchMessages(senderId: ObjectId, receiverId: ObjectId): List<MessageDto> {
-        userService.fetch()
         return messageService.fetch(senderId, receiverId)
     }
 

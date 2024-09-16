@@ -13,5 +13,7 @@ class Message: RealmObject {
 
     var receiverId: ObjectId? = null
 
-    var date: RealmInstant = RealmInstant.now()
+    var content: String? = ""
+
+    var date: RealmInstant? = RealmInstant.now()
 }
