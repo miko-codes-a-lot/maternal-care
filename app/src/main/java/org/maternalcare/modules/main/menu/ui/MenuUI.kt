@@ -147,17 +147,8 @@ private fun Menu(navController: NavController, userDto: UserDto) {
 }
 
 fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem> {
-    val commonItems = listOf(
-        MenuItem(text = "Profile") {
-            navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
-        },
-        MenuItem(text = "Settings") {
-            navController.navigate(MainNav.Settings)
-        }
-    )
-
     return when {
-        userDto.isSuperAdmin -> commonItems + listOf(
+        userDto.isSuperAdmin -> listOf(
             MenuItem(text = "Dashboard") {
                 navController.navigate(MainNav.Dashboard)
             },
@@ -166,9 +157,15 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
             },
             MenuItem(text = "Data Storage") {
                 navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name, isArchive = true))
+            },
+            MenuItem(text = "Settings") {
+                navController.navigate(MainNav.Settings)
             }
         )
-        userDto.isAdmin -> commonItems + listOf(
+        userDto.isAdmin -> listOf(
+            MenuItem(text = "Profile") {
+                navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
+            },
             MenuItem(text = "Messages") {
                 navController.navigate(MainNav.MessagesList)
             },
@@ -180,14 +177,23 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
             },
             MenuItem(text = "Data Storage") {
                 navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name, isArchive = true))
+            },
+            MenuItem(text = "Settings") {
+                navController.navigate(MainNav.Settings)
             }
         )
-        userDto.isResidence -> commonItems + listOf(
+        userDto.isResidence -> listOf(
+            MenuItem(text = "Profile") {
+                navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
+            },
             MenuItem(text = "Messages") {
                 navController.navigate(MainNav.MessagesList)
             },
             MenuItem(text = "Reminders") {
                 navController.navigate(MainNav.ReminderLists)
+            },
+            MenuItem(text = "Settings") {
+                navController.navigate(MainNav.Settings)
             }
         )
         else -> listOf()
@@ -221,7 +227,7 @@ private fun MenuButton(text: String, onClick: () -> Unit) {
 
 @Composable
 fun CheckUpDateContainer() {
-    var checkUpDetails = listOf( "August 24, 2024" )
+    val checkUpDetails = listOf( "August 24, 2024" )
     Row(
         modifier = Modifier
             .padding(top = 10.dp)
