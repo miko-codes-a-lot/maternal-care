@@ -18,7 +18,7 @@ fun String.toRealmInstant(): RealmInstant {
     return RealmInstant.from(instant.epochSecond, instant.nano)
 }
 
-fun String?.toRealmInstant(): RealmInstant? {
+fun String?.toRealmInstantNullable(): RealmInstant? {
     return if (!this.isNullOrEmpty()) {
         val instant = Instant.parse(this)
         return RealmInstant.from(instant.epochSecond, instant.nano)

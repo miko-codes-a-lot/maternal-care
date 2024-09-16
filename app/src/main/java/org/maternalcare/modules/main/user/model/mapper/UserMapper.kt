@@ -6,6 +6,7 @@ import org.maternalcare.modules.main.user.model.entity.User
 import org.maternalcare.shared.ext.toInstantString
 import org.maternalcare.shared.ext.toObjectId
 import org.maternalcare.shared.ext.toRealmInstant
+import org.maternalcare.shared.ext.toRealmInstantNullable
 
 fun User.toDTO(): UserDto {
     return UserDto(
@@ -45,11 +46,11 @@ fun UserDto.toEntity(): User {
         dateOfBirth = userDto.dateOfBirth.toRealmInstant()
         password = userDto.password
         createdBy = userDto.createdBy?.toObjectId()
-        createdAt = userDto.createdAt.toRealmInstant() ?: RealmInstant.now()
+        createdAt = userDto.createdAt.toRealmInstantNullable() ?: RealmInstant.now()
         lastUpdatedBy = userDto.lastUpdatedBy?.toObjectId()
-        lastUpdatedAt = userDto.createdAt.toRealmInstant() ?: RealmInstant.now()
+        lastUpdatedAt = userDto.createdAt.toRealmInstantNullable() ?: RealmInstant.now()
         deletedBy = userDto.deletedBy?.toObjectId()
-        deletedAt = userDto.deletedAt?.run { this.toRealmInstant() }
+        deletedAt = userDto.deletedAt.toRealmInstantNullable()
         isSuperAdmin = userDto.isSuperAdmin
         isAdmin = userDto.isAdmin
         isResidence = userDto.isResidence
