@@ -2,6 +2,7 @@ package org.maternalcare.modules.main.user.viewmodel
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.service.UserService
 import javax.inject.Inject
@@ -20,5 +21,17 @@ class UserViewModel @Inject constructor(
 
     fun fetchUser(userId: String): UserDto {
         return this.userService.fetchOne(userId)
+    }
+
+    fun fetchUserCheckupId(checkUpId: String): UserCheckupDto {
+        return this.userService.fetchOneCheckup(checkUpId)
+    }
+
+    fun fetchUserCheckUp(): List<UserCheckupDto> {
+        return this.userService.fetchAllCheckups()
+    }
+
+    suspend fun upsertCheckUp(checkupDto: UserCheckupDto): Result<UserCheckupDto> {
+        return this.userService.upsertCheckUp(checkupDto)
     }
 }
