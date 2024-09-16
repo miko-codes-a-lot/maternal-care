@@ -17,7 +17,7 @@ object MainNav {
     object ChooseCheckup
 
     @Serializable
-    object CheckupDetails
+    data class CheckupDetails(val checkUpId: String)
 
     @Serializable
     object MessagesList
@@ -50,7 +50,7 @@ object MainNav {
     object MonitoringCheckup
 
     @Serializable
-    object EditCheckup
+    data class EditCheckup(val checkUpId: String)
 
     @Serializable
     object UserPreview
