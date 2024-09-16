@@ -57,7 +57,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.MessagesList> {
             Guard(navController = navController) { currentUser ->
-                MessageListUI(navController)
+                MessageListUI(navController, currentUser)
             }
         }
         composable<MainNav.Messages> {

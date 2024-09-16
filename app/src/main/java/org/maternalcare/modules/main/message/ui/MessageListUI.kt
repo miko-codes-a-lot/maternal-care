@@ -21,6 +21,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,28 +33,27 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.message.viewmodel.MessageViewModel
+import org.maternalcare.modules.main.user.model.dto.UserDto
 
 @Preview(showSystemUi = true)
 @Composable
 fun MessageListUIPreview() {
-    MessageListUI(navController = rememberNavController())
+    MessageListUI(navController = rememberNavController(), currentUser = UserDto())
 }
 
-val usersList = listOf(
-    "Robert Downey Jr.", "Scarlett Johansson", "Chris Evans",
-    "Mark Ruffalo", "Chris Hemsworth", "Tom Holland", "Chris Evans",
-    "Mark Ruffalo", "Chris Hemsworth", "Tom Holland", "Chris Evans",
-    "Mark Ruffalo", "Chris Hemsworth", "Tom Holland", "Chris Evans",
-    "Mark Ruffalo", "Chris Hemsworth", "Tom Holland", "Chris Evans",
-)
-
 @Composable
-fun MessageListUI(navController: NavController) {
+fun MessageListUI(navController: NavController, currentUser: UserDto) {
+    val messageViewModel: MessageViewModel = hiltViewModel()
+    val users by produceState<List<UserDto>>(emptyList(), messageViewModel) {
+        value = messageViewModel.getResidences()
+    }
     Column(
         modifier = Modifier
             .height(715.dp)
@@ -82,15 +83,15 @@ fun MessageListUI(navController: NavController) {
         }
         Spacer(modifier = Modifier.height(5.dp))
         LazyColumn {
-            items(usersList) { users ->
-                ListOfMessages(usersName = users,navController = navController)
+            items(users) { userDto ->
+                ListOfMessages(userDto = userDto,navController = navController)
             }
         }
     }
 }
 
 @Composable
-fun ListOfMessages(usersName: String,navController: NavController) {
+fun ListOfMessages(userDto: UserDto, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -108,7 +109,7 @@ fun ListOfMessages(usersName: String,navController: NavController) {
         ) {
             ImageContainer()
             Text(
-                text = usersName,
+                text = "${userDto.firstName} ${userDto.lastName}",
                 fontSize = 19.sp,
                 fontFamily = FontFamily.SansSerif,
                 modifier = Modifier
