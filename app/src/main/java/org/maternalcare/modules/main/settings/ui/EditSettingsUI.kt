@@ -150,7 +150,7 @@ fun EmailEdit(navController: NavController, currentDto: UserDto) {
                         currentDto.email = editEmail
                         coroutineScope.launch {
                             try {
-                                val result = viewModel.upsertUser(currentDto.copy(email = currentDto.email))
+                                val result = viewModel.upsertUser(currentDto.copy(email = currentDto.email), currentDto)
                                 if (result.isSuccess) {
                                     navController.navigate(MainNav.Settings)
                                 } else {
@@ -277,7 +277,7 @@ fun PasswordEdit(navController: NavController, currentDto: UserDto) {
 
                         coroutineScope.launch {
                             try {
-                                val result = viewModel.upsertUser(currentDto.copy(password = hashedNewPassword))
+                                val result = viewModel.upsertUser(currentDto.copy(password = hashedNewPassword), currentDto)
                                 if (result.isSuccess) {
                                     navController.navigate(MainNav.Settings)
                                 } else {
