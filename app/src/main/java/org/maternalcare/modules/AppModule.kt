@@ -11,6 +11,7 @@ import io.realm.kotlin.mongodb.Credentials
 import io.realm.kotlin.mongodb.sync.SyncConfiguration
 import kotlinx.coroutines.runBlocking
 import org.maternalcare.BuildConfig
+import org.maternalcare.modules.main.message.model.entity.Message
 import org.maternalcare.modules.main.user.model.entity.User
 import javax.inject.Singleton
 
@@ -25,15 +26,24 @@ object AppModule {
             val credentials = Credentials.apiKey(BuildConfig.REALM_API_KEY)
             val user = app.login(credentials)
 
+            val setOfEntities = setOf(
+                User::class,
+                Message::class,
+            )
+
             val config = SyncConfiguration
                 .Builder(
                     user,
-                    setOf(User::class)
+                    setOfEntities
                 )
                 .initialSubscriptions { realm ->
                     add(
                         realm.query<User>("_id <> $0", null),
                         name = "Users"
+                    )
+                    add(
+                        realm.query<Message>("_id <> $0", null),
+                        name = "Messages"
                     )
                 }
                 .build()
