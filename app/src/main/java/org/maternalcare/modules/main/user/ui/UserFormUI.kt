@@ -79,9 +79,9 @@ fun UserForm(
     isInitialOptionShow: Boolean = true
 ) {
     val listOfLabel = if (includePassword) {
-        listOf("First Name", "Middle Name", "Last Name", "Email", "Mobile Number", "Date Of Birth", "Password")
+        listOf("First Name", "Middle Name", "Last Name", "Email", "Address", "Mobile Number", "Date Of Birth", "Password")
     } else {
-        listOf("First Name", "Middle Name", "Last Name", "Email", "Mobile Number", "Date Of Birth")
+        listOf("First Name", "Middle Name", "Last Name", "Email", "Address", "Mobile Number", "Date Of Birth")
     }
     val userId by remember { mutableStateOf(userDto?.id ?: "") }
     var radioError by remember { mutableStateOf(false) }
@@ -94,6 +94,7 @@ fun UserForm(
                     "Middle Name" -> userDto?.middleName ?: ""
                     "Last Name" -> userDto?.lastName ?: ""
                     "Email" -> userDto?.email ?: ""
+                    "Address" -> userDto?.address ?: ""
                     "Mobile Number" -> userDto?.mobileNumber ?: ""
                     "Date Of Birth" -> userDto?.dateOfBirth ?: ""
                     "Password" -> userDto?.password ?: ""
@@ -126,7 +127,7 @@ fun UserForm(
             fontFamily = FontFamily.Serif,
             fontSize = 24.sp,
             modifier = Modifier
-                .offset(y = (-11).dp)
+                .offset(y = (-6).dp)
         )
 
         val errors = remember {
@@ -172,7 +173,7 @@ fun UserForm(
             isEnableSubmit = isButtonEnabled,
         )
 
-        Spacer(modifier = Modifier.padding(top = 6.dp))
+        Spacer(modifier = Modifier.padding(top = 4.dp))
         if (userDto == null) {
             TextButton(onClick = { navController.navigate(MainNav.User) }) {
                 Text(text = "Cancel",
@@ -216,7 +217,6 @@ fun ContainerLabelValue(statesValue: Map<String, MutableState<String>>, errors: 
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldContainer(
     textFieldLabel: String,
@@ -449,7 +449,6 @@ fun DatePickerField(
 ) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
-
     val datePickerDialog = remember {
         android.app.DatePickerDialog(
             context,
@@ -571,6 +570,7 @@ fun ButtonSubmitData(
                     middleName = statesValue["Middle Name"]?.value ?: "",
                     lastName = statesValue["Last Name"]?.value ?: "",
                     email = statesValue["Email"]?.value ?: "",
+                    address = statesValue["Address"]?.value ?: "",
                     mobileNumber = statesValue["Mobile Number"]?.value ?: "",
                     dateOfBirth = statesValue["Date Of Birth"]?.value ?: "",
                     isSuperAdmin = selectedOption == "SuperAdmin",
@@ -594,7 +594,6 @@ fun ButtonSubmitData(
         enabled = isEnableSubmit,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 4.dp)
             .height(54.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(0xFF6650a4),
@@ -638,6 +637,21 @@ fun validateForm(
                     hasError = true
                 } else if (email != email.lowercase()) {
                     errors[label]?.value = "Email must be lowercase"
+                    hasError = true
+                } else {
+                    errors[label]?.value = ""
+                }
+            }
+            "Address" -> {
+                val address = state.value
+                if (address.isBlank()) {
+                    errors[label]?.value = "Cannot be empty"
+                    hasError = true
+                } else if (address.length < 5) {
+                    errors[label]?.value = "Address is too short"
+                    hasError = true
+                } else if (!address.matches(Regex("^[a-zA-Z0-9,. ]+$"))) {
+                    errors[label]?.value = "Invalid address"
                     hasError = true
                 } else {
                     errors[label]?.value = ""
