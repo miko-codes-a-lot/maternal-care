@@ -15,7 +15,7 @@ import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 
 @Composable
-fun UserCreateUI(navController: NavController) {
+fun UserCreateUI(navController: NavController, currentUser: UserDto) {
     val userViewModel: UserViewModel = hiltViewModel()
     var userDetails by remember { mutableStateOf(UserDto()) }
     var showForm by remember { mutableStateOf(true) }
@@ -41,7 +41,7 @@ fun UserCreateUI(navController: NavController) {
         )
     } else {
         val onSave: suspend (UserDto) -> Unit = { userDto ->
-            val result = userViewModel.upsertUser(userDto)
+            val result = userViewModel.upsertUser(userDto, currentUser)
 
             if (result.isSuccess) {
                 navController.navigate(MainNav.User){

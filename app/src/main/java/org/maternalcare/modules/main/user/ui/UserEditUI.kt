@@ -36,7 +36,7 @@ fun UserEditUI(navController: NavController, userDto: UserDto, currentUser: User
             user = userDetails,
             title = "Review Changes",
             onSave = { user ->
-                val result = userViewModel.upsertUser(user)
+                val result = userViewModel.upsertUser(user, currentUser)
 
                 if (result.isSuccess) {
                     navController.navigate(MainNav.User){
