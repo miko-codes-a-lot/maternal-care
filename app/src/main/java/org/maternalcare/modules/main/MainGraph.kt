@@ -35,7 +35,6 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.Addresses> {
             val args = it.toRoute<MainNav.Residences>()
-
             Guard(navController = navController) { currentUser ->
                 AddressesUI(navController, isArchive = args.isArchive)
             }
@@ -47,12 +46,15 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.ChooseCheckup> {
             Guard(navController = navController) { currentUser ->
-                ChooseCheckupUI(navController)
+                ChooseCheckupUI(navController, currentUser)
             }
         }
         composable<MainNav.CheckupDetails> {
             Guard(navController = navController) { currentUser ->
-                CheckupDetailsUI(navController)
+                val args = it.toRoute<MainNav.CheckupDetails>()
+                val userViewModel: UserViewModel = hiltViewModel()
+                val currentCheckup = userViewModel.fetchUserCheckupId(args.checkUpId)
+                CheckupDetailsUI(navController, currentUser, currentCheckup)
             }
         }
         composable<MainNav.MessagesList> {
@@ -115,9 +117,17 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 CheckupProgressUI(navController)
             }
         }
-        composable<MainNav.EditCheckup> {
-            Guard(navController = navController) { currentUser ->
-                EditCheckupUI(navController)
+        composable("edit_checkup/{userId}/{checkupId}") { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+            val checkupId = backStackEntry.arguments?.getString("checkupId") ?: return@composable
+            val userViewModel: UserViewModel = hiltViewModel()
+            val checkupUser = userViewModel.fetchUserCheckupId(checkupId)
+            Guard(navController) { currentUser ->
+                if (currentUser.id == userId) {
+                    EditCheckupUI(navController, currentUser = currentUser, checkupUser = checkupUser)
+                } else {
+                    navController.popBackStack()
+                }
             }
         }
         composable<MainNav.UserPreview> {
