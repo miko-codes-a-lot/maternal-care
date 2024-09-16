@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,8 +43,10 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import org.maternalcare.R
 import org.maternalcare.modules.main.message.model.dto.MessageDto
+import org.maternalcare.modules.main.message.model.entity.Message
 import org.maternalcare.modules.main.message.viewmodel.MessageViewModel
 import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.shared.ext.toObjectId
 
 data class SMSMessage(
     val type: Int,
@@ -79,19 +81,26 @@ fun MessageUI(navController: NavController, currentUser: UserDto, userDto: UserD
 fun MessageContainer(currentUser: UserDto, userDto: UserDto) {
     val messageViewModel: MessageViewModel = hiltViewModel()
     val coroutineScope = rememberCoroutineScope()
+    val messages = remember { mutableStateListOf<Message>() }
 
-    val messages = listOf(
-        SMSMessage(type = 1, message = "Hello from User sdfsdfsdfsdfdsf", date = "2024-09-01 10:00:00"),
-        SMSMessage(type = 2, message = "Hello from Client", date = "2024-09-01 10:05:00"),
-        SMSMessage(type = 1, message = "Another message from User", date = "2024-09-01 10:10:00"),
-        SMSMessage(type = 2, message = "Another message from Client", date = "2024-09-01 10:15:00")
-    )
-    val listState = rememberLazyListState()
+    LaunchedEffect("Message") {
+        launch {
+            val flow = messageViewModel.fetchMessagesAsync(
+                currentUser.id.toObjectId(),
+                userDto.id.toObjectId()
+            )
+            flow.collect { results ->
+                Log.d("micool", "live changes: ${results.list}")
+                messages.clear()
+                results.list.forEach { item -> messages.add((item)) }
+            }
+        }
+    }
+
     Column(modifier = Modifier
         .height(660.dp)
     ) {
         LazyColumn(
-            state = listState,
             modifier = Modifier
                 .background(Color.White)
                 .weight(1f)
@@ -100,7 +109,7 @@ fun MessageContainer(currentUser: UserDto, userDto: UserDto) {
             reverseLayout = true
         ) {
             items(messages) { message ->
-                MessageView(message = message)
+                MessageView(message = message, currentUser, userDto)
             }
         }
         MessageInputField { newMessage ->
@@ -120,18 +129,24 @@ fun MessageContainer(currentUser: UserDto, userDto: UserDto) {
             }
         }
     }
-    LaunchedEffect(messages.size) {
-        listState.animateScrollToItem(0)
-    }
 }
 
 @Composable
-fun MessageView(message: SMSMessage) {
-    val (containerColor, contentColor) = if (message.type == 1) {
-        Color(0xFF6650a4) to Color(0xFFFFFFFF)
-    } else { Color(0xFFcccccf) to Color.Black}
+fun MessageView(message: Message, currentUser: UserDto, userDto: UserDto) {
+    val isReceiver = message.senderId?.toHexString() == currentUser.id
 
-    val horizontalArrangement = if (message.type == 1) Arrangement.End else Arrangement.Start
+    val (containerColor, contentColor) =
+        if (isReceiver) {
+            Color(0xFF6650a4) to Color(0xFFFFFFFF)
+        } else {
+            Color(0xFFcccccf) to Color.Black
+        }
+
+    val horizontalArrangement =
+        if (isReceiver)
+            Arrangement.End
+        else
+            Arrangement.Start
 
     Row(
         modifier = Modifier
@@ -151,13 +166,13 @@ fun MessageView(message: SMSMessage) {
                 .padding(12.dp)
             ) {
                 Text(
-                    text = message.message,
+                    text = message.content ?: "",
                     maxLines = Int.MAX_VALUE,
                     overflow = TextOverflow.Visible
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = message.date.split(" ").last(),
+                    text = "",
                     fontSize = MaterialTheme.typography.bodySmall.fontSize,
                     textAlign = TextAlign.End,
                     modifier = Modifier
