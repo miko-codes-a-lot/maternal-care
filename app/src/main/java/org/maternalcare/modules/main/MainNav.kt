@@ -23,7 +23,7 @@ object MainNav {
     object MessagesList
 
     @Serializable
-    object Messages
+    data class Messages(val userId: String)
 
     @Serializable
     object ReminderLists
