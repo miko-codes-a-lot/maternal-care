@@ -13,6 +13,11 @@ fun String?.toObjectId(): ObjectId {
     }
 }
 
+fun String.toRealmInstant(): RealmInstant {
+    val instant = Instant.parse(this)
+    return RealmInstant.from(instant.epochSecond, instant.nano)
+}
+
 fun String?.toRealmInstant(): RealmInstant? {
     return if (!this.isNullOrEmpty()) {
         val instant = Instant.parse(this)
