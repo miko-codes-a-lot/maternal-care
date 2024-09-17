@@ -22,13 +22,13 @@ fun UserEditUI(navController: NavController, userDto: UserDto, currentUser: User
         UserForm(
             title = "Edit Account",
             userDto = userDto,
+            currentUser = currentUser,
             onSubmit = { user ->
                 userDetails = user
                 showForm = false
             },
             navController = navController,
             includePassword = false,
-            isInitialOptionShow = false,
             addressDto = null
         )
     } else {

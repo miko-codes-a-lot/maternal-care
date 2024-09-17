@@ -36,6 +36,7 @@ fun UserCreateUI(
         UserForm(
             userDto = userDetails,
             title = "Create Account",
+            currentUser = currentUser,
             onSubmit = { user ->
                 coroutineScope.launch {
                     userDetails = user
