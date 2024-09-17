@@ -149,6 +149,9 @@ private fun Menu(navController: NavController, userDto: UserDto) {
 fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem> {
     return when {
         userDto.isSuperAdmin -> listOf(
+            MenuItem(text = "Profile") {
+                navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
+            },
             MenuItem(text = "Dashboard") {
                 navController.navigate(MainNav.Dashboard)
             },
