@@ -20,6 +20,7 @@ import org.maternalcare.modules.main.residence.ui.ResidencesUI
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.settings.ui.EditSettingsUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
+import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.modules.main.user.ui.UserCreateUI
 import org.maternalcare.modules.main.user.ui.UserEditUI
@@ -65,8 +66,14 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             Guard(navController = navController) { currentUser ->
                 val checkupDto = userViewModel.fetchUserCheckupByNumber(args.userId, args.checkupNumber)
                 val userDto = userViewModel.fetchUser(userId = args.userId)
-                if (checkupDto != null) {
-                    CheckupDetailsUI(navController, currentUser, checkupDto, userDto, args.checkupNumber)
+                if (checkupDto != null || currentUser.isSuperAdmin) {
+                    CheckupDetailsUI(
+                        navController,
+                        currentUser,
+                        checkupDto = checkupDto ?: UserCheckupDto(),
+                        userDto,
+                        checkupNumber = args.checkupNumber
+                    )
                 } else {
                     EditCheckupUI(navController, currentUser = currentUser, userDto = userDto, checkupNumber = args.checkupNumber)
                 }
