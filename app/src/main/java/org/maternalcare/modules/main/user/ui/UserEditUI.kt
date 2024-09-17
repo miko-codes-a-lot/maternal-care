@@ -8,7 +8,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 
@@ -40,9 +39,7 @@ fun UserEditUI(navController: NavController, userDto: UserDto, currentUser: User
                 val result = userViewModel.upsertUser(user, currentUser)
 
                 if (result.isSuccess) {
-                    navController.navigate(MainNav.User){
-                        popUpTo(MainNav.Menu) { inclusive = true }
-                    }
+                    navController.popBackStack()
                 } else {
                     Log.e("micool", "Something went wrong: ${result.exceptionOrNull()}")
                 }

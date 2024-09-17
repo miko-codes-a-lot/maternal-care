@@ -10,7 +10,6 @@ import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
-import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.AddressDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
@@ -51,9 +50,7 @@ fun UserCreateUI(
             val result = userViewModel.upsertUser(userDto, currentUser)
 
             if (result.isSuccess) {
-                navController.navigate(MainNav.User){
-                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                }
+                navController.popBackStack()
             } else {
                 Log.e("micool", "Something went wrong: ${result.exceptionOrNull()}")
             }
