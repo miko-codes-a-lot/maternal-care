@@ -50,6 +50,15 @@ fun MenuUIPreview() {
     MenuUI(navController = rememberNavController(), currentUser = UserDto())
 }
 
+// notification remove to super admin
+// notification remove temporary to everyone
+// admin should see all residences but not modify them
+// alert address before 3 days (temporary every day latest)
+// Residence to Pregnant
+// BHW can update residence's middle name, last name
+// Pregnant settings change details - phone number, email, address (drop down)
+// add module from Wireframe
+
 @Composable
 fun MenuUI(navController: NavController, currentUser: UserDto) {
     val isReminderAlertVisible = rememberSaveable { mutableStateOf(true) }
@@ -93,8 +102,8 @@ fun MenuUI(navController: NavController, currentUser: UserDto) {
 fun UserPosition(userDto: UserDto) {
     val userDetails = when {
         userDto.isSuperAdmin -> listOf("Super Admin")
-        userDto.isAdmin -> listOf("Admin")
-        userDto.isResidence -> listOf("Residence")
+        userDto.isAdmin -> listOf("BHW")
+        userDto.isResidence -> listOf("Pregnant")
         else -> listOf("Unknown")
     }
     Row(
@@ -149,7 +158,7 @@ private fun Menu(navController: NavController, userDto: UserDto) {
 fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem> {
     return when {
         userDto.isSuperAdmin -> listOf(
-            MenuItem(text = "Profile") {
+            MenuItem(text = "Pregnant Users") {
                 navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
             },
             MenuItem(text = "Dashboard") {
@@ -166,7 +175,7 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
             }
         )
         userDto.isAdmin -> listOf(
-            MenuItem(text = "Profile") {
+            MenuItem(text = "Pregnant Users") {
                 navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
             },
             MenuItem(text = "Messages") {
@@ -185,6 +194,8 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
         userDto.isResidence -> listOf(
             MenuItem(text = "Profile") {
                 navController.navigate(MainNav.ChooseCheckup(userId = userDto.id!!))
+            },
+            MenuItem(text = "Module") {
             },
             MenuItem(text = "Messages") {
                 navController.navigate(MainNav.MessagesList)
