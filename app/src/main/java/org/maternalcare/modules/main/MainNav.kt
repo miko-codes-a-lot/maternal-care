@@ -11,13 +11,16 @@ object MainNav {
     data class Addresses(val status: String, var isArchive: Boolean = false)
 
     @Serializable
-    data class Residences(val status: String, var isArchive: Boolean = false)
+    data class Residences(val status: String, var isArchive: Boolean = false, var addressId: String? = null)
 
     @Serializable
-    object ChooseCheckup
+    data class ChooseCheckup(val userId: String)
 
     @Serializable
-    data class CheckupDetails(val checkUpId: String)
+    data class CheckupDetails(val userId: String, val checkupNumber: Int)
+
+    @Serializable
+    data class CheckupDetailsEdit(val userId: String, val checkupId: String, val checkupNumber: Int)
 
     @Serializable
     object MessagesList
@@ -35,7 +38,7 @@ object MainNav {
     object User
 
     @Serializable
-    object CreateUser
+    data class CreateUser(val addressId: String?)
 
     @Serializable
     data class EditUser(val userId: String)
