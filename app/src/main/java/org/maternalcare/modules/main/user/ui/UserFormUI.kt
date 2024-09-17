@@ -1,6 +1,7 @@
 package org.maternalcare.modules.main.user.ui
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -56,6 +57,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.user.model.dto.AddressDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.shared.ext.hashPassword
 import java.text.SimpleDateFormat
@@ -66,18 +68,23 @@ import java.util.TimeZone
 @Preview(showSystemUi = true)
 @Composable
 fun UserFormPrev() {
-    UserForm(onSubmit = { _ ->}, navController = rememberNavController() )
+    UserForm(onSubmit = { _ ->}, navController = rememberNavController(), addressDto = null)
 }
 
 @Composable
 fun UserForm(
-    title : String = "Create Account",
+    title: String = "Create Account",
     userDto: UserDto? = null,
     onSubmit: (UserDto) -> Unit,
     navController: NavController,
     includePassword: Boolean = true,
-    isInitialOptionShow: Boolean = true
+    isInitialOptionShow: Boolean = true,
+    addressDto: AddressDto?
 ) {
+    // Log the initial values
+    Log.d("UserForm", "UserDto: $userDto")
+    Log.d("UserForm", "IncludePassword: $includePassword")
+    Log.d("UserForm", "IsInitialOptionShow: $isInitialOptionShow")
     val listOfLabel = if (includePassword) {
         listOf("First Name", "Middle Name", "Last Name", "Email", "Address", "Mobile Number", "Date Of Birth", "Password")
     } else {
@@ -94,7 +101,7 @@ fun UserForm(
                     "Middle Name" -> userDto?.middleName ?: ""
                     "Last Name" -> userDto?.lastName ?: ""
                     "Email" -> userDto?.email ?: ""
-                    "Address" -> userDto?.address ?: ""
+                    "Address" -> userDto?.address ?: addressDto?.name ?: ""
                     "Mobile Number" -> userDto?.mobileNumber ?: ""
                     "Date Of Birth" -> userDto?.dateOfBirth ?: ""
                     "Password" -> userDto?.password ?: ""
@@ -103,15 +110,27 @@ fun UserForm(
             )
         }
     }
+    val isSuperAdmin = userDto?.isSuperAdmin == true
+    val showRadioButtons = isSuperAdmin || userDto?.isAdmin == true
+    Log.d("UserForm", "ShowRadioButtons: $showRadioButtons")
 
-    var selectedOption by remember { mutableStateOf(
-        when {
-            userDto?.isSuperAdmin == true -> "SuperAdmin"
-            userDto?.isAdmin == true -> "Admin"
-            userDto?.isResidence == true -> "Residence"
-            else -> ""
-        }
-    )}
+    val defaultSelectedOption = when {
+        isSuperAdmin -> "SuperAdmin"
+        userDto?.isAdmin == true -> "Residence" // Default to Residence if Admin
+        else -> "Residence"
+    }
+
+//    var selectedOption by remember { mutableStateOf(
+//        when {
+//            userDto?.isSuperAdmin == true -> "SuperAdmin"
+//            userDto?.isAdmin == true -> "Admin"
+//            userDto?.isResidence == true -> "Residence"
+//            else -> ""
+//        }
+//    )}
+    var selectedOption by remember { mutableStateOf(defaultSelectedOption) }
+    Log.d("UserForm", "DefaultSelectedOption: $defaultSelectedOption")
+    Log.d("UserForm", "SelectedOption: $selectedOption")
 
     var isActive by remember { mutableStateOf(true) }
     var isButtonEnabled by remember { mutableStateOf(true) }
@@ -129,22 +148,29 @@ fun UserForm(
             modifier = Modifier
                 .offset(y = (-6).dp)
         )
+        Log.d("UserForm", "Column started")
 
         val errors = remember {
             listOfLabel.associateWith { mutableStateOf("") }
         }
         ContainerLabelValue(statesValue, errors = errors)
 
-        if (isInitialOptionShow) {
+        if (showRadioButtons) {
+            Log.d("UserForm", "RadioButton SelectedOption: $selectedOption")
+
             val radioErrorMessage = if (radioError) "Please select an option" else ""
             FormRadioButton(
                 selectedOption = selectedOption,
                 onOptionSelected = { option ->
                     selectedOption = option
                     radioError = false
+                    Log.d("UserForm", "RadioButton Selected Option Changed: $option")
+
                 },
                 errorMsg = radioErrorMessage
             )
+        } else {
+            Log.d("UserForm", "Not displaying RadioButtons")
         }
 
         SwitchButton(isActiveState = isActive, onCheckedChange = { isActive = it } ,scale = 0.7f, switchText = "Active")
@@ -330,11 +356,14 @@ fun FormRadioButton(
     onOptionSelected: (String) -> Unit,
     errorMsg : String
 ) {
-    val activation = when (selectedOption) {
-        "Residence" -> listOf("Residence")
-        "SuperAdmin", "Admin" -> listOf("SuperAdmin", "Admin")
-        else -> listOf("Residence")
-    }
+//    val activation = when (selectedOption) {
+//        "Residence" -> listOf("Residence")
+//        "SuperAdmin", "Admin" -> listOf("SuperAdmin", "Admin")
+//        else -> listOf("Residence")
+//    }
+    val options = listOf("SuperAdmin", "Admin")
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -356,7 +385,7 @@ fun FormRadioButton(
             .padding(top = 2.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        activation.forEach { text ->
+        options.forEach { text ->
             Row(
                 Modifier
                     .selectable(
