@@ -198,7 +198,7 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
             MenuItem(text = "Module") {
             },
             MenuItem(text = "Messages") {
-                navController.navigate(MainNav.MessagesList)
+                navController.navigate(MainNav.Messages(userId = userDto.createdById!!))
             },
             MenuItem(text = "Reminders") {
                 navController.navigate(MainNav.ReminderLists)
