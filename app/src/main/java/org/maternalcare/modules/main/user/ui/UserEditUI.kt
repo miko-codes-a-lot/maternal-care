@@ -40,9 +40,7 @@ fun UserEditUI(navController: NavController, userDto: UserDto, currentUser: User
                 val result = userViewModel.upsertUser(user, currentUser)
 
                 if (result.isSuccess) {
-                    navController.navigate(MainNav.User){
-                        popUpTo(MainNav.Menu) { inclusive = true }
-                    }
+                    navController.popBackStack()
                 } else {
                     Log.e("micool", "Something went wrong: ${result.exceptionOrNull()}")
                 }

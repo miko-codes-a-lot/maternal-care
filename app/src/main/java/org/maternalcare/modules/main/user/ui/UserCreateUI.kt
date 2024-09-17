@@ -51,9 +51,7 @@ fun UserCreateUI(
             val result = userViewModel.upsertUser(userDto, currentUser)
 
             if (result.isSuccess) {
-                navController.navigate(MainNav.User){
-                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                }
+                navController.popBackStack()
             } else {
                 Log.e("micool", "Something went wrong: ${result.exceptionOrNull()}")
             }
