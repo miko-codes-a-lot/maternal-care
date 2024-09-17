@@ -49,10 +49,6 @@ import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
@@ -60,10 +56,30 @@ import java.util.TimeZone
 @Preview(showSystemUi = true)
 @Composable
 fun EditCheckupUIPreview() {
+    val mockCheckups = UserCheckupDto(
+        id = "66e7d37e209d993c619e73d9",
+        userId = "66e7d37e209d993c619e73d9",
+        checkup = 1,
+        bloodPressure = 120.0,
+        height = 175.0,
+        weight = 70.0,
+        dateOfCheckUp = "2024-09-17",
+        lastMenstrualPeriod = "2024-08-01",
+        scheduleOfNextCheckUp = "2024-10-01"
+    )
+    val mockUser = UserDto(
+        id = "66e7d37e209d993c619e73d9",
+        firstName = "Aron",
+        lastName = "Garcia",
+        dateOfBirth = "2003-09-18T06:42:34.553+00:00"
+    )
+
     EditCheckupUI(
-        rememberNavController(),
-        currentUser = UserDto(),
-        checkupUser = UserCheckupDto()
+        navController = rememberNavController(),
+        currentUser = mockUser,
+        checkupNumber = 1,
+        userDto = UserDto(),
+        checkupUser = mockCheckups
     )
 }
 
@@ -71,7 +87,9 @@ fun EditCheckupUIPreview() {
 fun EditCheckupUI(
     navController: NavController,
     currentUser: UserDto,
-    checkupUser: UserCheckupDto,
+    checkupNumber: Int,
+    userDto: UserDto,
+    checkupUser: UserCheckupDto? = null,
 ) {
     val listOfLabel = listOf(
         "Blood Pressure", "Height", "Weight", "Last Menstrual Period",
@@ -82,12 +100,12 @@ fun EditCheckupUI(
         listOfLabel.associateWith {
             mutableStateOf(
                 when (it) {
-                    "Blood Pressure" -> checkupUser.bloodPressure.toString()
-                    "Height" -> checkupUser.height.toString()
-                    "Weight" -> checkupUser.weight.toString()
-                    "Last Menstrual Period" -> checkupUser.lastMenstrualPeriod
-                    "Date of Check-up" -> checkupUser.dateOfCheckUp
-                    "Next Check-up" -> checkupUser.scheduleOfNextCheckUp
+                    "Blood Pressure" -> checkupUser?.bloodPressure?.toString() ?: "0.0"
+                    "Height" -> checkupUser?.height?.toString() ?: "0.0"
+                    "Weight" -> checkupUser?.weight?.toString() ?: "0.0"
+                    "Last Menstrual Period" -> checkupUser?.lastMenstrualPeriod ?: ""
+                    "Date of Check-up" -> checkupUser?.dateOfCheckUp ?: ""
+                    "Next Check-up" -> checkupUser?.scheduleOfNextCheckUp ?: ""
                     else -> ""
                 }
             )
@@ -105,8 +123,9 @@ fun EditCheckupUI(
         ContainerValue(statesValue)
         Spacer(modifier = Modifier.height(8.dp))
         ButtonSaveEdit(
-            currentUserId = currentUser.id ?: "",
+            userId = userDto.id!!,
             statesValue = statesValue,
+            checkupNumber = checkupNumber,
             navController = navController
         )
     }
@@ -195,40 +214,34 @@ fun TextFieldEditCheckUp(
 
 @Composable
 fun ButtonSaveEdit(
-    currentUserId: String,
+    userId: String,
     statesValue: Map<String, MutableState<String>>,
-    navController: NavController
+    navController: NavController,
+    checkupNumber: Int
 ) {
     val userViewModel: UserViewModel = hiltViewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val isoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.of("UTC"))
-    fun parseDate(key: String): String? = try {
-        LocalDate.parse(statesValue[key]?.value, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-            .atStartOfDay(ZoneId.of("UTC")).format(isoFormatter)
-    } catch (e: DateTimeParseException) {
-        Log.e("saving", "$key date parsing error: ${e.message}")
-        null
-    }
 
     Button(
         onClick = {
             val checkUpDto = UserCheckupDto(
-                userId = currentUserId,
+                userId = userId,
                 bloodPressure = statesValue["Blood Pressure"]?.value?.toDoubleOrNull() ?: 0.0,
                 height = statesValue["Height"]?.value?.toDoubleOrNull() ?: 0.0,
                 weight = statesValue["Weight"]?.value?.toDoubleOrNull() ?: 0.0,
-                lastMenstrualPeriod = parseDate("Next Check-up") ?: "",
-                dateOfCheckUp = parseDate("Date of Check-up") ?: "",
-                scheduleOfNextCheckUp = parseDate("Next Check-up") ?: ""
+                checkup = checkupNumber,
+                lastMenstrualPeriod = statesValue["Next Check-up"]?.value ?: "",
+                dateOfCheckUp = statesValue["Date of Check-up"]?.value ?: "",
+                scheduleOfNextCheckUp = statesValue["Next Check-up"]?.value ?: ""
             )
 
             scope.launch {
                 try {
                     val result = userViewModel.upsertCheckUp(checkUpDto)
                     if (result.isSuccess) {
-                        navController.navigate(MainNav.ChooseCheckup) {
-                            popUpTo(MainNav.ChooseCheckup) { inclusive = true }
+                        navController.navigate(MainNav.ChooseCheckup(userId)) {
+                            popUpTo(MainNav.ChooseCheckup(userId)) { inclusive = true }
                         }
                     } else {
                         Log.e("saving", "Error: ${result.exceptionOrNull()}")
@@ -264,9 +277,15 @@ fun EditDatePickerField(
         android.app.DatePickerDialog(
             context,
             { _, year, month, dayOfMonth ->
+
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+
                 calendar.set(year, month, dayOfMonth)
                 val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-                isoFormat.timeZone = TimeZone.getTimeZone("UTC")
+                isoFormat.timeZone = TimeZone.getTimeZone("UTC")  // Optional if you want to enforce UTC timezone
                 val dateISO = isoFormat.format(calendar.time)
                 onDateChange(dateISO)
             },
@@ -275,6 +294,7 @@ fun EditDatePickerField(
             calendar.get(Calendar.DAY_OF_MONTH)
         )
     }
+
     val displayFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
     val displayDate = try {
         val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateValue)
