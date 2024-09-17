@@ -81,7 +81,9 @@ fun CheckupDetailsUI(
 
     Scaffold(
         floatingActionButton = {
-            ParentFloatingIcon(navController, userDto, checkupDto, checkupNumber)
+            if (!currentUser.isSuperAdmin) {
+                ParentFloatingIcon(navController, userDto, checkupDto, checkupNumber)
+            }
         }
     ) {
         Column(
