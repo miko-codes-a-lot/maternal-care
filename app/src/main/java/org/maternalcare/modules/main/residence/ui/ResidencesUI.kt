@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -48,22 +47,28 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
+import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
+import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.shared.ext.toObjectId
 
 @Preview(showSystemUi = true)
 @Composable
 fun ResidencePreview() {
-    ResidencesUI(navController = rememberNavController())
+    ResidencesUI(navController = rememberNavController(), currentUser = UserDto())
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ResidencesUI(navController: NavController) {
+fun ResidencesUI(navController: NavController, currentUser: UserDto) {
+    val residenceViewModel: ResidenceViewModel = hiltViewModel()
+    val residences = residenceViewModel.fetchUsers(currentUser.id.toObjectId())
     Scaffold(
         floatingActionButton = {
             FloatingIcon(navController)
@@ -87,8 +92,8 @@ fun ResidencesUI(navController: NavController) {
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(residencesList) { residence ->
-                    SingleItemCard(residenceName = residence,navController = navController)
+                items(residences) { residence ->
+                    SingleItemCard(residenceDto = residence, navController = navController)
                 }
             }
         }
@@ -130,19 +135,8 @@ fun UsersImageContainer(imageUri: Uri? = null) {
     }
 }
 
-val residencesList = listOf(
-    "Robert Downey Jr.", "Scarlett Johansson", "Chris Evans",
-    "Mark Ruffalo", "Chris Hemsworth", "Tom Holland",
-    "Benedict Cumberbatch", "Chadwick Boseman", "Chris Pratt",
-    "Benedict Cumberbatch", "Chadwick Boseman", "Chris Pratt",
-    "Benedict Cumberbatch", "Chadwick Boseman", "Chris Pratt",
-    "Benedict Cumberbatch", "Chadwick Boseman", "Chris Pratt",
-    "Benedict Cumberbatch", "Chadwick Boseman", "Chris Pratt",
-    "Benedict Cumberbatch", "Chadwick" +
-            " Boseman", "Chris Pratt",
-)
 @Composable
-fun SingleItemCard(residenceName: String,navController: NavController) {
+fun SingleItemCard(residenceDto: UserDto, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -158,7 +152,7 @@ fun SingleItemCard(residenceName: String,navController: NavController) {
             Spacer(modifier = Modifier.width(10.dp))
             UsersImageContainer()
             Text(
-                text = residenceName,
+                text = "${residenceDto.firstName} ${residenceDto.lastName}",
                 fontSize = 18.sp,
                 fontFamily = FontFamily.SansSerif,
                 modifier = Modifier
