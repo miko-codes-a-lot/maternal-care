@@ -18,8 +18,6 @@ class MessageViewModel @Inject constructor(
     private val messageService: MessageService,
     private val userService: UserService
 ): ViewModel() {
-    var messages = mutableListOf<Message>()
-
     fun getResidences(userId: String): List<UserDto> {
         return userService.fetch(isResidence = true, userId = userId.toObjectId())
     }

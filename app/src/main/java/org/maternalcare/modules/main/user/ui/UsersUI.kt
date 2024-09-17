@@ -21,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -100,7 +99,6 @@ fun UsersUI(navController: NavController) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UsersSearchIcon(navController: NavController) {
     var searchQuery by remember { mutableStateOf("") }
@@ -109,7 +107,7 @@ fun UsersSearchIcon(navController: NavController) {
         value = searchQuery,
         onValueChange = { searchQuery = it },
         leadingIcon = {
-            IconButton(onClick = { navController.navigate(MainNav.ChooseCheckup)} ) {
+            IconButton(onClick = { } ) {
                 Icon(
                     imageVector = Icons.Filled.Search,
                     contentDescription = "Search Icon",
@@ -194,7 +192,7 @@ fun FloatParentFloatingIcon(navController: NavController) {
     ) {
         Column(horizontalAlignment = Alignment.End) {
             FloatingActionButton(
-                onClick = { navController.navigate(MainNav.CreateUser) },
+                onClick = { navController.navigate(MainNav.CreateUser(addressId = null)) },
                 containerColor = Color(0xFF6650a4),
                 contentColor = Color(0xFFFFFFFF),
                 shape = CircleShape,

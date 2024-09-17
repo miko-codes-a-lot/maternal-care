@@ -144,7 +144,8 @@ fun ButtonLogin(
         ReminderAlertUI(
             isReminderAlert = true,
             listOfText = messages,
-            onDismiss = { showAlert.value = false }
+            onDismiss = { showAlert.value = false },
+            isError = true
         )
     }
 

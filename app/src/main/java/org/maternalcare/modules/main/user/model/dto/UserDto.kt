@@ -7,6 +7,7 @@ data class UserDto(
     var lastName: String = "",
     var email: String? = null,
     var mobileNumber: String? = null,
+    var address: String? = null,
     var dateOfBirth: String = "",
     var password: String = "",
     var createdById: String? = null,

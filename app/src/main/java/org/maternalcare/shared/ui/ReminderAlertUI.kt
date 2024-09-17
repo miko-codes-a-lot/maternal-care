@@ -40,7 +40,8 @@ fun ReminderAlertUIPreview() {
 fun ReminderAlertUI (
     onDismiss : () -> Unit,
     listOfText: List<String> = listOf("Reminder","Your next check-up will be on."),
-    isReminderAlert: Boolean = false
+    isReminderAlert: Boolean = false,
+    isError: Boolean = false
 ) {
     Dialog(
         onDismissRequest = {},
@@ -58,7 +59,7 @@ fun ReminderAlertUI (
             ),
             modifier = Modifier
                 .fillMaxWidth(0.95f)
-                .heightIn(min = 162.dp, max = 300.dp)
+                .heightIn(min = 100.dp, max = 300.dp)
                 .border(
                     4.dp,
                     color = Color(0xFF6650a4),
@@ -77,13 +78,15 @@ fun ReminderAlertUI (
                 listOfText.forEach { text ->
                     TextContainer(text = text)
                 }
-                CheckUpDateContainer()
+                if (!isError) {
+                    CheckUpDateContainer()
+                }
                 Row(
                     modifier = Modifier
                         .padding(top = 15.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Bottom
                 ) {
                     Button(
                         onClick = { onDismiss() },

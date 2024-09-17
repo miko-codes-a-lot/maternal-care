@@ -12,7 +12,9 @@ import io.realm.kotlin.mongodb.sync.SyncConfiguration
 import kotlinx.coroutines.runBlocking
 import org.maternalcare.BuildConfig
 import org.maternalcare.modules.main.message.model.entity.Message
+import org.maternalcare.modules.main.user.model.entity.Address
 import org.maternalcare.modules.main.user.model.entity.User
+import org.maternalcare.modules.main.user.model.entity.UserCheckup
 import javax.inject.Singleton
 
 @Module
@@ -29,6 +31,8 @@ object AppModule {
             val setOfEntities = setOf(
                 User::class,
                 Message::class,
+                UserCheckup::class,
+                Address::class
             )
 
             val config = SyncConfiguration
@@ -44,6 +48,14 @@ object AppModule {
                     add(
                         realm.query<Message>("_id <> $0", null),
                         name = "Messages"
+                    )
+                    add(
+                        realm.query<UserCheckup>("_id <> $0", null),
+                        name = "UserCheckups"
+                    )
+                    add(
+                        realm.query<Address>("_id <> $0", null),
+                        name = "Addresses"
                     )
                 }
                 .build()

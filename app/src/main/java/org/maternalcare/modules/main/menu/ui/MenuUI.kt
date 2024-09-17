@@ -169,9 +169,6 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
             MenuItem(text = "Messages") {
                 navController.navigate(MainNav.MessagesList)
             },
-            MenuItem(text = "User Management") {
-                navController.navigate(MainNav.User)
-            },
             MenuItem(text = "Reminders") {
                 navController.navigate(MainNav.ReminderLists)
             },
@@ -184,7 +181,7 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
         )
         userDto.isResidence -> listOf(
             MenuItem(text = "Profile") {
-                navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
+                navController.navigate(MainNav.ChooseCheckup(userId = userDto.id!!))
             },
             MenuItem(text = "Messages") {
                 navController.navigate(MainNav.MessagesList)

@@ -1,52 +1,87 @@
-package org.maternalcare.modules.main.residence.ui
+    package org.maternalcare.modules.main.residence.ui
 
-import android.annotation.SuppressLint
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import org.maternalcare.modules.main.MainNav
+    import android.annotation.SuppressLint
+    import androidx.compose.foundation.background
+    import androidx.compose.foundation.layout.Arrangement
+    import androidx.compose.foundation.layout.Column
+    import androidx.compose.foundation.layout.Row
+    import androidx.compose.foundation.layout.Spacer
+    import androidx.compose.foundation.layout.fillMaxSize
+    import androidx.compose.foundation.layout.fillMaxWidth
+    import androidx.compose.foundation.layout.height
+    import androidx.compose.foundation.layout.offset
+    import androidx.compose.foundation.layout.padding
+    import androidx.compose.foundation.layout.size
+    import androidx.compose.foundation.lazy.LazyColumn
+    import androidx.compose.foundation.lazy.items
+    import androidx.compose.foundation.shape.CircleShape
+    import androidx.compose.material.icons.Icons
+    import androidx.compose.material.icons.filled.Edit
+    import androidx.compose.material3.FloatingActionButton
+    import androidx.compose.material3.HorizontalDivider
+    import androidx.compose.material3.Icon
+    import androidx.compose.material3.Scaffold
+    import androidx.compose.material3.Text
+    import androidx.compose.runtime.Composable
+    import androidx.compose.ui.Alignment
+    import androidx.compose.ui.Modifier
+    import androidx.compose.ui.graphics.Color
+    import androidx.compose.ui.text.font.FontFamily
+    import androidx.compose.ui.text.font.FontWeight
+    import androidx.compose.ui.unit.dp
+    import androidx.compose.ui.unit.sp
+    import androidx.navigation.NavController
+    import org.maternalcare.modules.main.MainNav
+    import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
+    import org.maternalcare.modules.main.user.model.dto.UserDto
+    import java.text.SimpleDateFormat
+    import java.time.LocalDate
+    import java.time.format.DateTimeFormatter
+    import java.time.format.DateTimeParseException
+    import java.util.Locale
 
-@Preview(showSystemUi = true)
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun CheckPreview() {
-    CheckupDetailsUI(navController = rememberNavController())
-}
+fun CheckupDetailsUI(
+    navController: NavController,
+    currentUser: UserDto,
+    checkupDto: UserCheckupDto,
+    userDto: UserDto,
+    checkupNumber: Int
+) {
+    val fullName = listOfNotNull(
+        userDto.firstName,
+        userDto.middleName,
+        userDto.lastName)
+        .joinToString(" ")
+    val userLabel = listOf(
+        "Name", "Date of Birth", "Mobile Number", "Address",
+    )
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Composable
-fun CheckupDetailsUI(navController: NavController) {
+    val userValue = listOf(
+        fullName,
+        formatIsoDate(userDto.dateOfBirth),
+        userDto.mobileNumber ,
+        userDto.address
+    )
+
+    val checkupLabels = listOf(
+        "Blood Pressure", "Height", "Weight", "Date Of Checkup",
+        "Last Menstrual Period", "Schedule of Next Check-up"
+    )
+
+    val checkupValues = listOf(
+        checkupDto.bloodPressure.toString(),
+        checkupDto.height.toString(),
+        checkupDto.weight.toString(),
+        formatDate(checkupDto.dateOfCheckUp),
+        formatDate(checkupDto.lastMenstrualPeriod),
+        formatDate(checkupDto.scheduleOfNextCheckUp)
+    )
+
     Scaffold(
         floatingActionButton = {
-            ParentFloatingIcon(navController)
+            ParentFloatingIcon(navController, userDto, checkupDto, checkupNumber)
         }
     ) {
         Column(
@@ -57,16 +92,27 @@ fun CheckupDetailsUI(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            NumberOfCheckUp()
             LazyColumn(
                 modifier = Modifier
                     .background(Color.White)
-                    .height(470.dp)
+                    .height(205.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                items(label.zip(value)) { (labelItem, valueItem) ->
+                items(userLabel.zip(userValue)) { (labelItems, valueItems) ->
+                    CheckupDetailsList(labelContainer = labelItems, sampleValue = valueItems)
+                }
+            }
+            LazyColumn(
+                modifier = Modifier
+                    .background(Color.White)
+                    .height(300.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                items(checkupLabels.zip(checkupValues)) { (labelItem, valueItem) ->
                     CheckupDetailsList(labelContainer = labelItem, sampleValue = valueItem)
                 }
             }
@@ -74,29 +120,48 @@ fun CheckupDetailsUI(navController: NavController) {
     }
 }
 
-@Composable
-fun NumberOfCheckUp() {
-    val numberOfCheckUp = listOf( "1st CheckUp" )
-    Row(
-        modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        numberOfCheckUp.forEach { checkUp ->
-            Text(
-                text = checkUp,
-                fontSize = 22.sp,
-                fontFamily = FontFamily.SansSerif
-            )
-        }
+fun formatIsoDate(isoDate: String): String? {
+    return try {
+        isoDate.let {
+            val parsedDate = LocalDate.parse(isoDate.substring(0, 10))
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            parsedDate.format(formatter)
+        } ?: "No Date of Birth"
+    } catch (e: DateTimeParseException) {
+        "Invalid Date Format"
     }
 }
 
 @Composable
-private fun CheckupDetailsList(labelContainer: String, sampleValue: String) {
+fun NumberOfCheckUp(currentCheckup: UserCheckupDto) {
+    val numberOfCheckUp = when (currentCheckup.checkup) {
+        1 -> "1st CheckUp"
+        2 -> "2nd CheckUp"
+        3 -> "3rd CheckUp"
+        else -> "${currentCheckup.checkup}th CheckUp"
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = numberOfCheckUp,
+            fontSize = 22.sp,
+            fontFamily = FontFamily.SansSerif
+        )
+    }
+}
+
+@Composable
+private fun CheckupDetailsList(
+    labelContainer: String,
+    sampleValue: String?
+) {
     Column(
         modifier = Modifier
+            .background(Color.White)
             .fillMaxWidth()
             .height(50.dp),
         verticalArrangement = Arrangement.Center
@@ -119,13 +184,15 @@ private fun CheckupDetailsList(labelContainer: String, sampleValue: String) {
                 modifier = Modifier,
                 horizontalAlignment = Alignment.Start
             ) {
-                Text(
-                    text = sampleValue,
-                    fontFamily = FontFamily.SansSerif,
-                    modifier = Modifier
-                        .padding(start = 5.dp),
-                    fontSize = 18.sp
-                )
+                if (sampleValue != null) {
+                    Text(
+                        text = sampleValue,
+                        fontFamily = FontFamily.SansSerif,
+                        modifier = Modifier
+                            .padding(start = 5.dp),
+                        fontSize = 18.sp
+                    )
+                }
                 HorizontalDivider(
                     modifier = Modifier.fillMaxWidth(),
                     thickness = 1.dp,
@@ -136,27 +203,22 @@ private fun CheckupDetailsList(labelContainer: String, sampleValue: String) {
     }
 }
 
-val label = listOf(
-    "Name","Date of Birth","Age","Address","Household Number",
-    "Blood Pressure","Height","Weight","Last Menstrual Period",
-    "Expected Due Date","Age Of Gestation","Nutritional Status",
-    "Schedule of Next Check-up"
-)
-
-val value = listOf(
-    "John Doe","01/01/1990","34","1234 Elm St","5678","120/80",
-    "170 cm","70 kg","N/A","01/01/2024","20 weeks","Good","01/09/2024"
-)
-
 @Composable
-fun ParentFloatingIcon(navController: NavController) {
+fun ParentFloatingIcon(
+    navController: NavController,
+    userDto: UserDto,
+    currentCheckup: UserCheckupDto,
+    checkupNumber: Int
+) {
     Column(
         modifier = Modifier
             .background(Color.Transparent),
         horizontalAlignment = Alignment.End
     ) {
         FloatingActionButton(
-            onClick = { navController.navigate(MainNav.EditCheckup) },
+            onClick = {
+                navController.navigate(MainNav.CheckupDetailsEdit(userDto.id!!, currentCheckup.id!!, checkupNumber))
+              },
             containerColor = Color(0xFF6650a4),
             contentColor = Color(0xFFFFFFFF),
             shape = CircleShape,
@@ -170,6 +232,24 @@ fun ParentFloatingIcon(navController: NavController) {
                 modifier = Modifier
                     .size(30.dp)
             )
+        }
+    }
+}
+
+fun formatDate(dateString: String): String {
+    return try {
+        val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val displayFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val date = isoFormatter.parse(dateString) ?: throw Exception("Date format error")
+        displayFormatter.format(date)
+    } catch (e: Exception) {
+        try {
+            val dateOnlyFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val displayFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val date = dateOnlyFormatter.parse(dateString) ?: throw Exception("Date format error")
+            displayFormatter.format(date)
+        } catch (e: Exception) {
+            "Invalid Date"
         }
     }
 }

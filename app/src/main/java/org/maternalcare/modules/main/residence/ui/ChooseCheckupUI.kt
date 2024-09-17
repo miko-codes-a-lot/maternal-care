@@ -1,5 +1,6 @@
 package org.maternalcare.modules.main.residence.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,14 +27,25 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.user.model.dto.UserDto
 
 @Preview(showSystemUi = true)
 @Composable
-fun ChooseCheckupUIPrev() { ChooseCheckupUI(rememberNavController()) }
+fun ChooseCheckupUIPreview() {
+    ChooseCheckupUI(
+        navController = rememberNavController(),
+        currentUser = UserDto(),
+        userDto = UserDto()
+    )
+}
 
+@SuppressLint("ProduceStateDoesNotAssignValue")
 @Composable
-fun ChooseCheckupUI(navController: NavController) {
-
+fun ChooseCheckupUI(
+    navController: NavController,
+    currentUser: UserDto,
+    userDto: UserDto
+) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
@@ -53,7 +65,7 @@ fun ChooseCheckupUI(navController: NavController) {
                 text = "No. Of Check-up", fontSize = 23.sp,
                 fontFamily = FontFamily.SansSerif
             )
-            CheckUpNavigationButton(navController )
+            CheckUpNavigationButton(navController, userDto)
         }
     }
 }
@@ -77,29 +89,34 @@ fun ButtonContainer(text : String, onClick:() -> Unit){
 }
 
 data class SelectionCheckUp (val text: String, val action: () -> Unit )
-
 @Composable
-fun CheckUpNavigationButton(navController: NavController){
+fun CheckUpNavigationButton(
+    navController: NavController,
+    userDto: UserDto,
+) {
     val listOfCheckup = listOf(
-        SelectionCheckUp(text = "1st Checkup") {
-            navController.navigate(MainNav.CheckupDetails)
+        SelectionCheckUp(text = "Checkup 1") {
+            navController.navigate(MainNav.CheckupDetails(userId = userDto.id!!, checkupNumber = 1))
         },
-        SelectionCheckUp(text = "2nd Checkup"){
-            navController.navigate(MainNav.CheckupDetails)
+        SelectionCheckUp(text = "Checkup 2") {
+            navController.navigate(MainNav.CheckupDetails(userId = userDto.id!!, checkupNumber = 2))
         },
-        SelectionCheckUp(text = "3rd Checkup"){
-            navController.navigate(MainNav.CheckupDetails)
+        SelectionCheckUp(text = "Checkup 3") {
+            navController.navigate(MainNav.CheckupDetails(userId = userDto.id!!, checkupNumber = 3))
         },
-        SelectionCheckUp(text = "4th Checkup"){
-            navController.navigate(MainNav.CheckupDetails)
+        SelectionCheckUp(text = "Checkup 4") {
+            navController.navigate(MainNav.CheckupDetails(userId = userDto.id!!, checkupNumber = 4))
         }
     )
-    Column (
-        modifier = Modifier.padding(20.dp)
+    Column(
+        modifier = Modifier
+            .height(380.dp)
+            .padding(20.dp),
+        verticalArrangement = Arrangement.Top
     ) {
-        listOfCheckup.forEach{ list ->
+        listOfCheckup.forEach { checkup ->
             Spacer(modifier = Modifier.height(15.dp))
-            ButtonContainer(onClick = list.action, text = list.text )
+            ButtonContainer(onClick = checkup.action, text = checkup.text)
         }
     }
 }

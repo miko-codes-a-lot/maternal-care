@@ -17,6 +17,7 @@ import org.maternalcare.modules.main.residence.ui.CheckupDetailsUI
 import org.maternalcare.modules.main.residence.ui.ChooseCheckupUI
 import org.maternalcare.modules.main.residence.ui.EditCheckupUI
 import org.maternalcare.modules.main.residence.ui.ResidencesUI
+import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.settings.ui.EditSettingsUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
 import org.maternalcare.modules.main.user.service.UserService
@@ -25,6 +26,7 @@ import org.maternalcare.modules.main.user.ui.UserEditUI
 import org.maternalcare.modules.main.user.ui.UsersUI
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 import org.maternalcare.shared.Guard
+import org.maternalcare.shared.ext.toObjectId
 
 fun NavGraphBuilder.mainGraph(navController: NavController) {
     navigation<MainNav>(startDestination = MainNav.Menu) {
@@ -34,25 +36,56 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             }
         }
         composable<MainNav.Addresses> {
-            val args = it.toRoute<MainNav.Residences>()
-
+            val args = it.toRoute<MainNav.Addresses>()
             Guard(navController = navController) { currentUser ->
                 AddressesUI(navController, isArchive = args.isArchive)
             }
         }
         composable<MainNav.Residences> {
+            val args = it.toRoute<MainNav.Residences>()
+            val residenceViewModel: ResidenceViewModel = hiltViewModel()
+            val addressDto = residenceViewModel.fetchOneAddress(args.addressId.toObjectId())
             Guard(navController = navController) { currentUser ->
-                ResidencesUI(navController)
+                ResidencesUI(navController, currentUser, addressDto)
             }
         }
         composable<MainNav.ChooseCheckup> {
+            val args = it.toRoute<MainNav.ChooseCheckup>()
+            val userViewModel: UserViewModel = hiltViewModel()
+
             Guard(navController = navController) { currentUser ->
-                ChooseCheckupUI(navController)
+                val userDto = userViewModel.fetchUser(userId = args.userId)
+                ChooseCheckupUI(navController, currentUser, userDto)
             }
         }
         composable<MainNav.CheckupDetails> {
+            val args = it.toRoute<MainNav.CheckupDetails>()
+            val userViewModel: UserViewModel = hiltViewModel()
+
             Guard(navController = navController) { currentUser ->
-                CheckupDetailsUI(navController)
+                val checkupDto = userViewModel.fetchUserCheckupByNumber(args.userId, args.checkupNumber)
+                val userDto = userViewModel.fetchUser(userId = args.userId)
+                if (checkupDto != null) {
+                    CheckupDetailsUI(navController, currentUser, checkupDto, userDto, args.checkupNumber)
+                } else {
+                    EditCheckupUI(navController, currentUser = currentUser, userDto = userDto, checkupNumber = args.checkupNumber)
+                }
+            }
+        }
+        composable<MainNav.CheckupDetailsEdit> {
+            val args = it.toRoute<MainNav.CheckupDetailsEdit>()
+            val userViewModel: UserViewModel = hiltViewModel()
+
+            Guard(navController) { currentUser ->
+                val checkup = userViewModel.fetchUserCheckup(args.checkupId)
+                val userDto = userViewModel.fetchUser(args.userId)
+                EditCheckupUI(
+                    navController,
+                    currentUser = currentUser,
+                    checkupUser = checkup,
+                    userDto = userDto,
+                    checkupNumber = args.checkupNumber
+                )
             }
         }
         composable<MainNav.MessagesList> {
@@ -86,8 +119,16 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             }
         }
         composable<MainNav.CreateUser> {
+            val args = it.toRoute<MainNav.CreateUser>()
+            val residenceViewModel: ResidenceViewModel = hiltViewModel()
+            val addressDto =
+                if(args.addressId != null)
+                    residenceViewModel.fetchOneAddress(args.addressId.toObjectId())
+                else
+                    null
+
             Guard(navController = navController) { currentUser ->
-                UserCreateUI(navController, currentUser)
+                UserCreateUI(navController, currentUser, addressDto)
             }
         }
         composable<MainNav.EditUser> {
@@ -113,11 +154,6 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         composable<MainNav.MonitoringCheckup> {
             Guard(navController = navController) { currentUser ->
                 CheckupProgressUI(navController)
-            }
-        }
-        composable<MainNav.EditCheckup> {
-            Guard(navController = navController) { currentUser ->
-                EditCheckupUI(navController)
             }
         }
         composable<MainNav.UserPreview> {
