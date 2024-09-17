@@ -23,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -55,23 +54,28 @@ import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
+import org.maternalcare.modules.main.user.model.dto.AddressDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.shared.ext.toObjectId
 
 @Preview(showSystemUi = true)
 @Composable
 fun ResidencePreview() {
-    ResidencesUI(navController = rememberNavController(), currentUser = UserDto())
+    ResidencesUI(
+        navController = rememberNavController(),
+        currentUser = UserDto(),
+        addressDto = AddressDto(id = null, name = "test", code = "loc_test")
+    )
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ResidencesUI(navController: NavController, currentUser: UserDto) {
+fun ResidencesUI(navController: NavController, currentUser: UserDto, addressDto: AddressDto) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
     val residences = residenceViewModel.fetchUsers(currentUser.id.toObjectId())
     Scaffold(
         floatingActionButton = {
-            FloatingIcon(navController)
+            FloatingIcon(navController, addressDto)
         }
     ) {
         Column(
@@ -93,7 +97,7 @@ fun ResidencesUI(navController: NavController, currentUser: UserDto) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(residences) { residence ->
-                    SingleItemCard(residenceDto = residence, navController = navController)
+                    SingleItemCard(userDto = residence, navController = navController)
                 }
             }
         }
@@ -136,7 +140,7 @@ fun UsersImageContainer(imageUri: Uri? = null) {
 }
 
 @Composable
-fun SingleItemCard(residenceDto: UserDto, navController: NavController) {
+fun SingleItemCard(userDto: UserDto, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -146,13 +150,13 @@ fun SingleItemCard(residenceDto: UserDto, navController: NavController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { navController.navigate(MainNav.ChooseCheckup) },
+                .clickable { navController.navigate(MainNav.ChooseCheckup(userDto.id!!)) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(modifier = Modifier.width(10.dp))
             UsersImageContainer()
             Text(
-                text = "${residenceDto.firstName} ${residenceDto.lastName}",
+                text = "${userDto.firstName} ${userDto.lastName}",
                 fontSize = 18.sp,
                 fontFamily = FontFamily.SansSerif,
                 modifier = Modifier
@@ -169,7 +173,6 @@ fun SingleItemCard(residenceDto: UserDto, navController: NavController) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchIcon(navController: NavController) {
     var searchQuery by remember { mutableStateOf("") }
@@ -178,7 +181,7 @@ fun SearchIcon(navController: NavController) {
         value = searchQuery,
         onValueChange = { searchQuery = it },
         leadingIcon = {
-            IconButton(onClick = { navController.navigate(MainNav.ChooseCheckup)} ) {
+            IconButton(onClick = { } ) {
                 Icon(
                     imageVector = Icons.Filled.Search,
                     contentDescription = "Search Icon",
@@ -212,14 +215,14 @@ fun SearchIcon(navController: NavController) {
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun FloatingIcon(navController: NavController) {
+fun FloatingIcon(navController: NavController, addressDto: AddressDto) {
     Column(
         modifier = Modifier
             .background(Color.Transparent),
         horizontalAlignment = Alignment.End
     ) {
         FloatingActionButton(
-            onClick = { navController.navigate(MainNav.CreateUser) },
+            onClick = { navController.navigate(MainNav.CreateUser(addressDto.id)) },
             containerColor = Color(0xFF6650a4),
             contentColor = Color(0xFFFFFFFF),
             shape = CircleShape,
