@@ -16,4 +16,10 @@ class UserCheckup : RealmObject {
     var dateOfCheckUp: RealmInstant = RealmInstant.now()
     var scheduleOfNextCheckUp: RealmInstant = RealmInstant.now()
     var checkup: Int = 1
+    var createdById: ObjectId? = null
+    var createdAt: RealmInstant = RealmInstant.now()
+    var lastUpdatedById: ObjectId? = null
+    var lastUpdatedAt: RealmInstant = RealmInstant.now()
+    var deletedById: ObjectId? = null
+    var deletedAt: RealmInstant? = null
 }
