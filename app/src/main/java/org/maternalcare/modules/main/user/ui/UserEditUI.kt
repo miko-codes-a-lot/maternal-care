@@ -28,7 +28,8 @@ fun UserEditUI(navController: NavController, userDto: UserDto, currentUser: User
             },
             navController = navController,
             includePassword = false,
-            isInitialOptionShow = false
+            isInitialOptionShow = false,
+            addressDto = null
         )
     } else {
         UserPreviewUI(
