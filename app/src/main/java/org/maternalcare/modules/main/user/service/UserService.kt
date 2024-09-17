@@ -9,6 +9,7 @@ import org.maternalcare.modules.main.user.model.entity.User
 import org.maternalcare.modules.main.user.model.entity.UserCheckup
 import org.maternalcare.modules.main.user.model.mapper.toDTO
 import org.maternalcare.modules.main.user.model.mapper.toEntity
+import org.mongodb.kbson.BsonObjectId.Companion.invoke
 import org.mongodb.kbson.ObjectId
 import javax.inject.Inject
 
@@ -57,8 +58,8 @@ class UserService @Inject constructor(private val realm: Realm) {
             }
     }
 
-    fun fetchOneCheckup(userCheckupId: String): UserCheckupDto {
-        return realm.query<UserCheckup>("_id == $0", ObjectId(userCheckupId))
+    fun fetchOneCheckup(checkupId: ObjectId): UserCheckupDto {
+        return realm.query<UserCheckup>("_id == $0", checkupId)
             .find()
             .first()
             .run {
@@ -66,10 +67,12 @@ class UserService @Inject constructor(private val realm: Realm) {
             }
     }
 
-    fun fetchAllCheckups(): List<UserCheckupDto> {
-        return realm.query<UserCheckup>()
+    fun fetchCheckupDetailByNumber(userId: String, checkupNumber: Int): UserCheckupDto? {
+        val userCheckup = realm.query<UserCheckup>("userId == $0 AND checkup == $1", userId, checkupNumber)
             .find()
-            .map { it.toDTO() }
+            .firstOrNull()
+
+        return userCheckup?.toDTO()
     }
 
     suspend fun saveProfilePicture(userId: String, imageUri: ByteArray?): Result<UserDto> {

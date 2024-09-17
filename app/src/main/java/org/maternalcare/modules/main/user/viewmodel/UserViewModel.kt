@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.service.UserService
+import org.maternalcare.shared.ext.toObjectId
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,12 +24,12 @@ class UserViewModel @Inject constructor(
         return this.userService.fetchOne(userId)
     }
 
-    fun fetchUserCheckupId(checkUpId: String): UserCheckupDto {
-        return this.userService.fetchOneCheckup(checkUpId)
+    fun fetchUserCheckup(checkUpId: String): UserCheckupDto {
+        return this.userService.fetchOneCheckup(checkUpId.toObjectId())
     }
 
-    fun fetchUserCheckUp(): List<UserCheckupDto> {
-        return this.userService.fetchAllCheckups()
+    fun fetchUserCheckupByNumber(userId: String, checkUpNumber: Int): UserCheckupDto? {
+        return userService.fetchCheckupDetailByNumber(userId, checkUpNumber)
     }
 
     suspend fun upsertCheckUp(checkupDto: UserCheckupDto): Result<UserCheckupDto> {
