@@ -74,7 +74,8 @@ fun ResidencesUI(navController: NavController, currentUser: UserDto, addressDto:
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
     val residences = residenceViewModel.fetchUsers(
         userId = currentUser.id.toObjectId(),
-        isSuperAdmin = currentUser.isSuperAdmin
+        isSuperAdmin = currentUser.isSuperAdmin,
+        addressName = addressDto.name,
     )
     Scaffold(
         floatingActionButton = {

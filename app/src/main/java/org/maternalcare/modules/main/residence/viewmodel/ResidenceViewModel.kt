@@ -26,8 +26,8 @@ class ResidenceViewModel @Inject constructor(
         return addressService.upsert(addressDto)
     }
 
-    fun fetchUsers(userId: ObjectId, isSuperAdmin: Boolean = false): List<UserDto> {
+    fun fetchUsers(userId: ObjectId, isSuperAdmin: Boolean = false, addressName: String): List<UserDto> {
         val id = if (!isSuperAdmin) userId else null
-        return userService.fetch(isResidence = true, userId = id)
+        return userService.fetch(isResidence = true, userId = id, addressName = addressName)
     }
 }
