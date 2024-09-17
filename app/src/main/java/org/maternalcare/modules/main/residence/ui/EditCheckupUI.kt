@@ -285,7 +285,7 @@ fun EditDatePickerField(
 
                 calendar.set(year, month, dayOfMonth)
                 val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-                isoFormat.timeZone = TimeZone.getTimeZone("UTC")  // Optional if you want to enforce UTC timezone
+                isoFormat.timeZone = TimeZone.getTimeZone("UTC")
                 val dateISO = isoFormat.format(calendar.time)
                 onDateChange(dateISO)
             },

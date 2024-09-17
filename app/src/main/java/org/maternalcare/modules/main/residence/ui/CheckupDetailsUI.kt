@@ -34,11 +34,13 @@
     import org.maternalcare.modules.main.MainNav
     import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
     import org.maternalcare.modules.main.user.model.dto.UserDto
+    import java.text.SimpleDateFormat
     import java.time.LocalDate
     import java.time.format.DateTimeFormatter
     import java.time.format.DateTimeParseException
+    import java.util.Locale
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CheckupDetailsUI(
     navController: NavController,
@@ -72,9 +74,9 @@ fun CheckupDetailsUI(
         checkupDto.bloodPressure.toString(),
         checkupDto.height.toString(),
         checkupDto.weight.toString(),
-        checkupDto.dateOfCheckUp,
-        checkupDto.lastMenstrualPeriod,
-        checkupDto.scheduleOfNextCheckUp
+        formatDate(checkupDto.dateOfCheckUp),
+        formatDate(checkupDto.lastMenstrualPeriod),
+        formatDate(checkupDto.scheduleOfNextCheckUp)
     )
 
     Scaffold(
@@ -230,6 +232,24 @@ fun ParentFloatingIcon(
                 modifier = Modifier
                     .size(30.dp)
             )
+        }
+    }
+}
+
+fun formatDate(dateString: String): String {
+    return try {
+        val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val displayFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val date = isoFormatter.parse(dateString) ?: throw Exception("Date format error")
+        displayFormatter.format(date)
+    } catch (e: Exception) {
+        try {
+            val dateOnlyFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val displayFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val date = dateOnlyFormatter.parse(dateString) ?: throw Exception("Date format error")
+            displayFormatter.format(date)
+        } catch (e: Exception) {
+            "Invalid Date"
         }
     }
 }
