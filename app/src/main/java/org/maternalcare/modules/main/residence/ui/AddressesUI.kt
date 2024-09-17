@@ -25,10 +25,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
+import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
+import org.maternalcare.modules.main.user.model.dto.AddressDto
 
 @Preview
 @Composable
@@ -71,7 +74,7 @@ fun AddressesUI(navController: NavController, isArchive: Boolean = false) {
 }
 
 @Composable
-private fun ListButton (isShowPercent: Boolean = false, data: Map<String,Any>, onClick: () -> Unit,navController: NavController){
+private fun ListButton (isShowPercent: Boolean = false, addressDto: AddressDto, onClick: () -> Unit, navController: NavController){
     ElevatedButton(onClick = onClick,
         colors = ButtonDefaults.elevatedButtonColors(
             containerColor =  Color(0xFF6650a4),
@@ -87,7 +90,7 @@ private fun ListButton (isShowPercent: Boolean = false, data: Map<String,Any>, o
         )
     ) {
         Text(
-            text = "${data["name"]}",
+            text = addressDto.name,
             fontSize = 17.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
@@ -98,7 +101,7 @@ private fun ListButton (isShowPercent: Boolean = false, data: Map<String,Any>, o
             Spacer(modifier = Modifier.width(10.dp))
 
             Text(
-                text = "${data["percent"]} %",
+                text = "0%",
                 fontSize = 17.sp,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
@@ -110,17 +113,19 @@ private fun ListButton (isShowPercent: Boolean = false, data: Map<String,Any>, o
 
 @Composable
 fun ListAddress (navController: NavController, isShowPercent: Boolean) {
-    val listAddress =
-        listOf(
-            mapOf("name" to "Makati City", "percent" to 10),
-        )
+    val residenceViewModel: ResidenceViewModel = hiltViewModel()
+    val addresses = residenceViewModel.fetchAddresses()
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
-        items(listAddress) { address ->
-            ListButton(data = address, isShowPercent = isShowPercent, onClick = {
-                navController.navigate(MainNav.Residences(CheckupStatus.ALL.name))
+        items(addresses) { address ->
+            ListButton(addressDto = address, isShowPercent = isShowPercent, onClick = {
+                val residenceRoute = MainNav.Residences(
+                    status = CheckupStatus.ALL.name,
+                    addressId = address.id
+                )
+                navController.navigate(residenceRoute)
             }, navController = navController)
         }
     }
