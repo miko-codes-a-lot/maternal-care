@@ -297,10 +297,15 @@ fun EditDatePickerField(
 
     val displayFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
     val displayDate = try {
-        val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateValue)
-        date?.let { displayFormat.format(it) } ?: "Select Date"
-    } catch (e: Exception) {
-        "Select Date"
+        val dateISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateValue)
+        dateISO?.let { displayFormat.format(it) } ?: throw Exception("ISO Parse failed")
+    } catch (isoException: Exception) {
+        try {
+            val dateSimple = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateValue)
+            dateSimple?.let { displayFormat.format(it) } ?: "Select Date"
+        } catch (e: Exception) {
+            "Select Date"
+        }
     }
 
     Row(
