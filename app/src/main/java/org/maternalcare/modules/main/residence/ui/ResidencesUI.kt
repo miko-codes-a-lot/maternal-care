@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,7 +61,7 @@ import org.maternalcare.shared.ext.toObjectId
 
 @Preview(showSystemUi = true)
 @Composable
-fun ResidencePreview() {
+fun ResidencesPrev() {
     ResidencesUI(
         navController = rememberNavController(),
         currentUser = UserDto(),
@@ -77,9 +78,14 @@ fun ResidencesUI(navController: NavController, currentUser: UserDto, addressDto:
         isSuperAdmin = currentUser.isSuperAdmin,
         addressName = addressDto.name,
     )
+
+    val isShowFloatingIcon = rememberSaveable { mutableStateOf( !currentUser.isSuperAdmin)}
+
     Scaffold(
         floatingActionButton = {
-            FloatingIcon(navController, addressDto)
+            if(isShowFloatingIcon.value) {
+                FloatingIcon(navController, addressDto)
+            }
         }
     ) {
         Column(
