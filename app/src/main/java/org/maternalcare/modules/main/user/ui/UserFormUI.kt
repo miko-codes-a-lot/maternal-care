@@ -21,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -573,7 +572,6 @@ fun SwitchButton(isActiveState: Boolean,  onCheckedChange: (Boolean) -> Unit, sc
 }
 
 @SuppressLint("RememberReturnType")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerField(
     label: String, dateValue: String,
@@ -754,9 +752,6 @@ fun validateForm(
                     hasError = true
                 } else if (name.any { it.isDigit() }) {
                     errors[label]?.value = "Cannot contain numbers"
-                    hasError = true
-                } else if (name.contains(" ")) {
-                    errors[label]?.value = "Cannot contain spaces"
                     hasError = true
                 } else if (!name.first().isUpperCase()) {
                     errors[label]?.value = "First letter uppercase"
