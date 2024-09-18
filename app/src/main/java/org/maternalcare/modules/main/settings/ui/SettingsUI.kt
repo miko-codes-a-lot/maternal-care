@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -178,6 +179,7 @@ fun UserDetails(navController: NavController, currentUser: UserDto) {
         currentUser.middleName,
         currentUser.lastName
     )
+    val isShowEditIcon = rememberSaveable { mutableStateOf( !currentUser.isResidence)}
     Row(
         modifier = Modifier,
         horizontalArrangement = Arrangement.Center,
@@ -194,24 +196,26 @@ fun UserDetails(navController: NavController, currentUser: UserDto) {
                 )
             }
         }
-        IconButton(
-            onClick = {
-                navController.navigate("${MainNav.EditSettings}/fullName")
-            },
-            modifier = Modifier
-                .size(30.dp)
-                .padding(bottom = 3.dp)
-                .clip(CircleShape),
-            colors = IconButtonDefaults.iconButtonColors(Color(0xFFFFFFFF)),
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.editicon),
-                contentDescription = "Edit Details",
+        if(isShowEditIcon.value){
+            IconButton(
+                onClick = {
+                    navController.navigate("${MainNav.EditSettings}/fullName")
+                },
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(5.dp),
-                tint = Color(0xFF6650a4)
-            )
+                    .size(30.dp)
+                    .padding(bottom = 3.dp)
+                    .clip(CircleShape),
+                colors = IconButtonDefaults.iconButtonColors(Color(0xFFFFFFFF)),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.editicon),
+                    contentDescription = "Edit Details",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(5.dp),
+                    tint = Color(0xFF6650a4)
+                )
+            }
         }
     }
 }
