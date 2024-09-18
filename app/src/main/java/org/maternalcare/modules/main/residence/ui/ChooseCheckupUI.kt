@@ -2,7 +2,10 @@ package org.maternalcare.modules.main.residence.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,13 +13,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -55,16 +65,28 @@ fun ChooseCheckupUI(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.care),
-                contentDescription = "Login Image",
-                modifier = Modifier.size(110.dp)
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = "No. Of Check-up", fontSize = 23.sp,
-                fontFamily = FontFamily.SansSerif
-            )
+            val isShowImage = rememberSaveable { mutableStateOf( currentUser.isSuperAdmin || currentUser.isAdmin) }
+
+            if(isShowImage.value){
+                ProfileUsers(navController, userDto, currentUser)
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = userDto.firstName +" "+ userDto.middleName +" "+  userDto.lastName,
+                    fontSize = 23.sp,
+                    fontFamily = FontFamily.SansSerif
+                )
+            }else{
+                Image(
+                    painter = painterResource(id = R.drawable.care),
+                    contentDescription = "Login Image",
+                    modifier = Modifier.size(110.dp)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "No. Of Check-up", fontSize = 23.sp,
+                    fontFamily = FontFamily.SansSerif
+                )
+            }
             CheckUpNavigationButton(navController, userDto)
         }
     }
@@ -119,4 +141,54 @@ fun CheckUpNavigationButton(
             ButtonContainer(onClick = checkup.action, text = checkup.text)
         }
     }
+}
+
+
+@Composable
+fun ProfileUsers (navController: NavController, userDto: UserDto, currentUser: UserDto ){
+    Box(
+        Modifier.height(120.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(120.dp)
+                .clip(CircleShape)
+                .background(Color(0xFF6650a4))
+                .border(3.dp, Color(0xFF6650a4), CircleShape),
+            contentAlignment = Alignment.Center
+        ){
+            Icon(
+                painter = painterResource(id = R.drawable.person),
+                contentDescription = "Default placeholder",
+                modifier = Modifier
+                    .size(78.dp),
+                tint = Color.White
+            )
+        }
+        if(currentUser.isAdmin) {
+            IconButton(
+                onClick = {
+                    navController.navigate(MainNav.ResidencePreview(userId = userDto.id!!))
+                },
+                modifier = Modifier
+                    .size(30.dp)
+                    .padding(2.dp)
+                    .clip(CircleShape)
+                    .align(Alignment.BottomEnd),
+                colors = IconButtonDefaults.iconButtonColors(Color(0xFF6650a4)),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.visibilityon),
+                    contentDescription = "Select Profile",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .size(11.dp)
+                        .padding(4.dp),
+                    tint = Color.White
+                )
+            }
+        }
+    }
+
+
 }
