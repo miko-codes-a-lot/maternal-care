@@ -16,6 +16,7 @@ import org.maternalcare.modules.main.residence.ui.AddressesUI
 import org.maternalcare.modules.main.residence.ui.CheckupDetailsUI
 import org.maternalcare.modules.main.residence.ui.ChooseCheckupUI
 import org.maternalcare.modules.main.residence.ui.EditCheckupUI
+import org.maternalcare.modules.main.residence.ui.ResidencesPreviewUI
 import org.maternalcare.modules.main.residence.ui.ResidencesUI
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.settings.ui.EditSettingsUI
@@ -50,6 +51,14 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 ResidencesUI(navController, currentUser, addressDto)
             }
         }
+        composable<MainNav.ResidencePreview> {
+            val args = it.toRoute<MainNav.ChooseCheckup>()
+            val userViewModel: UserViewModel = hiltViewModel()
+            Guard(navController = navController) { currentUser ->
+                val userDto = userViewModel.fetchUser(args.userId)
+                ResidencesPreviewUI(navController = navController, currentUser, userDto)
+            }
+        }
         composable<MainNav.ChooseCheckup> {
             val args = it.toRoute<MainNav.ChooseCheckup>()
             val userViewModel: UserViewModel = hiltViewModel()
@@ -62,7 +71,6 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         composable<MainNav.CheckupDetails> {
             val args = it.toRoute<MainNav.CheckupDetails>()
             val userViewModel: UserViewModel = hiltViewModel()
-
             Guard(navController = navController) { currentUser ->
                 val checkupDto = userViewModel.fetchUserCheckupByNumber(args.userId, args.checkupNumber)
                 val userDto = userViewModel.fetchUser(userId = args.userId)
