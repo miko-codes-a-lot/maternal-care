@@ -53,7 +53,8 @@ fun ReminderCheckupUI (
                 containerColor = Color.White
             ),
             modifier = Modifier
-                .fillMaxWidth(0.95f)
+                .fillMaxWidth(0.90f)
+                .padding(16.dp)
                 .heightIn(min = 100.dp, max = 600.dp)
                 .border(
                     4.dp,
@@ -83,11 +84,11 @@ fun ReminderCheckupUI (
                             contentColor = Color.White
                         ),
                         modifier = Modifier
-                            .height(40.dp)
+                            .height(35.dp)
                     ) {
                         Text(
                             text = "Close",
-                            fontSize = 18.sp,
+                            fontSize = 17.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
                         )
@@ -113,7 +114,7 @@ fun CheckUpValueContainer () {
             .padding(16.dp)
             .fillMaxWidth()
             .wrapContentHeight(),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center
     ) {
         labelValueMap.forEach { (label, value) ->
             Text(
