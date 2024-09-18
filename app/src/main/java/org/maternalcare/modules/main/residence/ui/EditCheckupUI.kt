@@ -49,7 +49,6 @@ import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
-import org.maternalcare.shared.ui.ReminderAlertUI
 import org.maternalcare.shared.ui.ReminderCheckupUI
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -81,7 +80,8 @@ fun EditCheckupUIPreview() {
         navController = rememberNavController(),
         checkupNumber = 1,
         userDto = UserDto(),
-        checkupUser = mockCheckups
+        checkupUser = mockCheckups,
+        currentUser = UserDto()
     )
 }
 
@@ -91,6 +91,7 @@ fun EditCheckupUI(
     checkupNumber: Int,
     userDto: UserDto,
     checkupUser: UserCheckupDto? = null,
+    currentUser: UserDto
 ) {
     val listOfLabel = listOf(
         "Blood Pressure", "Height", "Weight",
@@ -112,7 +113,7 @@ fun EditCheckupUI(
             )
         }
     }
-    val isReminderCheckUpVisible = rememberSaveable{ mutableStateOf( userDto.isAdmin && checkupUser == null)}
+    val isReminderCheckUpVisible = rememberSaveable { mutableStateOf( currentUser.isAdmin && checkupUser == null) }
     Column(
         modifier = Modifier
             .background(Color.White)
