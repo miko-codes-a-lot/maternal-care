@@ -237,21 +237,23 @@ fun ParentFloatingIcon(
         }
     }
 }
-
-fun formatDate(dateString: String): String {
-    return try {
-        val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        val displayFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-        val date = isoFormatter.parse(dateString) ?: throw Exception("Date format error")
-        displayFormatter.format(date)
-    } catch (e: Exception) {
-        try {
-            val dateOnlyFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    fun formatDate(dateString: String?): String {
+        if (dateString.isNullOrBlank()) {
+            return "No Date Available"
+        }
+        return try {
+            val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
             val displayFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-            val date = dateOnlyFormatter.parse(dateString) ?: throw Exception("Date format error")
+            val date = isoFormatter.parse(dateString) ?: throw Exception("ISO format error")
             displayFormatter.format(date)
         } catch (e: Exception) {
-            "Invalid Date"
+            try {
+                val simpleFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val displayFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                val date = simpleFormatter.parse(dateString) ?: throw Exception("Simple date format error")
+                displayFormatter.format(date)
+            } catch (e: Exception) {
+                "Invalid Date"
+            }
         }
     }
-}
