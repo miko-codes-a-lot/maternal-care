@@ -72,7 +72,11 @@ fun ResidencePreview() {
 @Composable
 fun ResidencesUI(navController: NavController, currentUser: UserDto, addressDto: AddressDto) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
-    val residences = residenceViewModel.fetchUsers(currentUser.id.toObjectId())
+    val residences = residenceViewModel.fetchUsers(
+        userId = currentUser.id.toObjectId(),
+        isSuperAdmin = currentUser.isSuperAdmin,
+        addressName = addressDto.name,
+    )
     Scaffold(
         floatingActionButton = {
             FloatingIcon(navController, addressDto)
