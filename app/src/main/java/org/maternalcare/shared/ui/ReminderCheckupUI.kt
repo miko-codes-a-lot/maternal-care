@@ -27,17 +27,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
+import org.maternalcare.modules.main.user.model.dto.UserDto
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
+import java.time.temporal.ChronoUnit
+import java.util.Locale
 
 @Preview(showSystemUi = true)
 @Composable
 fun ReminderCheckupUIPreview() {
-    ReminderCheckupUI(onDismiss = {})
+    ReminderCheckupUI(onDismiss = {},checkup = UserCheckupDto(), userDto = UserDto())
 }
 
 @Composable
 fun ReminderCheckupUI (
     onDismiss : () -> Unit,
-    ){
+    checkup: UserCheckupDto,
+    userDto: UserDto
+){
     Dialog(
         onDismissRequest = {},
         properties = DialogProperties(
@@ -53,7 +65,7 @@ fun ReminderCheckupUI (
                 containerColor = Color.White
             ),
             modifier = Modifier
-                .fillMaxWidth(0.90f)
+                .fillMaxWidth(0.96f)
                 .padding(16.dp)
                 .heightIn(min = 100.dp, max = 600.dp)
                 .border(
@@ -70,9 +82,10 @@ fun ReminderCheckupUI (
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CheckUpValueContainer()
+                CheckUpValueContainer(checkup = checkup, userDto = userDto)
                 Row(
                     modifier = Modifier
+                        .padding(bottom = 10.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.Bottom
@@ -100,14 +113,26 @@ fun ReminderCheckupUI (
 }
 
 @Composable
-fun CheckUpValueContainer () {
+fun CheckUpValueContainer (userDto: UserDto, checkup: UserCheckupDto) {
+
+    val lmpString = checkup.lastMenstrualPeriod ?: ""
+    val lmp = stringToInstant(lmpString)
+    val aogWeeks = lmp?.let { calculateAgeOFGestation(it) } ?: 0L
+
+    val edd = lmp?.let { calculateExpectedDueDate(it) } ?: "Unknown"
+
+    val bmi = calculateBMI(checkup.weight, checkup.height)
+    val bmiCategory = determineBMICategory(bmi)
+    val bloodPressureStatus = assessBloodPressure(checkup.bloodPressure)
+
     val labelValueMap = mapOf(
-        "Name" to "Nicki Lopez Batumbak",
-        "Age Of Gestation" to "20 weeks",
-        "Nutritional Station" to "Good",
-        "Expected Due Date" to "2024-01-15",
-        "Next Check-up" to "2023-10-01",
-        "Types Of Vaccine" to "Hepatitis B"
+        "Name" to userDto.firstName +" "+ userDto.middleName +" "+ userDto.lastName,
+        "Blood Pressure" to bloodPressureStatus,
+        "Age Of Gestation" to "$aogWeeks weeks",
+        "Nutritional Station" to  "%s".format(bmiCategory),
+        "Expected Due Date" to edd,
+        "Next Check-up" to formatDate(checkup.scheduleOfNextCheckUp),
+        "Types Of Vaccine" to checkup.typeOfVaccine
     )
     Column(
         modifier = Modifier
@@ -120,11 +145,74 @@ fun CheckUpValueContainer () {
             Text(
                 text = "$label : $value",
                 fontSize = 16.sp,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Start,
                 color =Color(0xFF6650a4),
                 fontFamily = (FontFamily.SansSerif),
                 modifier = Modifier.padding(vertical = 8.dp)
             )
+        }
+    }
+}
+
+fun calculateExpectedDueDate(lastMenstrualPeriod: Instant): String {
+    val lmpDate = lastMenstrualPeriod.atZone(ZoneId.systemDefault()).toLocalDate()
+    val edd = lmpDate.plusDays(280)
+
+    val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
+    return edd.format(formatter)
+}
+
+fun calculateAgeOFGestation(lastMenstrualPeriod: Instant): Long {
+    val lmpDate = lastMenstrualPeriod.atZone(ZoneId.systemDefault()).toLocalDate()
+    val currentDate = LocalDate.now()
+    val daysBetween = ChronoUnit.DAYS.between(lmpDate, currentDate)
+    return if (daysBetween >= 0) daysBetween / 7 else 0L
+}
+
+fun stringToInstant(dateString: String): Instant? {
+    return try {
+        Instant.parse(dateString)
+    } catch (e: DateTimeParseException) {
+        null
+    }
+}
+
+fun calculateBMI(weight: Double, height: Double): Double {
+    return if (height > 0) weight / (height * height) else 0.0
+}
+
+fun determineBMICategory(bmi: Double): String = when {
+    bmi < 18.5 -> "Underweight"
+    bmi < 24.9 -> "Normal"
+    bmi < 29.9 -> "Overweight"
+    else -> "Obesity"
+}
+
+fun assessBloodPressure(bloodPressure: Double): String = when {
+    bloodPressure < 120 -> "Normal"
+    bloodPressure in 120.0..129.9 -> "Elevated"
+    bloodPressure >= 130 -> "High"
+    else -> "Unknown"
+}
+
+
+fun formatDate(dateString: String?): String {
+    if (dateString.isNullOrBlank()) {
+        return "No Date Available"
+    }
+    return try {
+        val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val displayFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val date = isoFormatter.parse(dateString) ?: throw Exception("ISO format error")
+        displayFormatter.format(date)
+    } catch (e: Exception) {
+        try {
+            val simpleFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val displayFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val date = simpleFormatter.parse(dateString) ?: throw Exception("Simple date format error")
+            displayFormatter.format(date)
+        } catch (e: Exception) {
+            "Invalid Date"
         }
     }
 }
