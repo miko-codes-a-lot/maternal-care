@@ -78,7 +78,8 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                     EditCheckupUI(
                         navController,
                         checkupNumber = args.checkupNumber,
-                        userDto = userDto
+                        userDto = userDto,
+                        currentUser = currentUser
                     )
                 }
             }
@@ -94,7 +95,8 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                     navController,
                     checkupNumber = args.checkupNumber,
                     userDto = userDto,
-                    checkupUser = checkup
+                    checkupUser = checkup,
+                    currentUser = currentUser
                 )
             }
         }
