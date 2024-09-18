@@ -52,7 +52,7 @@ fun MenuUIPreview() {
 
 @Composable
 fun MenuUI(navController: NavController, currentUser: UserDto) {
-    val isReminderAlertVisible = rememberSaveable { mutableStateOf(true) }
+    val isReminderAlertVisible = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -74,6 +74,7 @@ fun MenuUI(navController: NavController, currentUser: UserDto) {
                     .size(100.dp)
                     .align(Alignment.CenterHorizontally)
             )
+
             if (isReminderAlertVisible.value) {
                 ReminderAlertUI(
                     isReminderAlert = true,
@@ -93,8 +94,8 @@ fun MenuUI(navController: NavController, currentUser: UserDto) {
 fun UserPosition(userDto: UserDto) {
     val userDetails = when {
         userDto.isSuperAdmin -> listOf("Super Admin")
-        userDto.isAdmin -> listOf("Admin")
-        userDto.isResidence -> listOf("Residence")
+        userDto.isAdmin -> listOf("BHW")
+        userDto.isResidence -> listOf("Pregnant")
         else -> listOf("Unknown")
     }
     Row(
@@ -149,6 +150,9 @@ private fun Menu(navController: NavController, userDto: UserDto) {
 fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem> {
     return when {
         userDto.isSuperAdmin -> listOf(
+            MenuItem(text = "Pregnant Users") {
+                navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
+            },
             MenuItem(text = "Dashboard") {
                 navController.navigate(MainNav.Dashboard)
             },
@@ -163,7 +167,7 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
             }
         )
         userDto.isAdmin -> listOf(
-            MenuItem(text = "Profile") {
+            MenuItem(text = "Pregnant Users") {
                 navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
             },
             MenuItem(text = "Messages") {
@@ -183,8 +187,10 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
             MenuItem(text = "Profile") {
                 navController.navigate(MainNav.ChooseCheckup(userId = userDto.id!!))
             },
+            MenuItem(text = "Module") {
+            },
             MenuItem(text = "Messages") {
-                navController.navigate(MainNav.MessagesList)
+                navController.navigate(MainNav.Messages(userId = userDto.createdById!!))
             },
             MenuItem(text = "Reminders") {
                 navController.navigate(MainNav.ReminderLists)
