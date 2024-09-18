@@ -23,6 +23,8 @@
     import androidx.compose.material3.Scaffold
     import androidx.compose.material3.Text
     import androidx.compose.runtime.Composable
+    import androidx.compose.runtime.mutableStateOf
+    import androidx.compose.runtime.saveable.rememberSaveable
     import androidx.compose.ui.Alignment
     import androidx.compose.ui.Modifier
     import androidx.compose.ui.graphics.Color
@@ -34,6 +36,7 @@
     import org.maternalcare.modules.main.MainNav
     import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
     import org.maternalcare.modules.main.user.model.dto.UserDto
+    import org.maternalcare.shared.ui.ReminderCheckupUI
     import java.text.SimpleDateFormat
     import java.time.LocalDate
     import java.time.format.DateTimeFormatter
@@ -48,7 +51,17 @@ fun CheckupDetailsUI(
     checkupDto: UserCheckupDto,
     userDto: UserDto,
     checkupNumber: Int
-) {
+    ) {
+    val isShowReminderDialog = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin) }
+
+    if (isShowReminderDialog.value){
+        ReminderCheckupUI(
+            onDismiss = { isShowReminderDialog.value = false},
+            checkup = checkupDto,
+            userDto = userDto
+        )
+    }
+
     val fullName = listOfNotNull(
     userDto.firstName,
     userDto.middleName,
@@ -66,7 +79,7 @@ fun CheckupDetailsUI(
     )
 
     val checkupLabels = listOf(
-        "Blood Pressure", "Height", "Weight", "Date Of Checkup",
+        "Blood Pressure", "Height", "Weight", "Types Of Vaccine","Date Of Checkup",
         "Last Menstrual Period", "Schedule of Next Check-up"
     )
 
@@ -74,11 +87,11 @@ fun CheckupDetailsUI(
         checkupDto.bloodPressure.toString(),
         checkupDto.height.toString(),
         checkupDto.weight.toString(),
+        checkupDto.typeOfVaccine,
         formatDate(checkupDto.dateOfCheckUp),
         formatDate(checkupDto.lastMenstrualPeriod),
         formatDate(checkupDto.scheduleOfNextCheckUp)
     )
-
     Scaffold(
         floatingActionButton = {
             if (!currentUser.isSuperAdmin && !currentUser.isResidence) {
@@ -109,7 +122,7 @@ fun CheckupDetailsUI(
             LazyColumn(
                 modifier = Modifier
                     .background(Color.White)
-                    .height(300.dp)
+                    .height(350.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -226,7 +239,7 @@ fun ParentFloatingIcon(
             shape = CircleShape,
             modifier = Modifier
                 .size(72.dp)
-                .offset(x = (-7).dp, y = (-5).dp)
+                .offset(x = (-7).dp, y = (5).dp)
         ) {
             Icon(
                 imageVector = Icons.Filled.Edit,
@@ -237,23 +250,24 @@ fun ParentFloatingIcon(
         }
     }
 }
-    fun formatDate(dateString: String?): String {
-        if (dateString.isNullOrBlank()) {
-            return "No Date Available"
-        }
-        return try {
-            val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+
+fun formatDate(dateString: String?): String {
+    if (dateString.isNullOrBlank()) {
+        return "No Date Available"
+    }
+    return try {
+        val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val displayFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val date = isoFormatter.parse(dateString) ?: throw Exception("ISO format error")
+        displayFormatter.format(date)
+    } catch (e: Exception) {
+        try {
+            val simpleFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val displayFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-            val date = isoFormatter.parse(dateString) ?: throw Exception("ISO format error")
+            val date = simpleFormatter.parse(dateString) ?: throw Exception("Simple date format error")
             displayFormatter.format(date)
         } catch (e: Exception) {
-            try {
-                val simpleFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                val displayFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                val date = simpleFormatter.parse(dateString) ?: throw Exception("Simple date format error")
-                displayFormatter.format(date)
-            } catch (e: Exception) {
-                "Invalid Date"
-            }
+            "Invalid Date"
         }
     }
+}
