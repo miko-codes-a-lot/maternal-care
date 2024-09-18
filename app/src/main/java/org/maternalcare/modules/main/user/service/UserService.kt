@@ -14,13 +14,18 @@ import org.mongodb.kbson.ObjectId
 import javax.inject.Inject
 
 class UserService @Inject constructor(private val realm: Realm) {
-    fun fetch(isResidence: Boolean = false, userId: ObjectId? = null): List<UserDto> {
+    fun fetch(
+        isResidence: Boolean = false,
+        userId: ObjectId? = null,
+        addressName: String? = null,
+    ): List<UserDto> {
         val query = StringBuilder()
             .append("isResidence == $0")
 
         if (userId != null) query.append(" AND createdById == $1")
+        if (addressName != null) query.append(" AND address = $2")
 
-        return realm.query<User>(query.toString(), isResidence, userId)
+        return realm.query<User>(query.toString(), isResidence, userId, addressName)
             .find()
             .map { user -> user.toDTO() }
     }
