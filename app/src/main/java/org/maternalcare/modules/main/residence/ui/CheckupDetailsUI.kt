@@ -50,10 +50,10 @@ fun CheckupDetailsUI(
     checkupNumber: Int
 ) {
     val fullName = listOfNotNull(
-        userDto.firstName,
-        userDto.middleName,
-        userDto.lastName)
-        .joinToString(" ")
+    userDto.firstName,
+    userDto.middleName,
+    userDto.lastName)
+    .joinToString(" ")
     val userLabel = listOf(
         "Name", "Date of Birth", "Mobile Number", "Address",
     )
@@ -81,7 +81,9 @@ fun CheckupDetailsUI(
 
     Scaffold(
         floatingActionButton = {
-            ParentFloatingIcon(navController, userDto, checkupDto, checkupNumber)
+            if (!currentUser.isSuperAdmin && !currentUser.isResidence) {
+                ParentFloatingIcon(navController, userDto, checkupDto, checkupNumber)
+            }
         }
     ) {
         Column(
