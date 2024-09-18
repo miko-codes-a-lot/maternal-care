@@ -29,7 +29,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,7 +48,6 @@ import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
-import org.maternalcare.shared.ui.ReminderCheckupUI
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -94,9 +92,8 @@ fun EditCheckupUI(
     currentUser: UserDto
 ) {
     val listOfLabel = listOf(
-        "Blood Pressure", "Height", "Weight",
-        "Date of Check-up", "Last Menstrual Period",
-        "Next Check-up"
+        "Blood Pressure", "Height", "Weight", "Types of Vaccine",
+        "Date of Check-up", "Last Menstrual Period", "Next Check-up"
     )
     val statesValue = remember {
         listOfLabel.associateWith {
@@ -105,6 +102,7 @@ fun EditCheckupUI(
                     "Blood Pressure" -> checkupUser?.bloodPressure?.toString() ?: "0.0"
                     "Height" -> checkupUser?.height?.toString() ?: "0.0"
                     "Weight" -> checkupUser?.weight?.toString() ?: "0.0"
+                    "Types of Vaccine" -> checkupUser?.typeOfVaccine ?: ""
                     "Date of Check-up" -> checkupUser?.dateOfCheckUp ?: ""
                     "Last Menstrual Period" -> checkupUser?.lastMenstrualPeriod ?: ""
                     "Next Check-up" -> checkupUser?.scheduleOfNextCheckUp ?: ""
@@ -113,7 +111,6 @@ fun EditCheckupUI(
             )
         }
     }
-    val isReminderCheckUpVisible = rememberSaveable { mutableStateOf( currentUser.isAdmin && checkupUser == null) }
     Column(
         modifier = Modifier
             .background(Color.White)
@@ -122,12 +119,6 @@ fun EditCheckupUI(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (isReminderCheckUpVisible.value) {
-            ReminderCheckupUI(
-                onDismiss = { isReminderCheckUpVisible.value = false }
-            )
-        }
-
         ContainerValue(statesValue)
         Spacer(modifier = Modifier.height(8.dp))
         ButtonSaveEdit(
