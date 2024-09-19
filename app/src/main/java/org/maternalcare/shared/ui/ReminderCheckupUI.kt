@@ -65,7 +65,7 @@ fun ReminderCheckupUI (
                 containerColor = Color.White
             ),
             modifier = Modifier
-                .fillMaxWidth(0.90f)
+                .fillMaxWidth(0.95f)
                 .padding(16.dp)
                 .heightIn(min = 100.dp, max = 600.dp)
                 .border(
@@ -133,7 +133,7 @@ fun CheckUpValueContainer (userDto: UserDto, checkup: UserCheckupDto) {
         "Expected Due Date" to edd,
         "Next Check-up" to formatDate(checkup.scheduleOfNextCheckUp),
 //        "Type  Of Vaccine" to checkup.typeOfVaccine
-        "Type Of Vaccine" to "Tetanus toxoid"
+        "Recommended Type Of Vaccine" to "Tetanus toxoid"
     )
     Column(
         modifier = Modifier
