@@ -92,7 +92,8 @@ fun EditCheckupUI(
     currentUser: UserDto
 ) {
     val listOfLabel = listOf(
-        "Blood Pressure", "Height", "Weight", "Types of Vaccine",
+        "Blood Pressure", "Height", "Weight",
+//        "Types of Vaccine",
         "Date of Check-up", "Last Menstrual Period", "Next Check-up"
     )
     val statesValue = remember {
@@ -102,7 +103,7 @@ fun EditCheckupUI(
                     "Blood Pressure" -> checkupUser?.bloodPressure?.toString() ?: "0.0"
                     "Height" -> checkupUser?.height?.toString() ?: "0.0"
                     "Weight" -> checkupUser?.weight?.toString() ?: "0.0"
-                    "Types of Vaccine" -> checkupUser?.typeOfVaccine ?: ""
+//                    "Types of Vaccine" -> checkupUser?.typeOfVaccine ?: ""
                     "Date of Check-up" -> checkupUser?.dateOfCheckUp ?: ""
                     "Last Menstrual Period" -> checkupUser?.lastMenstrualPeriod ?: ""
                     "Next Check-up" -> checkupUser?.scheduleOfNextCheckUp ?: ""
