@@ -76,26 +76,26 @@ fun EditCheckupUIPreview() {
 
     EditCheckupUI(
         navController = rememberNavController(),
-        currentUser = mockUser,
         checkupNumber = 1,
         userDto = UserDto(),
-        checkupUser = mockCheckups
+        checkupUser = mockCheckups,
+        currentUser = UserDto()
     )
 }
 
 @Composable
 fun EditCheckupUI(
     navController: NavController,
-    currentUser: UserDto,
     checkupNumber: Int,
     userDto: UserDto,
     checkupUser: UserCheckupDto? = null,
+    currentUser: UserDto
 ) {
     val listOfLabel = listOf(
-        "Blood Pressure", "Height", "Weight", "Last Menstrual Period",
-        "Date of Check-up", "Next Check-up"
+        "Blood Pressure", "Height", "Weight",
+//        "Types of Vaccine",
+        "Date of Check-up", "Last Menstrual Period", "Next Check-up"
     )
-
     val statesValue = remember {
         listOfLabel.associateWith {
             mutableStateOf(
@@ -103,15 +103,15 @@ fun EditCheckupUI(
                     "Blood Pressure" -> checkupUser?.bloodPressure?.toString() ?: "0.0"
                     "Height" -> checkupUser?.height?.toString() ?: "0.0"
                     "Weight" -> checkupUser?.weight?.toString() ?: "0.0"
-                    "Last Menstrual Period" -> checkupUser?.lastMenstrualPeriod ?: ""
+//                    "Types of Vaccine" -> checkupUser?.typeOfVaccine ?: ""
                     "Date of Check-up" -> checkupUser?.dateOfCheckUp ?: ""
+                    "Last Menstrual Period" -> checkupUser?.lastMenstrualPeriod ?: ""
                     "Next Check-up" -> checkupUser?.scheduleOfNextCheckUp ?: ""
                     else -> ""
                 }
             )
         }
     }
-
     Column(
         modifier = Modifier
             .background(Color.White)
@@ -126,7 +126,8 @@ fun EditCheckupUI(
             userId = userDto.id!!,
             statesValue = statesValue,
             checkupNumber = checkupNumber,
-            navController = navController
+             navController = navController,
+            checkupUser = checkupUser ?: UserCheckupDto()
         )
     }
 }
@@ -159,7 +160,7 @@ fun TextFieldEditCheckUp(
     if (textFieldLabel == "Last Menstrual Period" ||
         textFieldLabel == "Date of Check-up" ||
         textFieldLabel == "Next Check-up"
-        ) {
+    ) {
         EditDatePickerField(
             label = textFieldLabel,
             dateValue = textFieldValue,
@@ -217,7 +218,8 @@ fun ButtonSaveEdit(
     userId: String,
     statesValue: Map<String, MutableState<String>>,
     navController: NavController,
-    checkupNumber: Int
+    checkupNumber: Int,
+    checkupUser: UserCheckupDto
 ) {
     val userViewModel: UserViewModel = hiltViewModel()
     val context = LocalContext.current
@@ -226,12 +228,14 @@ fun ButtonSaveEdit(
     Button(
         onClick = {
             val checkUpDto = UserCheckupDto(
+                id = checkupUser.id,
                 userId = userId,
                 bloodPressure = statesValue["Blood Pressure"]?.value?.toDoubleOrNull() ?: 0.0,
                 height = statesValue["Height"]?.value?.toDoubleOrNull() ?: 0.0,
                 weight = statesValue["Weight"]?.value?.toDoubleOrNull() ?: 0.0,
+                typeOfVaccine = statesValue ["Types of Vaccine"]?.value ?: "",
                 checkup = checkupNumber,
-                lastMenstrualPeriod = statesValue["Next Check-up"]?.value ?: "",
+                lastMenstrualPeriod = statesValue["Last Menstrual Period"]?.value ?: "",
                 dateOfCheckUp = statesValue["Date of Check-up"]?.value ?: "",
                 scheduleOfNextCheckUp = statesValue["Next Check-up"]?.value ?: ""
             )
@@ -240,14 +244,22 @@ fun ButtonSaveEdit(
                 try {
                     val result = userViewModel.upsertCheckUp(checkUpDto)
                     if (result.isSuccess) {
-                        navController.navigate(MainNav.ChooseCheckup(userId)) {
-                            popUpTo(MainNav.ChooseCheckup(userId)) { inclusive = true }
+                        Log.d("CheckUpSave", "Saving CheckUpDto: $checkUpDto")
+
+                        navController.navigate(MainNav.CheckupDetails(userId, checkupNumber)) {
+                            popUpTo(MainNav.CheckupDetails(userId, checkupNumber)) {
+                                inclusive = true
+                            }
                         }
                     } else {
                         Log.e("saving", "Error: ${result.exceptionOrNull()}")
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(context, "Error updating data: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Error updating data: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         },
@@ -277,12 +289,6 @@ fun EditDatePickerField(
         android.app.DatePickerDialog(
             context,
             { _, year, month, dayOfMonth ->
-
-                calendar.set(Calendar.HOUR_OF_DAY, 0)
-                calendar.set(Calendar.MINUTE, 0)
-                calendar.set(Calendar.SECOND, 0)
-                calendar.set(Calendar.MILLISECOND, 0)
-
                 calendar.set(year, month, dayOfMonth)
                 val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
                 isoFormat.timeZone = TimeZone.getTimeZone("UTC")

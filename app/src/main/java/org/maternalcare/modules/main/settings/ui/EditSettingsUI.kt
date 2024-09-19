@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -62,15 +61,181 @@ fun EditSettingsUI(navController: NavController, settingType: String, currentDto
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (settingType) {
+                "fullName" -> FullNameEdit(navController, currentDto)
                 "email" -> EmailEdit(navController, currentDto)
+                "mobileNumber" -> PhoneNumberEdit(navController, currentDto)
                 "password" -> PasswordEdit(navController, currentDto)
                 else -> Text(text = "Invalid setting type")
             }
         }
     }
 }
+@Composable
+fun FullNameEdit(navController: NavController, currentDto: UserDto) {
+    val viewModel: UserViewModel = hiltViewModel()
+    val coroutineScope = rememberCoroutineScope()
 
-@OptIn(ExperimentalMaterial3Api::class)
+    var editFullNameMode by remember { mutableStateOf(false) }
+    val fieldLabels = listOf("First Name", "Middle Name", "Last Name")
+
+    var firstNameError: String? by remember { mutableStateOf(null) }
+    var middleNameError: String? by remember { mutableStateOf(null) }
+    var lastNameError: String? by remember { mutableStateOf(null) }
+
+    val nameRegex = Regex("^[a-zA-Z\\s]*$")
+
+    val fieldStates = remember {
+        mutableMapOf(
+            "First Name" to mutableStateOf(currentDto.firstName ?: ""),
+            "Middle Name" to mutableStateOf(currentDto.middleName ?: ""),
+            "Last Name" to mutableStateOf(currentDto.lastName ?: "")
+        )
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .width(280.dp)
+        ) {
+             if (editFullNameMode) {
+                Column {
+                    fieldLabels.forEach { label ->
+                        val isFieldError = when (label) {
+                            "First Name" -> firstNameError != null
+                            "Last Name" -> lastNameError != null
+                            else -> false
+                        }
+                        val errorText = when (label) {
+                            "First Name" -> firstNameError
+                            "Middle Name" -> middleNameError
+                            "Last Name" -> lastNameError
+                            else -> null
+                        }
+                        OutlinedTextField(
+                            value = fieldStates[label]?.value ?: "",
+                            onValueChange = { newValue ->
+                                fieldStates[label]?.value = newValue
+                                when (label) {
+                                    "First Name" -> firstNameError = if (newValue.matches(nameRegex)) null else "No numbers allowed"
+                                    "Middle Name" -> middleNameError = if (newValue.isEmpty() || newValue.matches(nameRegex)) null else "No numbers allowed"
+                                    "Last Name" -> lastNameError = if (newValue.matches(nameRegex)) null else "No numbers allowed"
+                                }
+                            },
+                            label = {
+                                Text(
+                                    text = label,
+                                    fontFamily = FontFamily.SansSerif,
+                                    color = if (isFieldError) Color.Red else Color(0xFF6650a4),
+                                    fontSize = 14.sp
+                                )
+                            },
+                            isError = isFieldError,
+                            supportingText = {
+                                errorText?.let { Text(it, color = Color.Red) }
+                            },
+                            textStyle = TextStyle(
+                                color = Color(0xFF6650a4),
+                                fontSize = 14.sp,
+                                fontFamily = FontFamily.SansSerif
+                            ),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(0xFF6650a4),
+                                unfocusedBorderColor = Color(0xFF6650a4),
+                                cursorColor = Color.Gray
+                            ),
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .width(280.dp)
+                        .border(1.dp, color = Color(0xFF6650a4), shape = RoundedCornerShape(5.dp))
+                        .padding(8.dp)
+                ) {
+                    Column {
+                        Row(modifier = Modifier.padding(10.dp)) {
+                            Text(
+                                text = "Full Name : ",
+                                fontSize = 15.sp,
+                                fontFamily = FontFamily.SansSerif,
+                                color = Color(0xFF6650a4)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = currentDto.firstName +" "+ currentDto.middleName +" "+ currentDto.lastName,
+                                fontSize = 15.sp,
+                                fontFamily = FontFamily.SansSerif,
+                                color = Color(0xFF6650a4)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.padding(vertical = 7.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ){
+            Button(
+                onClick = {
+                    if (editFullNameMode) {
+                        currentDto.firstName = fieldStates["First Name"]?.value ?: ""
+                        currentDto.middleName = fieldStates["Middle Name"]?.value ?: ""
+                        currentDto.lastName = fieldStates["Last Name"]?.value ?: ""
+
+                        coroutineScope.launch {
+                            try {
+                                val result = viewModel.upsertUser(
+                                    currentDto.copy(
+                                        firstName = currentDto.firstName,
+                                        middleName = currentDto.middleName,
+                                        lastName = currentDto.lastName
+                                    ),
+                                    currentDto
+                                )
+                                if (result.isSuccess) {
+                                    editFullNameMode = false
+                                } else {
+                                    Log.e("FullNameEdit", "Failed to update fullname")
+                                }
+                            } catch (error: Exception) {
+                                Log.e("FullNameEdit", "Failed to update fullname: ${error.message}")
+                            }
+                        }
+                    }
+                    else {
+                        editFullNameMode = true
+                    }
+                },
+                modifier = Modifier
+                    .width(280.dp)
+                    .height(54.dp)
+                    .background(Color(0xFF6650a4))
+                    .border(1.dp, color = Color(0xFF6650a4), shape = RoundedCornerShape(5.dp)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = Color.White
+                ),
+                enabled = firstNameError == null && lastNameError == null
+            ) {
+                Text(
+                    text = if (!editFullNameMode) "Change" else "Save",
+                    fontSize = 14.sp,
+                    fontFamily = FontFamily.Serif
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun EmailEdit(navController: NavController, currentDto: UserDto) {
     val viewModel: UserViewModel = hiltViewModel()
@@ -78,6 +243,8 @@ fun EmailEdit(navController: NavController, currentDto: UserDto) {
 
     var editEmail by remember { mutableStateOf(currentDto.email ?: "") }
     var editEmailMode by remember { mutableStateOf(false) }
+    var emailError by remember { mutableStateOf<String?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -91,11 +258,16 @@ fun EmailEdit(navController: NavController, currentDto: UserDto) {
             if (editEmailMode) {
                 OutlinedTextField(
                     value = editEmail,
-                    onValueChange = { editEmail = it },
+                    onValueChange = { newValue ->
+                        editEmail = newValue
+                        emailError = if (newValue.isEmpty()) "Email cannot be empty" else null
+                    },
                     label = { Text(text = "Email",
                         fontFamily = FontFamily.SansSerif,
-                        color = Color(0xFF6650a4), fontSize = 14.sp)
+                        color = if (emailError != null) Color.Red else Color(0xFF6650a4),
+                        fontSize = 14.sp)
                     },
+                    isError = emailError != null,
                     textStyle = TextStyle(
                         color = Color(0xFF6650a4),
                         fontSize = 14.sp,
@@ -152,7 +324,7 @@ fun EmailEdit(navController: NavController, currentDto: UserDto) {
                             try {
                                 val result = viewModel.upsertUser(currentDto.copy(email = currentDto.email), currentDto)
                                 if (result.isSuccess) {
-                                    navController.navigate(MainNav.Settings)
+                                    editEmailMode = false
                                 } else {
                                     Log.e("EmailEdit", "Failed to update email")
                                 }
@@ -161,7 +333,9 @@ fun EmailEdit(navController: NavController, currentDto: UserDto) {
                             }
                         }
                     }
-                    editEmailMode = !editEmailMode
+                    else {
+                        editEmailMode = true
+                    }
                 },
                 modifier = Modifier
                     .width(280.dp)
@@ -171,7 +345,8 @@ fun EmailEdit(navController: NavController, currentDto: UserDto) {
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
                     contentColor = Color.White
-                )
+                ),
+                enabled = emailError == null
             ) {
                 Text(
                     text = if (!editEmailMode) "Change" else "Save",
@@ -182,7 +357,133 @@ fun EmailEdit(navController: NavController, currentDto: UserDto) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PhoneNumberEdit(navController: NavController, currentDto: UserDto) {
+    val viewModel: UserViewModel = hiltViewModel()
+    val coroutineScope = rememberCoroutineScope()
+
+    var editMobileNumber by remember { mutableStateOf(currentDto.mobileNumber ?: "") }
+    var editMobileNumberMode by remember { mutableStateOf(false) }
+    var phoneNumberError by remember { mutableStateOf<String?>(null) }
+
+    val phoneNumberRegex = Regex("^\\d{11}$")
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .width(280.dp)
+        ) {
+            if (editMobileNumberMode) {
+                OutlinedTextField(
+                    value = editMobileNumber,
+                    onValueChange = { newValue ->
+                        editMobileNumber = newValue
+                        phoneNumberError = if (newValue.matches(phoneNumberRegex)) {
+                            null
+                        } else {
+                            "Phone number must be 11 digits and contain only numbers"
+                        }
+                    },
+                    label = { Text(text = "Mobile Number",
+                        fontFamily = FontFamily.SansSerif,
+                        color = if (phoneNumberError != null) Color.Red else Color(0xFF6650a4),
+                        fontSize = 14.sp)
+                    },
+                    isError = phoneNumberError != null,
+                    textStyle = TextStyle(
+                        color = Color(0xFF6650a4),
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily.SansSerif,
+                    ),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF6650a4),
+                        unfocusedBorderColor = Color(0xFF6650a4),
+                        cursorColor = Color.Gray
+                    ),
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .width(280.dp)
+                        .border(
+                            1.dp,
+                            color = Color(0xFF6650a4),
+                            shape = RoundedCornerShape(5.dp)
+                        )
+                        .padding(8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(10.dp)
+                    )
+                    {
+                        Text(text = "Mobile Number :", fontSize = 15
+                            .sp,
+                            fontFamily = FontFamily.SansSerif,
+                            color = (Color(0xFF6650a4))
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = currentDto.mobileNumber ?: "No Mobile Number",
+                            fontSize = 15.sp,
+                            fontFamily = FontFamily.SansSerif,
+                            color = Color(0xFF6650a4)
+                        )
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.padding(vertical = 7.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ){
+            Button(
+                onClick = {
+                    if (editMobileNumberMode) {
+                        currentDto.mobileNumber = editMobileNumber
+                        coroutineScope.launch {
+                            try {
+                                val result = viewModel.upsertUser(currentDto.copy(mobileNumber = currentDto.mobileNumber), currentDto)
+                                if (result.isSuccess) {
+                                    editMobileNumberMode = false
+                                } else {
+                                    Log.e("MobileEdit", "Failed to update mobile")
+                                }
+                            } catch (error: Exception) {
+                                Log.e("MobileEdit", "Failed to update mobile: ${error.message}")
+                            }
+                        }
+                    }
+                    else{
+                        editMobileNumberMode = true
+                    }
+                },
+                modifier = Modifier
+                    .width(280.dp)
+                    .height(54.dp)
+                    .background(Color(0xFF6650a4))
+                    .border(1.dp, color = Color(0xFF6650a4), shape = RoundedCornerShape(5.dp)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = Color.White
+                ),
+                enabled = phoneNumberError == null
+            ) {
+                Text(
+                    text = if (!editMobileNumberMode) "Change" else "Save",
+                    fontSize = 14.sp, fontFamily = FontFamily.Serif
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun PasswordEdit(navController: NavController, currentDto: UserDto) {
     val viewModel: UserViewModel = hiltViewModel()

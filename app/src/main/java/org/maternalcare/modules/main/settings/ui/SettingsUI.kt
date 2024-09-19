@@ -14,11 +14,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,9 +29,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -159,7 +164,7 @@ fun Profile(
 
         Spacer(modifier = Modifier.padding(vertical = 15.dp))
 
-        UserDetails(currentUser)
+        UserDetails(navController, currentUser)
 
         Spacer(modifier = Modifier.padding(vertical = 5.dp))
 
@@ -168,15 +173,17 @@ fun Profile(
 }
 
 @Composable
-fun UserDetails(currentUser: UserDto) {
+fun UserDetails(navController: NavController, currentUser: UserDto) {
     val userDetails = listOf(
         currentUser.firstName,
         currentUser.middleName,
         currentUser.lastName
     )
+    val isShowEditIcon = rememberSaveable { mutableStateOf( !currentUser.isResidence)}
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+        modifier = Modifier,
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         userDetails.forEach { fullName ->
             if (fullName != null) {
@@ -189,6 +196,27 @@ fun UserDetails(currentUser: UserDto) {
                 )
             }
         }
+        if(isShowEditIcon.value){
+            IconButton(
+                onClick = {
+                    navController.navigate("${MainNav.EditSettings}/fullName")
+                },
+                modifier = Modifier
+                    .size(30.dp)
+                    .padding(bottom = 3.dp)
+                    .clip(CircleShape),
+                colors = IconButtonDefaults.iconButtonColors(Color(0xFFFFFFFF)),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.editicon),
+                    contentDescription = "Edit Details",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(5.dp),
+                    tint = Color(0xFF6650a4)
+                )
+            }
+        }
     }
 }
 
@@ -197,6 +225,9 @@ fun Setting(navController: NavController){
     val settingsMenu = listOf(
         SettingItem(text = "Email"){
             navController.navigate("${MainNav.EditSettings}/email")
+        },
+        SettingItem(text = "Mobile Number"){
+            navController.navigate("${MainNav.EditSettings}/mobileNumber")
         },
         SettingItem(text = "Password"){
             navController.navigate("${MainNav.EditSettings}/password")
@@ -230,7 +261,8 @@ fun SettingButton(text: String, onClick: () -> Unit) {
             Spacer(modifier = Modifier.weight(0.1f))
             Icon(painter = painterResource(id = R.drawable.editicon)
                 ,contentDescription = null,
-                modifier = Modifier.size(20.dp))
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }

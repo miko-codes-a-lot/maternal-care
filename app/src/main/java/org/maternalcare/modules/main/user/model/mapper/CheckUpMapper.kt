@@ -1,6 +1,5 @@
 package org.maternalcare.modules.main.user.model.mapper
 
-import android.util.Log
 import io.realm.kotlin.types.RealmInstant
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.entity.UserCheckup
@@ -11,14 +10,13 @@ import org.maternalcare.shared.ext.toRealmInstant
 import org.maternalcare.shared.ext.toRealmInstantNullable
 
 fun UserCheckup.toDTO(): UserCheckupDto {
-    Log.d("UserCheckupMapper", "Mapping UserCheckup to DTO for ID: ${this._id}")
-
     return UserCheckupDto(
         id = _id.toHexString(),
         userId = userId,
         bloodPressure = bloodPressure,
         height = height,
         weight = weight,
+        typeOfVaccine = typeOfVaccine,
         lastMenstrualPeriod = lastMenstrualPeriod.toInstantString(),
         dateOfCheckUp = dateOfCheckUp.toInstantString(),
         scheduleOfNextCheckUp = scheduleOfNextCheckUp.toInstantString(),
@@ -40,6 +38,7 @@ fun UserCheckupDto.toEntity(): UserCheckup {
         bloodPressure = checkUpDto.bloodPressure
         height = checkUpDto.height
         weight = checkUpDto.weight
+        typeOfVaccine = checkUpDto.typeOfVaccine
         lastMenstrualPeriod = checkUpDto.lastMenstrualPeriod.toRealmInstant()
         dateOfCheckUp = checkUpDto.dateOfCheckUp.toRealmInstant()
         scheduleOfNextCheckUp = checkUpDto.scheduleOfNextCheckUp.toRealmInstant()

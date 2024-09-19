@@ -21,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -154,6 +153,7 @@ fun UserForm(
             currentUser = currentUser,
             statesValue = statesValue,
             chosenOption = selectedOption,
+            addressDto = addressDto,
             includePassword = includePassword,
             radioErrorMsg = radioErrorMessage,
             onSelect = { option ->
@@ -210,6 +210,7 @@ fun ContainerLabelValue(
     includePassword: Boolean,
     radioErrorMsg: String,
     onSelect: (option: String) -> Unit,
+    addressDto: AddressDto?,
 ) {
     val firstNameKey = "First Name"
     val firstName = statesValue[firstNameKey]
@@ -267,6 +268,7 @@ fun ContainerLabelValue(
         textFieldLabel = addressKey,
         textFieldValue = address?.value ?: "",
         onValueChange = { newValue -> address?.value = newValue },
+        isDisable = addressDto != null,
         isError = errors[addressKey]?.value?.isNotEmpty() == true,
         onErrorChange = { hasError ->
             errors[addressKey]?.value = if (hasError) "This field is required" else ""
@@ -431,6 +433,7 @@ fun TextFieldContainer(
     onValueChange: (String) -> Unit,
     isError: Boolean,
     onErrorChange: (Boolean) -> Unit,
+    isDisable: Boolean = false,
     errorMessage: String = ""
 ) {
     var isPasswordField = textFieldLabel == "Password"
@@ -447,37 +450,27 @@ fun TextFieldContainer(
         )
     }
 
-    if (textFieldLabel == "Date Of Birth") {
-
-        DatePickerField(
-            label = textFieldLabel,
-            dateValue = textFieldValue,
-            onDateChange = onValueChange,
-            isError = isError,
-            onErrorChange = onErrorChange,
-            errorMessage = "Invalid date format"
-        )
-    } else {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = textFieldLabel,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.SansSerif,
-                    fontSize = 17.sp
-                )
-                Spacer(modifier = Modifier.width(5.dp))
-                Text(" : ", fontWeight = FontWeight.Bold)
-                TextField(
-                    value = textFieldValue,
-                    onValueChange = {
+            Text(
+                text = textFieldLabel,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.SansSerif,
+                fontSize = 17.sp
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(" : ", fontWeight = FontWeight.Bold)
+            TextField(
+                value = textFieldValue,
+                onValueChange = {
+                    if (!isDisable) { // Prevent value change when disabled
                         if (isPhoneNumberField) {
                             if (it.all { char -> char.isDigit() }) {
                                 onValueChange(it)
@@ -489,44 +482,45 @@ fun TextFieldContainer(
                             onValueChange(it)
                             onErrorChange(it.isEmpty())
                         }
-                    },
-                    placeholder = if (!isError) {
-                        { Text("Enter value", color = Color.Black) }
-                    } else null,
-                    label = if (isError) {
-                        {
-                            Text(
-                                text = errorMessage,
-                                color = Color.Red,
-                                fontSize = 12.sp,
-                                modifier = Modifier.offset(y = (-3).dp)
+                    }
+                },
+                placeholder = if (!isError) {
+                    { Text("Enter value", color = Color.Black) }
+                } else null,
+                label = if (isError) {
+                    {
+                        Text(
+                            text = errorMessage,
+                            color = Color.Red,
+                            fontSize = 12.sp,
+                            modifier = Modifier.offset(y = (-3).dp)
+                        )
+                    }
+                } else null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                visualTransformation = if (isPasswordField && !isPasswordVisible) {
+                    PasswordVisualTransformation()
+                } else {
+                    VisualTransformation.None
+                },
+                trailingIcon = {
+                    if (isPasswordField) {
+                        IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                            Icon(
+                                painter = painterResource(
+                                    id = if (isPasswordVisible) R.drawable.visibilityon else R.drawable.visibility_off
+                                ),
+                                contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
                             )
                         }
-                    } else null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    visualTransformation = if (isPasswordField && !isPasswordVisible) {
-                        PasswordVisualTransformation()
-                    } else {
-                        VisualTransformation.None
-                    },
-                    trailingIcon = {
-                        if (isPasswordField) {
-                            IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
-                                Icon(
-                                    painter = painterResource(
-                                        id = if (isPasswordVisible) R.drawable.visibilityon else R.drawable.visibility_off
-                                    ),
-                                    contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
-                                )
-                            }
-                        }
-                    },
-                    colors = colors,
-                    isError = isError
-                )
-            }
+                    }
+                },
+                colors = colors,
+                isError = isError,
+                enabled = !isDisable
+            )
         }
     }
 }
@@ -578,7 +572,6 @@ fun SwitchButton(isActiveState: Boolean,  onCheckedChange: (Boolean) -> Unit, sc
 }
 
 @SuppressLint("RememberReturnType")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerField(
     label: String, dateValue: String,
@@ -759,9 +752,6 @@ fun validateForm(
                     hasError = true
                 } else if (name.any { it.isDigit() }) {
                     errors[label]?.value = "Cannot contain numbers"
-                    hasError = true
-                } else if (name.contains(" ")) {
-                    errors[label]?.value = "Cannot contain spaces"
                     hasError = true
                 } else if (!name.first().isUpperCase()) {
                     errors[label]?.value = "First letter uppercase"

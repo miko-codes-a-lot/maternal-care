@@ -1,46 +1,63 @@
-    package org.maternalcare.modules.main.residence.ui
+package org.maternalcare.modules.main.residence.ui
 
-    import android.annotation.SuppressLint
-    import androidx.compose.foundation.background
-    import androidx.compose.foundation.layout.Arrangement
-    import androidx.compose.foundation.layout.Column
-    import androidx.compose.foundation.layout.Row
-    import androidx.compose.foundation.layout.Spacer
-    import androidx.compose.foundation.layout.fillMaxSize
-    import androidx.compose.foundation.layout.fillMaxWidth
-    import androidx.compose.foundation.layout.height
-    import androidx.compose.foundation.layout.offset
-    import androidx.compose.foundation.layout.padding
-    import androidx.compose.foundation.layout.size
-    import androidx.compose.foundation.lazy.LazyColumn
-    import androidx.compose.foundation.lazy.items
-    import androidx.compose.foundation.shape.CircleShape
-    import androidx.compose.material.icons.Icons
-    import androidx.compose.material.icons.filled.Edit
-    import androidx.compose.material3.FloatingActionButton
-    import androidx.compose.material3.HorizontalDivider
-    import androidx.compose.material3.Icon
-    import androidx.compose.material3.Scaffold
-    import androidx.compose.material3.Text
-    import androidx.compose.runtime.Composable
-    import androidx.compose.ui.Alignment
-    import androidx.compose.ui.Modifier
-    import androidx.compose.ui.graphics.Color
-    import androidx.compose.ui.text.font.FontFamily
-    import androidx.compose.ui.text.font.FontWeight
-    import androidx.compose.ui.unit.dp
-    import androidx.compose.ui.unit.sp
-    import androidx.navigation.NavController
-    import org.maternalcare.modules.main.MainNav
-    import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
-    import org.maternalcare.modules.main.user.model.dto.UserDto
-    import java.text.SimpleDateFormat
-    import java.time.LocalDate
-    import java.time.format.DateTimeFormatter
-    import java.time.format.DateTimeParseException
-    import java.util.Locale
+import android.annotation.SuppressLint
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
+import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.shared.ui.ReminderCheckupUI
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
+import java.util.Locale
 
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Preview(showSystemUi = true)
+@Composable
+fun CheckupPrev() {
+    CheckupDetailsUI(
+        navController = rememberNavController(),
+        currentUser = UserDto(),
+        checkupDto = UserCheckupDto(),
+        userDto = UserDto(),
+        checkupNumber = 1,
+        )
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CheckupDetailsUI(
     navController: NavController,
@@ -48,12 +65,22 @@ fun CheckupDetailsUI(
     checkupDto: UserCheckupDto,
     userDto: UserDto,
     checkupNumber: Int
-) {
+    ) {
+    val isShowReminderDialog = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin) }
+
+    if (isShowReminderDialog.value){
+        ReminderCheckupUI(
+            onDismiss = { isShowReminderDialog.value = false},
+            checkup = checkupDto,
+            userDto = userDto
+        )
+    }
+
     val fullName = listOfNotNull(
-        userDto.firstName,
-        userDto.middleName,
-        userDto.lastName)
-        .joinToString(" ")
+    userDto.firstName,
+    userDto.middleName,
+    userDto.lastName)
+    .joinToString(" ")
     val userLabel = listOf(
         "Name", "Date of Birth", "Mobile Number", "Address",
     )
@@ -66,7 +93,9 @@ fun CheckupDetailsUI(
     )
 
     val checkupLabels = listOf(
-        "Blood Pressure", "Height", "Weight", "Date Of Checkup",
+        "Blood Pressure", "Height", "Weight",
+//        "Types Of Vaccine",
+        "Date Of Checkup",
         "Last Menstrual Period", "Schedule of Next Check-up"
     )
 
@@ -74,14 +103,14 @@ fun CheckupDetailsUI(
         checkupDto.bloodPressure.toString(),
         checkupDto.height.toString(),
         checkupDto.weight.toString(),
+//        checkupDto.typeOfVaccine,
         formatDate(checkupDto.dateOfCheckUp),
         formatDate(checkupDto.lastMenstrualPeriod),
         formatDate(checkupDto.scheduleOfNextCheckUp)
     )
-
     Scaffold(
         floatingActionButton = {
-            if (!currentUser.isSuperAdmin) {
+            if (!currentUser.isSuperAdmin && !currentUser.isResidence) {
                 ParentFloatingIcon(navController, userDto, checkupDto, checkupNumber)
             }
         }
@@ -97,7 +126,8 @@ fun CheckupDetailsUI(
             LazyColumn(
                 modifier = Modifier
                     .background(Color.White)
-                    .height(205.dp)
+//                    .height(205.dp)
+                    .height(190.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -109,7 +139,8 @@ fun CheckupDetailsUI(
             LazyColumn(
                 modifier = Modifier
                     .background(Color.White)
-                    .height(300.dp)
+//                    .height(350.dp)
+                    .height(338.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -226,7 +257,8 @@ fun ParentFloatingIcon(
             shape = CircleShape,
             modifier = Modifier
                 .size(72.dp)
-                .offset(x = (-7).dp, y = (-5).dp)
+//                .offset(x = (-7).dp, y = (5).dp)
+                .offset(x = (-7).dp, y = (2).dp)
         ) {
             Icon(
                 imageVector = Icons.Filled.Edit,
@@ -238,17 +270,20 @@ fun ParentFloatingIcon(
     }
 }
 
-fun formatDate(dateString: String): String {
+fun formatDate(dateString: String?): String {
+    if (dateString.isNullOrBlank()) {
+        return "No Date Available"
+    }
     return try {
         val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
         val displayFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-        val date = isoFormatter.parse(dateString) ?: throw Exception("Date format error")
+        val date = isoFormatter.parse(dateString) ?: throw Exception("ISO format error")
         displayFormatter.format(date)
     } catch (e: Exception) {
         try {
-            val dateOnlyFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val simpleFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val displayFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-            val date = dateOnlyFormatter.parse(dateString) ?: throw Exception("Date format error")
+            val date = simpleFormatter.parse(dateString) ?: throw Exception("Simple date format error")
             displayFormatter.format(date)
         } catch (e: Exception) {
             "Invalid Date"

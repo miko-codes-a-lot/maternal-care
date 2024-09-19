@@ -50,19 +50,9 @@ fun MenuUIPreview() {
     MenuUI(navController = rememberNavController(), currentUser = UserDto())
 }
 
-// notification remove to super admin
-// notification remove temporary to everyone
-// admin should see all residences but not modify them
-// alert address before 3 days (temporary every day latest)
-// Residence to Pregnant
-// BHW can update residence's middle name, last name
-// Pregnant settings change details - phone number, email, address (drop down)
-// add module from Wireframe
-
 @Composable
 fun MenuUI(navController: NavController, currentUser: UserDto) {
-    val isReminderAlertVisible = rememberSaveable { mutableStateOf(true) }
-
+//    val isReminderAlertVisible = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin) }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
@@ -83,12 +73,13 @@ fun MenuUI(navController: NavController, currentUser: UserDto) {
                     .size(100.dp)
                     .align(Alignment.CenterHorizontally)
             )
-            if (isReminderAlertVisible.value) {
-                ReminderAlertUI(
-                    isReminderAlert = true,
-                    onDismiss = { isReminderAlertVisible.value = false }
-                )
-            }
+//              hide reminder alert
+//            if (isReminderAlertVisible.value) {
+//                ReminderAlertUI(
+//                    isReminderAlert = true,
+//                    onDismiss = { isReminderAlertVisible.value = false }
+//                )
+//            }
 
             Spacer(modifier = Modifier.height(20.dp))
             UserPosition(userDto = currentUser)

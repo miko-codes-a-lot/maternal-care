@@ -12,6 +12,7 @@ class UserCheckup : RealmObject {
     var bloodPressure: Double = 0.0
     var height: Double = 0.0
     var weight: Double = 0.0
+    var typeOfVaccine: String = ""
     var lastMenstrualPeriod: RealmInstant = RealmInstant.now()
     var dateOfCheckUp: RealmInstant = RealmInstant.now()
     var scheduleOfNextCheckUp: RealmInstant = RealmInstant.now()
