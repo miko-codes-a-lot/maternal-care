@@ -52,8 +52,7 @@ fun MenuUIPreview() {
 
 @Composable
 fun MenuUI(navController: NavController, currentUser: UserDto) {
-    val isReminderAlertVisible = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin) }
-
+//    val isReminderAlertVisible = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin) }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
@@ -74,13 +73,13 @@ fun MenuUI(navController: NavController, currentUser: UserDto) {
                     .size(100.dp)
                     .align(Alignment.CenterHorizontally)
             )
-
-            if (isReminderAlertVisible.value) {
-                ReminderAlertUI(
-                    isReminderAlert = true,
-                    onDismiss = { isReminderAlertVisible.value = false }
-                )
-            }
+//              hide reminder alert
+//            if (isReminderAlertVisible.value) {
+//                ReminderAlertUI(
+//                    isReminderAlert = true,
+//                    onDismiss = { isReminderAlertVisible.value = false }
+//                )
+//            }
 
             Spacer(modifier = Modifier.height(20.dp))
             UserPosition(userDto = currentUser)
