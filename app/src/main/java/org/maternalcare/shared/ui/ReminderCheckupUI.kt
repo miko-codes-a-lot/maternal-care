@@ -167,7 +167,7 @@ fun calculateAgeOFGestation(lastMenstrualPeriod: Instant): Long {
     val lmpDate = lastMenstrualPeriod.atZone(ZoneId.systemDefault()).toLocalDate()
     val currentDate = LocalDate.now()
     val daysBetween = ChronoUnit.DAYS.between(lmpDate, currentDate)
-    return if (daysBetween >= 0) daysBetween / 7 else 0L
+    return if (daysBetween >= 0) (daysBetween / 7) else 0L
 }
 
 fun stringToInstant(dateString: String): Instant? {
@@ -184,7 +184,7 @@ fun calculateBMI(weight: Double, height: Double): Double {
 
 fun determineBMICategory(bmi: Double): String = when {
     bmi < 18.5 -> "Underweight"
-    bmi < 24.9 -> "Normal"
+    bmi < 24.99 -> "Normal"
     bmi < 29.9 -> "Overweight"
     else -> "Obesity"
 }
