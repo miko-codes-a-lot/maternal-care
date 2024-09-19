@@ -125,7 +125,8 @@ fun EditCheckupUI(
             userId = userDto.id!!,
             statesValue = statesValue,
             checkupNumber = checkupNumber,
-            navController = navController
+             navController = navController,
+            checkupUser = checkupUser ?: UserCheckupDto()
         )
     }
 }
@@ -158,7 +159,7 @@ fun TextFieldEditCheckUp(
     if (textFieldLabel == "Last Menstrual Period" ||
         textFieldLabel == "Date of Check-up" ||
         textFieldLabel == "Next Check-up"
-        ) {
+    ) {
         EditDatePickerField(
             label = textFieldLabel,
             dateValue = textFieldValue,
@@ -216,7 +217,8 @@ fun ButtonSaveEdit(
     userId: String,
     statesValue: Map<String, MutableState<String>>,
     navController: NavController,
-    checkupNumber: Int
+    checkupNumber: Int,
+    checkupUser: UserCheckupDto
 ) {
     val userViewModel: UserViewModel = hiltViewModel()
     val context = LocalContext.current
@@ -225,6 +227,7 @@ fun ButtonSaveEdit(
     Button(
         onClick = {
             val checkUpDto = UserCheckupDto(
+                id = checkupUser.id,
                 userId = userId,
                 bloodPressure = statesValue["Blood Pressure"]?.value?.toDoubleOrNull() ?: 0.0,
                 height = statesValue["Height"]?.value?.toDoubleOrNull() ?: 0.0,
