@@ -229,6 +229,7 @@ fun ButtonSaveEdit(
                 bloodPressure = statesValue["Blood Pressure"]?.value?.toDoubleOrNull() ?: 0.0,
                 height = statesValue["Height"]?.value?.toDoubleOrNull() ?: 0.0,
                 weight = statesValue["Weight"]?.value?.toDoubleOrNull() ?: 0.0,
+                typeOfVaccine = statesValue ["Types of Vaccine"]?.value ?: "",
                 checkup = checkupNumber,
                 lastMenstrualPeriod = statesValue["Last Menstrual Period"]?.value ?: "",
                 dateOfCheckUp = statesValue["Date of Check-up"]?.value ?: "",
