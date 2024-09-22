@@ -20,28 +20,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import org.maternalcare.modules.main.menu.ui.CheckUpDateContainer
 import org.maternalcare.modules.main.menu.ui.TextContainer
-
-@Preview(showSystemUi = true)
-@Composable
-fun ReminderAlertUIPreview() {
-    ReminderAlertUI(onDismiss = {})
-}
+import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
+import org.maternalcare.modules.main.user.model.dto.UserDto
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
-fun ReminderAlertUI (
+fun ReminderDates (
     onDismiss : () -> Unit,
-    listOfText: List<String> = listOf("Reminder","Your next check-up will be on."),
     isReminderAlert: Boolean = false,
-    isError: Boolean = false
+    isError: Boolean = false,
+    currentUser: UserDto,
+    checkupDto: UserCheckupDto
 ) {
     Dialog(
         onDismissRequest = {},
@@ -58,7 +56,7 @@ fun ReminderAlertUI (
                 containerColor = Color.White
             ),
             modifier = Modifier
-                .fillMaxWidth(0.95f)
+                .fillMaxWidth(0.89f)
                 .heightIn(min = 100.dp, max = 300.dp)
                 .border(
                     4.dp,
@@ -75,15 +73,28 @@ fun ReminderAlertUI (
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(10.dp))
-                listOfText.forEach { text ->
+
+                val displayText: List<String>? = when {
+                    currentUser.isResidence -> listOf(
+                        "Reminder", "Your next check-up will be on.")
+                    else -> null
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+                displayText?.forEach { text ->
                     TextContainer(text = text)
                 }
                 if (!isError) {
-                    CheckUpDateContainer()
+                    if(currentUser.isResidence) {
+                        CheckUpDateContainer(
+                            checkupDto = checkupDto,
+                            userDto = currentUser,
+                        )
+                    }
                 }
                 Row(
                     modifier = Modifier
-                        .padding(top = 15.dp)
+                        .padding(top = 15.dp, bottom = 10.dp )
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.Bottom
@@ -99,13 +110,69 @@ fun ReminderAlertUI (
                     ) {
                         Text(
                             text = "Close",
-                            fontSize = 15.sp,
+                            fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
                         )
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun CheckUpDateContainer(
+    checkupDto: UserCheckupDto,
+    userDto: UserDto,
+) {
+    val checkupMap: HashMap<Int, String> = when {
+        userDto.isResidence -> {
+            hashMapOf(1 to formatDates(checkupDto.dateOfCheckUp))
+        }
+        else -> hashMapOf()
+    }
+
+    Column (
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        checkupMap.forEach { (_, date) ->
+            Text(
+                text = " $date",
+                textAlign = TextAlign.Center,
+                fontSize = 16.sp,
+                color = Color(0xFF6650a4),
+                fontFamily = FontFamily.SansSerif
+            )
+        }
+    }
+}
+
+fun formatDates(dateString: String?): String {
+    if (dateString.isNullOrBlank()) {
+        return "No Date Available"
+    }
+
+    return try {
+        val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val date = isoFormatter.parse(dateString) ?: throw Exception("ISO format error")
+
+        val displayFormatter = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
+        displayFormatter.format(date)
+    } catch (e: Exception) {
+        try {
+            val simpleFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val date = simpleFormatter.parse(dateString) ?: throw Exception("Simple date format error")
+
+            val displayFormatter = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
+            displayFormatter.format(date)
+        } catch (e: Exception) {
+            "Invalid Date"
         }
     }
 }
