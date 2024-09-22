@@ -52,6 +52,7 @@ fun UserPreviewUI(
             "Middle Name" to (user.middleName ?: ""),
             "Last Name" to user.lastName,
             "Email" to (user.email ?: ""),
+            "Address" to (user.address ?: ""),
             "Mobile Number" to (user.mobileNumber ?: ""),
             "Date Of Birth" to dateFormatContainer(user.dateOfBirth),
             "User Type" to (if (user.isSuperAdmin) "SuperAdmin" else if (user.isAdmin) "Admin" else "Residence"),
