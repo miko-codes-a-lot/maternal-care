@@ -35,4 +35,12 @@ class UserViewModel @Inject constructor(
     suspend fun upsertCheckUp(checkupDto: UserCheckupDto): Result<UserCheckupDto> {
         return this.userService.upsertCheckUp(checkupDto)
     }
+
+    fun fetchCheckUpDetail(userId: String): UserCheckupDto? {
+        return userService.fetchCheckUpDetails(userId)
+    }
+
+    fun getGroupOfCheckupDate(): List<UserCheckupDto> {
+        return userService.getGroupOfCheckupDates()
+    }
 }
