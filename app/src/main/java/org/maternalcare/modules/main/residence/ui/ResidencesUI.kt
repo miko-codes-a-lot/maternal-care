@@ -76,6 +76,7 @@ fun ResidencesUI(
     currentUser: UserDto,
     addressDto: AddressDto?,
     dateOfCheckup: String? = null,
+    isArchive: Boolean = false,
 ) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
 
@@ -90,6 +91,7 @@ fun ResidencesUI(
                 userId = currentUser.id.toObjectId(),
                 isSuperAdmin = currentUser.isSuperAdmin,
                 addressName = addressDto?.name,
+                isArchive = isArchive,
             )
 
     val isShowFloatingIcon = rememberSaveable { mutableStateOf( !currentUser.isSuperAdmin)}
