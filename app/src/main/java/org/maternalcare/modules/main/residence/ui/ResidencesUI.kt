@@ -95,7 +95,7 @@ fun ResidencesUI(
                 isArchive = isArchive,
             )
 
-    val isShowFloatingIcon = rememberSaveable { mutableStateOf( !currentUser.isSuperAdmin)}
+    val isShowFloatingIcon = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin && !isArchive)}
 
     Scaffold(
         floatingActionButton = {
