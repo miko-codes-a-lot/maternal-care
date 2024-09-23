@@ -40,7 +40,7 @@ class UserViewModel @Inject constructor(
         return userService.fetchCheckUpDetails(userId)
     }
 
-    fun getGroupOfCheckupDate(): List<UserCheckupDto> {
-        return userService.getGroupOfCheckupDates()
+    fun getGroupOfCheckupDate(adminId: String): List<UserCheckupDto> {
+        return userService.getGroupOfCheckupDates(adminId.toObjectId())
     }
 }
