@@ -109,13 +109,20 @@ private fun RemindersButton (data: UserCheckupDto, onClick: () -> Unit, navContr
 @Composable
 fun ScheduleList (navController: NavController, currentUser: UserDto) {
     val reminderViewModel: ReminderViewModel = hiltViewModel()
-    val reminders = reminderViewModel.getGroupOfCheckupDate(currentUser.id!!)
+    val reminders =
+        if (currentUser.isAdmin)
+            reminderViewModel.getGroupOfCheckupDate(currentUser.id!!)
+        else
+            reminderViewModel.getMyUpcomingCheckup(currentUser.id!!)
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         items(reminders) { reminder ->
             RemindersButton(data = reminder, onClick = {
+                if (!currentUser.isAdmin) return@RemindersButton
+
                 val route = MainNav.Residences(
                     status = CheckupStatus.ALL.name,
                     dateOfCheckup = reminder.dateOfCheckUp
