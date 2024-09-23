@@ -71,19 +71,32 @@ fun ResidencesPrev() {
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ResidencesUI(navController: NavController, currentUser: UserDto, addressDto: AddressDto) {
+fun ResidencesUI(
+    navController: NavController,
+    currentUser: UserDto,
+    addressDto: AddressDto?,
+    dateOfCheckup: String? = null,
+) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
-    val residences = residenceViewModel.fetchUsers(
-        userId = currentUser.id.toObjectId(),
-        isSuperAdmin = currentUser.isSuperAdmin,
-        addressName = addressDto.name,
-    )
+
+    val residences =
+        if (dateOfCheckup != null)
+            residenceViewModel.fetchUsersByCheckup(
+                userId = currentUser.id.toObjectId(),
+                dateOfCheckup = dateOfCheckup
+            )
+        else
+            residenceViewModel.fetchUsers(
+                userId = currentUser.id.toObjectId(),
+                isSuperAdmin = currentUser.isSuperAdmin,
+                addressName = addressDto?.name,
+            )
 
     val isShowFloatingIcon = rememberSaveable { mutableStateOf( !currentUser.isSuperAdmin)}
 
     Scaffold(
         floatingActionButton = {
-            if(isShowFloatingIcon.value) {
+            if (isShowFloatingIcon.value && addressDto != null) {
                 FloatingIcon(navController, addressDto)
             }
         }
