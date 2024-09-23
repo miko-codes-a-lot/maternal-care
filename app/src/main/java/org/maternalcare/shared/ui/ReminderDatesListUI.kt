@@ -102,7 +102,6 @@ fun ReminderCheckupListUI (
                         .padding(16.dp)
                         .fillMaxWidth()
                         .heightIn(min = 120.dp, max = 210.dp),
-//                        .height(200.dp),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
