@@ -109,8 +109,8 @@ class UserService @Inject constructor(private val realm: Realm) {
             ?.run { toDTO() }
     }
 
-    fun getGroupOfCheckupDates(): List<UserCheckupDto> {
-        return realm.query<UserCheckup>()
+    fun getGroupOfCheckupDates(adminId: ObjectId): List<UserCheckupDto> {
+        return realm.query<UserCheckup>("createdById == $0", adminId)
             .distinct("userId")
             .sort("scheduleOfNextCheckUp", Sort.DESCENDING)
             .find()
