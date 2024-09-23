@@ -19,16 +19,18 @@ import javax.inject.Inject
 class UserService @Inject constructor(private val realm: Realm) {
     fun fetch(
         isResidence: Boolean = false,
+        isArchive: Boolean = false,
         userId: ObjectId? = null,
         addressName: String? = null,
     ): List<UserDto> {
         val query = StringBuilder()
             .append("isResidence == $0")
+            .append(" AND isArchive == $1")
 
-        if (userId != null) query.append(" AND createdById == $1")
-        if (addressName != null) query.append(" AND address = $2")
+        if (userId != null) query.append(" AND createdById == $2")
+        if (addressName != null) query.append(" AND address = $3")
 
-        return realm.query<User>(query.toString(), isResidence, userId, addressName)
+        return realm.query<User>(query.toString(), isResidence, isArchive, userId, addressName)
             .find()
             .map { user -> user.toDTO() }
     }
@@ -44,6 +46,7 @@ class UserService @Inject constructor(private val realm: Realm) {
         val query = StringBuilder()
             .append("createdById == $0")
             .append(" AND dateOfCheckUp >= $1 AND dateOfCheckUp <= $2")
+            .append(" AND isArchive == false")
 
         val checkups = realm.query<UserCheckup>(query.toString(), userId, startRealmInstant, endRealmInstant)
             .find()
@@ -140,7 +143,7 @@ class UserService @Inject constructor(private val realm: Realm) {
     }
 
     fun getGroupOfCheckupDates(adminId: ObjectId): List<UserCheckupDto> {
-        return realm.query<UserCheckup>("createdById == $0", adminId)
+        return realm.query<UserCheckup>("createdById == $0 AND isArchive == false", adminId)
             .distinct("dateOfCheckUp")
             .sort("dateOfCheckUp", Sort.ASCENDING)
             .find()
