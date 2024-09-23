@@ -24,21 +24,29 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.reminder.viewmodel.ReminderViewModel
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
+import org.maternalcare.modules.main.user.model.dto.UserDto
 
 @Preview(showSystemUi = true)
 @Composable
 fun ReminderListUIPreview() {
-    ReminderListUI(navController = rememberNavController())
+    ReminderListUI(
+        navController = rememberNavController(),
+        currentUser = UserDto(isAdmin = true)
+    )
 }
 
 @Composable
-fun ReminderListUI(navController: NavController) {
+fun ReminderListUI(
+    navController: NavController,
+    currentUser: UserDto
+) {
     Column(
         modifier = Modifier
             .height(715.dp)
@@ -67,13 +75,13 @@ fun ReminderListUI(navController: NavController) {
                 color = Color(0xFF6650a4)
             )
             Spacer(modifier = Modifier.height(10.dp))
-            ScheduleList(navController)
+            ScheduleList(navController, currentUser)
         }
     }
 }
 
 @Composable
-private fun RemindersButton (data: Map<String,Any>, onClick: () -> Unit,navController: NavController){
+private fun RemindersButton (data: UserCheckupDto, onClick: () -> Unit,navController: NavController){
     ElevatedButton(onClick = onClick,
         colors = ButtonDefaults.elevatedButtonColors(
             containerColor =  Color(0xFF6650a4),
@@ -89,7 +97,7 @@ private fun RemindersButton (data: Map<String,Any>, onClick: () -> Unit,navContr
         )
     ) {
         Text(
-            text = "${data["dates"]}",
+            text = data.dateOfCheckUp,
             fontSize = 17.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
@@ -99,27 +107,15 @@ private fun RemindersButton (data: Map<String,Any>, onClick: () -> Unit,navContr
 }
 
 @Composable
-fun ScheduleList (navController: NavController) {
-
-    val formatter = DateTimeFormatter.ofPattern("MMMM-dd-yyyy")
-
-    val listAddress = listOf(
-        mapOf("dates" to LocalDate.of(2024, 8, 24).format(formatter)),
-        mapOf("dates" to LocalDate.of(2024, 3, 15).format(formatter)),
-        mapOf("dates" to LocalDate.of(2024, 10, 5).format(formatter)),
-        mapOf("dates" to LocalDate.of(2024, 8, 24).format(formatter)),
-        mapOf("dates" to LocalDate.of(2024, 8, 24).format(formatter)),
-        mapOf("dates" to LocalDate.of(2024, 8, 24).format(formatter)),
-        mapOf("dates" to LocalDate.of(2024, 8, 24).format(formatter)),
-        mapOf("dates" to LocalDate.of(2024, 8, 24).format(formatter)),
-        mapOf("dates" to LocalDate.of(2024, 8, 24).format(formatter)),
-        )
+fun ScheduleList (navController: NavController, currentUser: UserDto) {
+    val reminderViewModel: ReminderViewModel = hiltViewModel()
+    val reminders = reminderViewModel.getGroupOfCheckupDate(currentUser.id!!)
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
-        items(listAddress) { address ->
-            RemindersButton(data = address, onClick = {
+        items(reminders) { reminder ->
+            RemindersButton(data = reminder, onClick = {
                 navController.navigate(MainNav.Residences(CheckupStatus.ALL.name))
             }, navController = navController)
         }
