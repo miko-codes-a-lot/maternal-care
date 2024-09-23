@@ -11,7 +11,12 @@ object MainNav {
     data class Addresses(val status: String, var isArchive: Boolean = false)
 
     @Serializable
-    data class Residences(val status: String, var isArchive: Boolean = false, var addressId: String? = null)
+    data class Residences(
+        val status: String,
+        var isArchive: Boolean = false,
+        var addressId: String? = null,
+        var dateOfCheckup: String? = null
+    )
 
     @Serializable
     data class ResidencePreview(val userId: String)
