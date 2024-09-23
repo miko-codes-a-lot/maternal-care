@@ -84,6 +84,7 @@ fun ResidencesUI(
         if (dateOfCheckup != null)
             residenceViewModel.fetchUsersByCheckup(
                 userId = currentUser.id.toObjectId(),
+                isSuperAdmin = currentUser.isSuperAdmin,
                 dateOfCheckup = dateOfCheckup
             )
         else

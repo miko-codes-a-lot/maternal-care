@@ -38,8 +38,10 @@ class ResidenceViewModel @Inject constructor(
 
     fun fetchUsersByCheckup(
         userId: ObjectId,
+        isSuperAdmin: Boolean = false,
         dateOfCheckup: String
     ): List<UserDto> {
-        return userService.fetchByCheckup(userId = userId, dateOfCheckup = dateOfCheckup)
+        val id = if (!isSuperAdmin) userId else null
+        return userService.fetchByCheckup(userId = id, dateOfCheckup = dateOfCheckup)
     }
 }

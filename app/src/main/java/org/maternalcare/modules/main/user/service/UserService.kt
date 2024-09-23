@@ -35,7 +35,7 @@ class UserService @Inject constructor(private val realm: Realm) {
             .map { user -> user.toDTO() }
     }
 
-    fun fetchByCheckup(userId: ObjectId, dateOfCheckup: String): List<UserDto> {
+    fun fetchByCheckup(userId: ObjectId?, dateOfCheckup: String): List<UserDto> {
         val date = LocalDate.parse(dateOfCheckup.substring(0, 10))
         val startOfDay = date.atStartOfDay().toInstant(ZoneOffset.UTC)
         val endOfDay = date.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC).minusMillis(1)
@@ -44,9 +44,10 @@ class UserService @Inject constructor(private val realm: Realm) {
         val endRealmInstant = RealmInstant.from(endOfDay.epochSecond, endOfDay.nano)
 
         val query = StringBuilder()
-            .append("createdById == $0")
+            .append("isArchive == false")
             .append(" AND dateOfCheckUp >= $1 AND dateOfCheckUp <= $2")
-            .append(" AND isArchive == false")
+
+        if (userId != null) query.append(" AND createdById == $0")
 
         val checkups = realm.query<UserCheckup>(query.toString(), userId, startRealmInstant, endRealmInstant)
             .find()
