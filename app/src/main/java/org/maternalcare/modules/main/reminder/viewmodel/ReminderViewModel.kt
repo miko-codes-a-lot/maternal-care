@@ -14,4 +14,8 @@ class ReminderViewModel @Inject constructor(
     fun getGroupOfCheckupDate(adminId: String): List<UserCheckupDto> {
         return userService.getGroupOfCheckupDates(adminId = adminId.toObjectId())
     }
+
+    fun getMyUpcomingCheckup(residenceId: String): List<UserCheckupDto> {
+        return userService.getMyUpcomingCheckup(residenceId = residenceId)
+    }
 }
