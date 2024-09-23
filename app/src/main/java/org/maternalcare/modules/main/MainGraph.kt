@@ -56,6 +56,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                     navController = navController,
                     currentUser = currentUser,
                     addressDto = addressDto,
+                    isArchive = args.isArchive,
                     dateOfCheckup = args.dateOfCheckup,
                 )
             }
