@@ -21,6 +21,7 @@ import org.maternalcare.modules.main.residence.ui.ResidencesUI
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.settings.ui.EditSettingsUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
+import org.maternalcare.modules.main.user.model.dto.AddressDto
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.modules.main.user.ui.UserCreateUI
@@ -46,9 +47,17 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         composable<MainNav.Residences> {
             val args = it.toRoute<MainNav.Residences>()
             val residenceViewModel: ResidenceViewModel = hiltViewModel()
-            val addressDto = residenceViewModel.fetchOneAddress(args.addressId.toObjectId())
+            var addressDto: AddressDto? = null;
+            if (args.addressId != null) {
+                addressDto = residenceViewModel.fetchOneAddress(args.addressId.toObjectId())
+            }
             Guard(navController = navController) { currentUser ->
-                ResidencesUI(navController, currentUser, addressDto)
+                ResidencesUI(
+                    navController = navController,
+                    currentUser = currentUser,
+                    addressDto = addressDto,
+                    dateOfCheckup = args.dateOfCheckup,
+                )
             }
         }
         composable<MainNav.ResidencePreview> {
