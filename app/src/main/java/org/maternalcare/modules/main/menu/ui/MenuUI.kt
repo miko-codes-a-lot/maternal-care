@@ -87,7 +87,7 @@ fun MenuUI(
                         )
                     }
                 } else if (currentUser.isAdmin) {
-                    val checkupDates = userViewModel.getGroupOfCheckupDate()
+                    val checkupDates = userViewModel.getGroupOfCheckupDate(currentUser.id!!)
                     ReminderCheckupListUI(
                         onDismiss = {  isReminderAlertVisible.value = false  },
                         checkupDto = checkupDates
