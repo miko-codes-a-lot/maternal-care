@@ -51,7 +51,6 @@ fun MenuUI(
     navController: NavController,
     currentUser: UserDto,
 ) {
-
     val isReminderAlertVisible = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin) }
     Surface(
         modifier = Modifier.fillMaxSize(),
