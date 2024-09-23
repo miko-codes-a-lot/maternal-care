@@ -17,8 +17,9 @@ data class UserDto(
     var deletedById: String? = null,
     var deletedAt: String? = null,
     var isActive: Boolean = true,
+    var isArchive: Boolean = false,
     var isSuperAdmin: Boolean = false,
     var isAdmin: Boolean = false,
     var isResidence: Boolean = false,
-    var imageBase64: String? = null
+    var imageBase64: String? = null,
 )

@@ -23,6 +23,7 @@ class User : RealmObject {
     var deletedById: ObjectId? = null
     var deletedAt: RealmInstant? = null
     var isActive: Boolean = true
+    var isArchive: Boolean = false
     var isSuperAdmin: Boolean = false
     var isAdmin: Boolean = false
     var isResidence: Boolean = false

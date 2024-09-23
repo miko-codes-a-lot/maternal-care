@@ -30,6 +30,7 @@ fun User.toDTO(): UserDto {
         isAdmin = isAdmin,
         isResidence = isResidence,
         isActive = isActive,
+        isArchive = isArchive,
         imageBase64 = imageBase64
     )
 }
@@ -58,6 +59,7 @@ fun UserDto.toEntity(): User {
         isAdmin = userDto.isAdmin
         isResidence = userDto.isResidence
         isActive = userDto.isActive
+        isArchive = userDto.isArchive
         imageBase64 = userDto.imageBase64
     }
 }
