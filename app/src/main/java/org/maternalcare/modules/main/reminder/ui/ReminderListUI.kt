@@ -81,7 +81,7 @@ fun ReminderListUI(
 }
 
 @Composable
-private fun RemindersButton (data: UserCheckupDto, onClick: () -> Unit,navController: NavController){
+private fun RemindersButton (data: UserCheckupDto, onClick: () -> Unit, navController: NavController){
     ElevatedButton(onClick = onClick,
         colors = ButtonDefaults.elevatedButtonColors(
             containerColor =  Color(0xFF6650a4),
@@ -116,7 +116,11 @@ fun ScheduleList (navController: NavController, currentUser: UserDto) {
     ) {
         items(reminders) { reminder ->
             RemindersButton(data = reminder, onClick = {
-                navController.navigate(MainNav.Residences(CheckupStatus.ALL.name))
+                val route = MainNav.Residences(
+                    status = CheckupStatus.ALL.name,
+                    dateOfCheckup = reminder.dateOfCheckUp
+                )
+                navController.navigate(route)
             }, navController = navController)
         }
     }
