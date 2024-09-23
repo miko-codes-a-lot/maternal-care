@@ -4,6 +4,7 @@ import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.Sort
+import io.realm.kotlin.types.RealmInstant
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.model.entity.User
@@ -11,6 +12,8 @@ import org.maternalcare.modules.main.user.model.entity.UserCheckup
 import org.maternalcare.modules.main.user.model.mapper.toDTO
 import org.maternalcare.modules.main.user.model.mapper.toEntity
 import org.mongodb.kbson.ObjectId
+import java.time.LocalDate
+import java.time.ZoneOffset
 import javax.inject.Inject
 
 class UserService @Inject constructor(private val realm: Realm) {
@@ -28,6 +31,33 @@ class UserService @Inject constructor(private val realm: Realm) {
         return realm.query<User>(query.toString(), isResidence, userId, addressName)
             .find()
             .map { user -> user.toDTO() }
+    }
+
+    fun fetchByCheckup(userId: ObjectId, dateOfCheckup: String): List<UserDto> {
+        val date = LocalDate.parse(dateOfCheckup.substring(0, 10))
+        val startOfDay = date.atStartOfDay().toInstant(ZoneOffset.UTC)
+        val endOfDay = date.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC).minusMillis(1)
+
+        val startRealmInstant = RealmInstant.from(startOfDay.epochSecond, startOfDay.nano)
+        val endRealmInstant = RealmInstant.from(endOfDay.epochSecond, endOfDay.nano)
+
+        val query = StringBuilder()
+            .append("createdById == $0")
+            .append(" AND dateOfCheckUp >= $1 AND dateOfCheckUp <= $2")
+
+        val checkups = realm.query<UserCheckup>(query.toString(), userId, startRealmInstant, endRealmInstant)
+            .find()
+
+        val users = mutableListOf<UserDto>()
+
+        checkups.forEach { checkup ->
+            val user = realm.query<User>("_id == $0", ObjectId(checkup.userId)).find().firstOrNull()
+            if (user != null) {
+                users.add(user.toDTO())
+            }
+        }
+
+        return users;
     }
 
     suspend fun upsert(data: UserDto, actionOf: UserDto): Result<UserDto> {
@@ -112,7 +142,7 @@ class UserService @Inject constructor(private val realm: Realm) {
     fun getGroupOfCheckupDates(adminId: ObjectId): List<UserCheckupDto> {
         return realm.query<UserCheckup>("createdById == $0", adminId)
             .distinct("userId")
-            .sort("scheduleOfNextCheckUp", Sort.DESCENDING)
+            .sort("dateOfCheckUp", Sort.ASCENDING)
             .find()
             .map { it.toDTO() }
     }
