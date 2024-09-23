@@ -1,7 +1,10 @@
 package org.maternalcare.modules.main.user.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.service.UserService
@@ -11,7 +14,13 @@ import javax.inject.Inject
 @HiltViewModel
 class UserViewModel @Inject constructor(
     val userService: UserService
-): ViewModel()  {
+): ViewModel() {
+    init {
+        viewModelScope.launch {
+            userService.archiveOldResidences()
+        }
+    }
+
     fun fetchUsers(): List<UserDto> {
         return this.userService.fetch()
     }
