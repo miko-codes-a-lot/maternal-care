@@ -60,7 +60,7 @@ class UserService @Inject constructor(private val realm: Realm) {
             }
         }
 
-        return users;
+        return users
     }
 
     suspend fun upsert(data: UserDto, actionOf: UserDto): Result<UserDto> {
@@ -69,7 +69,7 @@ class UserService @Inject constructor(private val realm: Realm) {
                 data.createdById = actionOf.id
                 data.lastUpdatedById = data.lastUpdatedById ?: actionOf.id
                 val user = copyToRealm(data.toEntity(), updatePolicy = UpdatePolicy.ALL)
-                Result.success(user.toDTO());
+                Result.success(user.toDTO())
             }
         } catch (error: Exception) {
             Result.failure(error)
@@ -114,7 +114,7 @@ class UserService @Inject constructor(private val realm: Realm) {
         return try {
             realm.write {
                 val userCheckUp = copyToRealm(data.toEntity(), updatePolicy = UpdatePolicy.ALL)
-                Result.success(userCheckUp.toDTO());
+                Result.success(userCheckUp.toDTO())
             }
         } catch (error: Exception) {
             Result.failure(error)
