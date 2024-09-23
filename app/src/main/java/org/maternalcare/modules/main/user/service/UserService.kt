@@ -76,6 +76,40 @@ class UserService @Inject constructor(private val realm: Realm) {
         }
     }
 
+    suspend fun archiveOldResidences() {
+        val fiveYearsAgoInstant = LocalDate.now().minusYears(5).atStartOfDay().toInstant(ZoneOffset.UTC)
+        val fiveYearsAgoRealmInstant = RealmInstant.from(fiveYearsAgoInstant.epochSecond, 0)
+
+        val usersToArchive = realm.query<User>(
+            "isResidence == true AND isArchive == false AND createdAt < $0",
+            fiveYearsAgoRealmInstant
+        ).find()
+
+        for (user in usersToArchive) {
+            this.archiveUserCheckup(user._id.toHexString())
+            val userDto = user.toDTO()
+            userDto.isArchive = true
+            realm.write {
+                copyToRealm(userDto.toEntity(), updatePolicy = UpdatePolicy.ALL)
+                Result.success("Archived ${user._id.toHexString()}")
+            }
+        }
+    }
+
+    private suspend fun archiveUserCheckup(residenceId: String) {
+        val checkupsToArchive = realm.query<UserCheckup>("userId == $0", residenceId)
+            .find()
+
+        for (checkup in checkupsToArchive) {
+            val checkupDto = checkup.toDTO()
+            checkupDto.isArchive = true
+            realm.write {
+                copyToRealm(checkupDto.toEntity(), updatePolicy = UpdatePolicy.ALL)
+                Result.success("Archived Checkup: ${checkup._id.toHexString()}")
+            }
+        }
+    }
+
     suspend fun upsertCheckUp(data: UserCheckupDto): Result<UserCheckupDto> {
         return try {
             realm.write {
