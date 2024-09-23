@@ -67,12 +67,6 @@ fun EditCheckupUIPreview() {
         lastMenstrualPeriod = "2024-08-01",
         scheduleOfNextCheckUp = "2024-10-01"
     )
-    val mockUser = UserDto(
-        id = "66e7d37e209d993c619e73d9",
-        firstName = "Aron",
-        lastName = "Garcia",
-        dateOfBirth = "2003-09-18T06:42:34.553+00:00"
-    )
 
     EditCheckupUI(
         navController = rememberNavController(),
@@ -126,8 +120,9 @@ fun EditCheckupUI(
             userId = userDto.id!!,
             statesValue = statesValue,
             checkupNumber = checkupNumber,
-             navController = navController,
-            checkupUser = checkupUser ?: UserCheckupDto()
+            navController = navController,
+            checkupUser = checkupUser ?: UserCheckupDto(),
+            currentUser = currentUser
         )
     }
 }
@@ -219,6 +214,7 @@ fun ButtonSaveEdit(
     statesValue: Map<String, MutableState<String>>,
     navController: NavController,
     checkupNumber: Int,
+    currentUser: UserDto,
     checkupUser: UserCheckupDto
 ) {
     val userViewModel: UserViewModel = hiltViewModel()
@@ -237,7 +233,8 @@ fun ButtonSaveEdit(
                 checkup = checkupNumber,
                 lastMenstrualPeriod = statesValue["Last Menstrual Period"]?.value ?: "",
                 dateOfCheckUp = statesValue["Date of Check-up"]?.value ?: "",
-                scheduleOfNextCheckUp = statesValue["Next Check-up"]?.value ?: ""
+                scheduleOfNextCheckUp = statesValue["Next Check-up"]?.value ?: "",
+                createdById = checkupUser.createdById ?: currentUser.id
             )
 
             scope.launch {
