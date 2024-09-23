@@ -17,6 +17,9 @@ object MainNav {
     data class ResidencePreview(val userId: String)
 
     @Serializable
+    object Reminders
+
+    @Serializable
     data class ChooseCheckup(val userId: String)
 
     @Serializable
