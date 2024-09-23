@@ -87,7 +87,8 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                         navController,
                         checkupNumber = args.checkupNumber,
                         userDto = userDto,
-                        currentUser = currentUser
+                        currentUser = currentUser,
+                        checkupUser = checkupDto
                     )
                 }
             }
@@ -108,6 +109,15 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 )
             }
         }
+        composable<MainNav.Reminders> {
+            Guard(navController = navController) { currentUser ->
+                if(currentUser.isAdmin){
+                    ReminderListUI(navController, currentUser)
+                }else{
+//                    ReminderDates(onDismiss = { /*TODO*/ }, currentUser = , checkupDto = )
+                }
+            }
+        }
         composable<MainNav.MessagesList> {
             Guard(navController = navController) { currentUser ->
                 MessageListUI(navController, currentUser)
@@ -125,7 +135,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.ReminderLists> {
             Guard(navController = navController) { currentUser ->
-                ReminderListUI(navController)
+                ReminderListUI(navController, currentUser)
             }
         }
         composable<MainNav.Dashboard> {
