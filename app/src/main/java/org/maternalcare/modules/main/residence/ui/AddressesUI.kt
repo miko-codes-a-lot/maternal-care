@@ -69,7 +69,7 @@ fun AddressesUI(navController: NavController, isArchive: Boolean = false) {
                 color = Color(0xFF6650a4)
             )
             Spacer(modifier = Modifier.height(10.dp))
-            ListAddress(navController,isShowPercent = false)
+            ListAddress(navController, isArchive = isArchive, isShowPercent = false)
         }
     }
 }
@@ -113,7 +113,7 @@ private fun ListButton (isShowPercent: Boolean = false, addressDto: AddressDto, 
 }
 
 @Composable
-fun ListAddress (navController: NavController, isShowPercent: Boolean) {
+fun ListAddress (navController: NavController, isShowPercent: Boolean, isArchive: Boolean = false) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
     val addresses = residenceViewModel.fetchAddresses()
     LazyColumn(
@@ -124,6 +124,7 @@ fun ListAddress (navController: NavController, isShowPercent: Boolean) {
             ListButton(addressDto = address, isShowPercent = isShowPercent, onClick = {
                 val residenceRoute = MainNav.Residences(
                     status = CheckupStatus.ALL.name,
+                    isArchive = isArchive,
                     addressId = address.id
                 )
                 navController.navigate(residenceRoute)
