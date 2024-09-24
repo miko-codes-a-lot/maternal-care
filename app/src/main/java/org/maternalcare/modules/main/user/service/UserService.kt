@@ -7,6 +7,7 @@ import io.realm.kotlin.query.Sort
 import io.realm.kotlin.types.RealmInstant
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.modules.main.user.model.entity.Address
 import org.maternalcare.modules.main.user.model.entity.User
 import org.maternalcare.modules.main.user.model.entity.UserCheckup
 import org.maternalcare.modules.main.user.model.mapper.toDTO
@@ -191,5 +192,49 @@ class UserService @Inject constructor(private val realm: Realm) {
             .sort("dateOfCheckUp", Sort.ASCENDING)
             .find()
             .map { it.toDTO() }
+    }
+
+    fun fetchAddressCheckupPercentage(): Map<String, Double> {
+        val addresses = realm.query<Address>().find()
+        val addressPercentageMap = mutableMapOf<String, Double>()
+        var completedAddressCount = 0
+
+        addresses.forEach { address ->
+            val usersAtAddress = realm.query<User>(
+                "address == $0",
+                address.name
+            ).find()
+
+            val usersWithFourCheckups = usersAtAddress.filter { user ->
+                val checkups = realm.query<UserCheckup>(
+                    "userId == $0",
+                    user._id.toHexString()
+                ).find()
+                checkups.size >= 4
+            }
+
+            val percentage = if (usersAtAddress.isNotEmpty()) {
+                (usersWithFourCheckups.size.toDouble() / usersAtAddress.size.toDouble()) * 100
+            } else {
+                0.0
+            }
+
+            addressPercentageMap[address.name] = percentage
+
+            if (usersWithFourCheckups.isNotEmpty()) {
+                completedAddressCount++
+            }
+        }
+
+        val totalAddresses = addresses.size
+        val overallPercentage = if (totalAddresses > 0) {
+            (completedAddressCount.toDouble() / totalAddresses.toDouble()) * 100
+        } else {
+            0.0
+        }
+
+        addressPercentageMap["Overall Completed Address Percentage"] = overallPercentage
+
+        return addressPercentageMap
     }
 }
