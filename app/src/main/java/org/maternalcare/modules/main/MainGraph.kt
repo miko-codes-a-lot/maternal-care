@@ -192,8 +192,14 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             }
         }
         composable<MainNav.MonitoringCheckup> {
+            val args = it.toRoute<MainNav.MonitoringCheckup>()
+            val userViewModel: UserViewModel = hiltViewModel()
             Guard(navController = navController) { currentUser ->
-                CheckupProgressUI(navController)
+                CheckupProgressUI(
+                    navController,
+                    isComplete = args.isComplete,
+                    userViewModel = userViewModel
+                )
             }
         }
         composable<MainNav.UserPreview> {
