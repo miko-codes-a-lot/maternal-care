@@ -2,6 +2,7 @@ package org.maternalcare.modules.main.residence.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -127,7 +127,8 @@ fun CheckupDetailsUI(
                 modifier = Modifier
                     .background(Color.White)
 //                    .height(205.dp)
-                    .height(190.dp)
+//                    .height(190.dp)
+                    .height(200.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -140,7 +141,8 @@ fun CheckupDetailsUI(
                 modifier = Modifier
                     .background(Color.White)
 //                    .height(350.dp)
-                    .height(338.dp)
+//                    .height(338.dp)
+                    .height(300.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -202,12 +204,15 @@ private fun CheckupDetailsList(
         Row(
             modifier = Modifier
                 .padding(top = 4.dp)
+                .border(1.dp, Color.Gray)
+                .padding(8.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = labelContainer,
                 fontWeight = FontWeight.Bold,
+                color = Color.Black,
                 fontFamily = FontFamily.SansSerif,
                 fontSize = 17.sp
             )
@@ -220,17 +225,18 @@ private fun CheckupDetailsList(
                 if (sampleValue != null) {
                     Text(
                         text = sampleValue,
+                        color = Color.Black,
                         fontFamily = FontFamily.SansSerif,
                         modifier = Modifier
                             .padding(start = 5.dp),
                         fontSize = 18.sp
                     )
                 }
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = Color.Gray
-                )
+//                HorizontalDivider(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    thickness = 1.dp,
+//                    color = Color.Gray
+//                )
             }
         }
     }
