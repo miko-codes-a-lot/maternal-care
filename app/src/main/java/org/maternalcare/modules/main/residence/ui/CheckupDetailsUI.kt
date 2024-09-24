@@ -6,7 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -203,10 +203,11 @@ private fun CheckupDetailsList(
     ) {
         Row(
             modifier = Modifier
-                .padding(top = 4.dp)
-                .border(1.dp, Color.Gray)
-                .padding(8.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(top = 6.dp)
+                .border(1.dp, Color.Black)
+                .padding(horizontal = 8.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -214,10 +215,9 @@ private fun CheckupDetailsList(
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
                 fontFamily = FontFamily.SansSerif,
-                fontSize = 17.sp
+                fontSize = 17.sp,
             )
             Text(" :  ", fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.padding(horizontal = 1.dp))
             Column(
                 modifier = Modifier,
                 horizontalAlignment = Alignment.Start
