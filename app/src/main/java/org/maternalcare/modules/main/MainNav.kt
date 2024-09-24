@@ -61,7 +61,7 @@ object MainNav {
     object EditSettings
 
     @Serializable
-    object MonitoringCheckup
+    data class MonitoringCheckup(val isComplete: Boolean)
 
     @Serializable
     data class EditCheckup(val checkUpId: String)
