@@ -15,7 +15,7 @@ object MainNav {
         val status: String,
         var isArchive: Boolean = false,
         var addressId: String? = null,
-        var dateOfCheckup: String? = null
+        var dateOfCheckUp: String? = null
     )
 
     @Serializable

@@ -181,7 +181,7 @@ class UserService @Inject constructor(private val realm: Realm) {
         val currentDate = System.currentTimeMillis()
         val query = StringBuilder()
             .append("createdById == $0")
-            .append(" AND dateOfCheckup > $1")
+            .append(" AND dateOfCheckUp > $1")
         return realm.query<UserCheckup>(query.toString(), adminId, currentDate)
             .distinct("dateOfCheckUp")
             .sort("dateOfCheckUp", Sort.ASCENDING)

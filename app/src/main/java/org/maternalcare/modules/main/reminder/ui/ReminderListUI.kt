@@ -134,7 +134,7 @@ fun ScheduleList (navController: NavController, currentUser: UserDto) {
 
                 val route = MainNav.Residences(
                     status = CheckupStatus.ALL.name,
-                    dateOfCheckup = reminders[num - 1].dateOfCheckUp
+                    dateOfCheckUp = reminders[num - 1].dateOfCheckUp
                 )
                 navController.navigate(route)
             }, navController = navController)

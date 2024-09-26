@@ -57,7 +57,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                     currentUser = currentUser,
                     addressDto = addressDto,
                     isArchive = args.isArchive,
-                    dateOfCheckup = args.dateOfCheckup,
+                    dateOfCheckup = args.dateOfCheckUp,
                 )
             }
         }
