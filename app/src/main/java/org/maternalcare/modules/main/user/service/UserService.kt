@@ -226,21 +226,21 @@ class UserService @Inject constructor(private val realm: Realm) {
 
     fun fetchAddressCompletionPercentages(): Map<String, Map<String, Double>> {
         val addresses = realm.query<Address>().find()
-        val addressCompletionMap = mutableMapOf<String, Map<String, Double>>()
-        addresses.forEach { address ->
-            val usersAtAddress = realm.query<User>("address == $0 AND isResidence == true", address.name).find()
-            val usersWithFourCheckups = usersAtAddress.filter { user ->
+        return addresses.associate { address ->
+            val usersAtAddress = realm.query<User>(
+                "address == $0 AND isResidence == true", address.name
+            ).find()
+            val (usersWithFourCheckups, usersWithoutFourCheckups) = usersAtAddress.partition { user ->
                 val checkups = realm.query<UserCheckup>("userId == $0", user._id.toHexString()).find()
                 checkups.size >= 4
             }
             val totalUsers = usersAtAddress.size.toDouble()
             val completedPercentage = if (totalUsers > 0) (usersWithFourCheckups.size / totalUsers) * 100 else 0.0
-            val incompletePercentage = 100.0 - completedPercentage
-            addressCompletionMap[address.name] = mapOf(
+            val incompletePercentage = if (totalUsers > 0) (usersWithoutFourCheckups.size / totalUsers) * 100 else 0.0
+            address.name to mapOf(
                 "Complete" to completedPercentage,
                 "Incomplete" to incompletePercentage
             )
         }
-        return addressCompletionMap
     }
 }
