@@ -178,7 +178,11 @@ class UserService @Inject constructor(private val realm: Realm) {
     }
 
     fun getGroupOfCheckupDates(adminId: ObjectId): List<UserCheckupDto> {
-        return realm.query<UserCheckup>("createdById == $0 AND isArchive == false", adminId)
+        val currentDate = System.currentTimeMillis()
+        val query = StringBuilder()
+            .append("createdById == $0")
+            .append(" AND dateOfCheckup > $1")
+        return realm.query<UserCheckup>(query.toString(), adminId, currentDate)
             .distinct("dateOfCheckUp")
             .sort("dateOfCheckUp", Sort.ASCENDING)
             .find()
@@ -186,7 +190,11 @@ class UserService @Inject constructor(private val realm: Realm) {
     }
 
     fun getMyUpcomingCheckup(residenceId: String): List<UserCheckupDto> {
-        return realm.query<UserCheckup>("userId == $0", residenceId)
+        val currentDate = System.currentTimeMillis()
+        val query = StringBuilder()
+            .append("userId == $0")
+            .append(" AND dateOfCheckUp > $1")
+        return realm.query<UserCheckup>(query.toString(), residenceId, currentDate)
             .distinct("dateOfCheckUp")
             .sort("dateOfCheckUp", Sort.ASCENDING)
             .find()
