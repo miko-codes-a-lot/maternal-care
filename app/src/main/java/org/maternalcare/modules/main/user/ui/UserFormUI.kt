@@ -100,7 +100,6 @@ fun UserForm(
     val listOfLabel = mutableListOf("First Name", "Middle Name", "Last Name", "Email", "Address", "Mobile Number", "Date Of Birth")
     if (includePassword) listOfLabel.add("Password")
 
-    val userId by remember { mutableStateOf(userDto?.id ?: "") }
     var radioError by remember { mutableStateOf(false) }
 
     val statesValue = remember {
@@ -182,7 +181,7 @@ fun UserForm(
 
         ButtonSubmitData(
             statesValue = statesValue,
-            userId = userId,
+            targetUserDto = userDto,
             selectedOption = selectedOption,
             isActiveState = isActive,
             onSubmit = {
@@ -801,7 +800,7 @@ fun ButtonSubmitData(
     statesValue: Map<String, MutableState<String>>,
     selectedOption: String,
     isActiveState: Boolean,
-    userId: String,
+    targetUserDto: UserDto?,
     onSubmit: (UserDto) -> Unit,
     errors: Map<String, MutableState<String>>,
     isEnableSubmit: Boolean,
@@ -812,6 +811,7 @@ fun ButtonSubmitData(
             val hasError = validateForm(errors, statesValue)
             if (!hasError) {
                 val userDto = UserDto(
+                    id =  targetUserDto?.id,
                     firstName = statesValue["First Name"]?.value ?: "",
                     middleName = statesValue["Middle Name"]?.value ?: "",
                     lastName = statesValue["Last Name"]?.value ?: "",
@@ -819,18 +819,17 @@ fun ButtonSubmitData(
                     address = statesValue["Address"]?.value ?: "",
                     mobileNumber = statesValue["Mobile Number"]?.value ?: "",
                     dateOfBirth = statesValue["Date Of Birth"]?.value ?: "",
+                    password = statesValue["Password"]?.value ?: targetUserDto?.password ?: "",
                     isSuperAdmin = selectedOption == "Admin",
                     isAdmin = selectedOption == "BHW",
                     isResidence = selectedOption == "Residence",
                     isActive = isActiveState
                 )
 
-                val password = statesValue["Password"]?.value
-                if (userId.isEmpty()) {
-                    userDto.password = password?.hashPassword() ?: ""
+                if (targetUserDto?.id == null) {
+                    userDto.password = statesValue["Password"]?.value?.hashPassword() ?: "";
                 } else {
-                    userDto.id = userId
-                    userDto.password = password ?: ""
+                    userDto.password = targetUserDto.password
                 }
 
                 // Invoke callback listener
