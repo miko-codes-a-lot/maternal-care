@@ -13,6 +13,7 @@ import org.maternalcare.modules.main.user.model.entity.UserCheckup
 import org.maternalcare.modules.main.user.model.mapper.toDTO
 import org.maternalcare.modules.main.user.model.mapper.toEntity
 import org.mongodb.kbson.ObjectId
+import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import javax.inject.Inject
@@ -178,7 +179,7 @@ class UserService @Inject constructor(private val realm: Realm) {
     }
 
     fun getGroupOfCheckupDates(adminId: ObjectId): List<UserCheckupDto> {
-        val currentDate = System.currentTimeMillis()
+        val currentDate: RealmInstant = RealmInstant.from(Instant.now().epochSecond, 0)
         val query = StringBuilder()
             .append("createdById == $0")
             .append(" AND dateOfCheckUp > $1")
@@ -190,7 +191,7 @@ class UserService @Inject constructor(private val realm: Realm) {
     }
 
     fun getMyUpcomingCheckup(residenceId: String): List<UserCheckupDto> {
-        val currentDate = System.currentTimeMillis()
+        val currentDate: RealmInstant = RealmInstant.from(Instant.now().epochSecond, 0)
         val query = StringBuilder()
             .append("userId == $0")
             .append(" AND dateOfCheckUp > $1")
