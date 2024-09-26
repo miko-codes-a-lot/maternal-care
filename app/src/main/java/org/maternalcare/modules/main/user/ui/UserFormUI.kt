@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -237,7 +238,8 @@ fun ContainerLabelValue(
         onErrorChange = { hasError ->
             errors[firstNameKey]?.value = if (hasError) "This field is required" else ""
         },
-        errorMessage = errors[firstNameKey]?.value ?: ""
+        errorMessage = errors[firstNameKey]?.value ?: "",
+        textStyle = TextStyle(color = Color.Black, fontSize = 17.sp)
     )
 
     val middleNameKey = "Middle Name"
@@ -248,7 +250,8 @@ fun ContainerLabelValue(
         onValueChange = { newValue -> middleName?.value = newValue },
         isError = false,
         onErrorChange = {},
-        errorMessage = errors[middleNameKey]?.value ?: ""
+        errorMessage = errors[middleNameKey]?.value ?: "",
+        textStyle = TextStyle(color = Color.Black, fontSize = 17.sp)
     )
 
     val lastNameKey = "Last Name"
@@ -261,7 +264,8 @@ fun ContainerLabelValue(
         onErrorChange = { hasError ->
             errors[lastNameKey]?.value = if (hasError) "This field is required" else ""
         },
-        errorMessage = errors[lastNameKey]?.value ?: ""
+        errorMessage = errors[lastNameKey]?.value ?: "",
+        textStyle = TextStyle(color = Color.Black, fontSize = 17.sp)
     )
 
     val emailKey = "Email"
@@ -274,7 +278,8 @@ fun ContainerLabelValue(
         onErrorChange = { hasError ->
             errors[emailKey]?.value = if (hasError) "This field is required" else ""
         },
-        errorMessage = errors[emailKey]?.value ?: ""
+        errorMessage = errors[emailKey]?.value ?: "",
+        textStyle = TextStyle(color = Color.Black, fontSize = 17.sp)
     )
 
     Spacer(modifier = Modifier.height(5.dp))
@@ -294,6 +299,7 @@ fun ContainerLabelValue(
         Text(
             text = "Address",
             fontWeight = FontWeight.Bold,
+            color = Color.Black,
             fontFamily = FontFamily.SansSerif,
             fontSize = 17.sp
         )
@@ -325,7 +331,7 @@ fun ContainerLabelValue(
                                 fontSize = 12.sp
                             )
                         }else{
-                            Text(text = "Select Address")
+                            Text(text = "Select Address",  color = Color.Black)
                             Spacer(modifier = Modifier.weight(1f))
                             Icon(icon, "Dropdown Icon")
                         }
@@ -359,6 +365,11 @@ fun ContainerLabelValue(
                         )
                     },
                     readOnly = true,
+                    textStyle = TextStyle(
+                        color = Color.Black,
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily.Serif
+                    ),
                     colors =
                     OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
@@ -373,12 +384,11 @@ fun ContainerLabelValue(
                 modifier = Modifier
                     .width(260.dp)
                     .background(color = Color.White)
-//                    .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
                     .heightIn(max = 200.dp)
                     .offset(y = 8.dp)
             ) {
                 addressList.forEach { address  ->
-                    DropdownMenuItem( text = { Text(text = address.name) }, onClick = {
+                    DropdownMenuItem( text = { Text(text = address.name, color = Color.Black, fontSize = 17.sp) }, onClick = {
                         selectItem  = address.name
                         statesValue["Address"]?.value = address.name
                         expanded = false
@@ -398,7 +408,8 @@ fun ContainerLabelValue(
         onErrorChange = { hasError ->
             errors[mobileNumberKey]?.value = if (hasError) "This field is required" else ""
         },
-        errorMessage = errors[mobileNumberKey]?.value ?: ""
+        errorMessage = errors[mobileNumberKey]?.value ?: "",
+        textStyle = TextStyle(color = Color.Black, fontSize = 17.sp)
     )
 
     val dateOfBirthKey = "Date Of Birth"
@@ -428,7 +439,8 @@ fun ContainerLabelValue(
             onErrorChange = { hasError ->
                 errors[passwordKey]?.value = if (hasError) "This field is required" else ""
             },
-            errorMessage = errors[passwordKey]?.value ?: ""
+            errorMessage = errors[passwordKey]?.value ?: "",
+            textStyle = TextStyle(color = Color.Black)
         )
     }
 
@@ -546,7 +558,8 @@ fun TextFieldContainer(
     isError: Boolean,
     onErrorChange: (Boolean) -> Unit,
     isDisable: Boolean = false,
-    errorMessage: String = ""
+    errorMessage: String = "",
+    textStyle: TextStyle
 ) {
     val isPasswordField = textFieldLabel == "Password"
     var isPasswordVisible by remember { mutableStateOf(false) }
@@ -597,7 +610,7 @@ fun TextFieldContainer(
                     }
                 },
                 placeholder = if (!isError) {
-                    { Text("Enter value", color = Color.Black) }
+                    { Text("Enter value", color = Color.Black, fontSize = 17.sp) }
                 } else null,
                 label = if (isError) {
                     {
@@ -609,6 +622,7 @@ fun TextFieldContainer(
                         )
                     }
                 } else null,
+                textStyle = textStyle,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -808,7 +822,7 @@ fun ButtonSubmitData(
     Button(
         onClick = {
 
-            val hasError = validateForm(errors, statesValue)
+                val hasError = validateForm(errors, statesValue)
             if (!hasError) {
                 val userDto = UserDto(
                     id =  targetUserDto?.id,
