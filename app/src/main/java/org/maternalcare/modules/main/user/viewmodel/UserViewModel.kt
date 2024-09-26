@@ -55,4 +55,8 @@ class UserViewModel @Inject constructor(
     fun getCompleteCheckupPercentages(): Map<String, Double> {
         return userService.fetchAddressCheckupPercentage()
     }
+
+    fun getAllListAddressCheckupPercentages(): Map<String, Map<String, Double>> {
+        return userService.fetchAddressCompletionPercentages()
+    }
 }
