@@ -232,11 +232,6 @@ private fun CheckupDetailsList(
                         fontSize = 18.sp
                     )
                 }
-//                HorizontalDivider(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    thickness = 1.dp,
-//                    color = Color.Gray
-//                )
             }
         }
     }
