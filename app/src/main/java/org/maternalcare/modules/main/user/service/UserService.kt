@@ -61,7 +61,6 @@ class UserService @Inject constructor(private val realm: Realm) {
                 users.add(user.toDTO())
             }
         }
-
         return users
     }
 
@@ -198,13 +197,8 @@ class UserService @Inject constructor(private val realm: Realm) {
         val addresses = realm.query<Address>().find()
         val addressPercentageMap = mutableMapOf<String, Double>()
         var completedAddressCount = 0
-
         addresses.forEach { address ->
-            val usersAtAddress = realm.query<User>(
-                "address == $0",
-                address.name
-            ).find()
-
+            val usersAtAddress = realm.query<User>( "address == $0 AND isResidence == true", address.name ).find()
             val usersWithFourCheckups = usersAtAddress.filter { user ->
                 val checkups = realm.query<UserCheckup>(
                     "userId == $0",
@@ -212,29 +206,41 @@ class UserService @Inject constructor(private val realm: Realm) {
                 ).find()
                 checkups.size >= 4
             }
-
             val percentage = if (usersAtAddress.isNotEmpty()) {
                 (usersWithFourCheckups.size.toDouble() / usersAtAddress.size.toDouble()) * 100
             } else {
                 0.0
             }
-
             addressPercentageMap[address.name] = percentage
-
-            if (usersWithFourCheckups.isNotEmpty()) {
-                completedAddressCount++
-            }
+            if (usersWithFourCheckups.isNotEmpty()) { completedAddressCount++ }
         }
-
         val totalAddresses = addresses.size
         val overallPercentage = if (totalAddresses > 0) {
             (completedAddressCount.toDouble() / totalAddresses.toDouble()) * 100
         } else {
             0.0
         }
-
         addressPercentageMap["Overall Completed Address Percentage"] = overallPercentage
-
         return addressPercentageMap
+    }
+
+    fun fetchAddressCompletionPercentages(): Map<String, Map<String, Double>> {
+        val addresses = realm.query<Address>().find()
+        val addressCompletionMap = mutableMapOf<String, Map<String, Double>>()
+        addresses.forEach { address ->
+            val usersAtAddress = realm.query<User>("address == $0 AND isResidence == true", address.name).find()
+            val usersWithFourCheckups = usersAtAddress.filter { user ->
+                val checkups = realm.query<UserCheckup>("userId == $0", user._id.toHexString()).find()
+                checkups.size >= 4
+            }
+            val totalUsers = usersAtAddress.size.toDouble()
+            val completedPercentage = if (totalUsers > 0) (usersWithFourCheckups.size / totalUsers) * 100 else 0.0
+            val incompletePercentage = 100.0 - completedPercentage
+            addressCompletionMap[address.name] = mapOf(
+                "Complete" to completedPercentage,
+                "Incomplete" to incompletePercentage
+            )
+        }
+        return addressCompletionMap
     }
 }
