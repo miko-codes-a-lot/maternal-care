@@ -53,6 +53,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -239,7 +240,11 @@ fun ContainerLabelValue(
             errors[firstNameKey]?.value = if (hasError) "This field is required" else ""
         },
         errorMessage = errors[firstNameKey]?.value ?: "",
-        textStyle = TextStyle(color = Color.Black, fontSize = 17.sp)
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 17.sp,
+            fontFamily = FontFamily.SansSerif
+        )
     )
 
     val middleNameKey = "Middle Name"
@@ -251,7 +256,11 @@ fun ContainerLabelValue(
         isError = false,
         onErrorChange = {},
         errorMessage = errors[middleNameKey]?.value ?: "",
-        textStyle = TextStyle(color = Color.Black, fontSize = 17.sp)
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 17.sp,
+            fontFamily = FontFamily.SansSerif
+        )
     )
 
     val lastNameKey = "Last Name"
@@ -265,7 +274,11 @@ fun ContainerLabelValue(
             errors[lastNameKey]?.value = if (hasError) "This field is required" else ""
         },
         errorMessage = errors[lastNameKey]?.value ?: "",
-        textStyle = TextStyle(color = Color.Black, fontSize = 17.sp)
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 17.sp,
+            fontFamily = FontFamily.SansSerif
+        )
     )
 
     val emailKey = "Email"
@@ -279,7 +292,11 @@ fun ContainerLabelValue(
             errors[emailKey]?.value = if (hasError) "This field is required" else ""
         },
         errorMessage = errors[emailKey]?.value ?: "",
-        textStyle = TextStyle(color = Color.Black, fontSize = 17.sp)
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 17.sp,
+            fontFamily = FontFamily.SansSerif
+        )
     )
 
     Spacer(modifier = Modifier.height(5.dp))
@@ -331,7 +348,11 @@ fun ContainerLabelValue(
                                 fontSize = 12.sp
                             )
                         }else{
-                            Text(text = "Select Address",  color = Color.Black)
+                            Text(text = "Select Address",
+                                color = Color.Black,
+                                fontSize = 16.sp,
+                                fontFamily = FontFamily.SansSerif
+                            )
                             Spacer(modifier = Modifier.weight(1f))
                             Icon(icon, "Dropdown Icon")
                         }
@@ -368,7 +389,7 @@ fun ContainerLabelValue(
                     textStyle = TextStyle(
                         color = Color.Black,
                         fontSize = 16.sp,
-                        fontFamily = FontFamily.Serif
+                        fontFamily = FontFamily.SansSerif
                     ),
                     colors =
                     OutlinedTextFieldDefaults.colors(
@@ -388,7 +409,15 @@ fun ContainerLabelValue(
                     .offset(y = 8.dp)
             ) {
                 addressList.forEach { address  ->
-                    DropdownMenuItem( text = { Text(text = address.name, color = Color.Black, fontSize = 17.sp) }, onClick = {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = address.name,
+                                color = Color.Black,
+                                fontFamily = FontFamily.SansSerif,
+                                fontSize = 16.sp
+                            )
+                        }, onClick = {
                         selectItem  = address.name
                         statesValue["Address"]?.value = address.name
                         expanded = false
@@ -409,7 +438,11 @@ fun ContainerLabelValue(
             errors[mobileNumberKey]?.value = if (hasError) "This field is required" else ""
         },
         errorMessage = errors[mobileNumberKey]?.value ?: "",
-        textStyle = TextStyle(color = Color.Black, fontSize = 17.sp)
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 17.sp,
+            fontFamily = FontFamily.SansSerif
+        )
     )
 
     val dateOfBirthKey = "Date Of Birth"
@@ -440,7 +473,11 @@ fun ContainerLabelValue(
                 errors[passwordKey]?.value = if (hasError) "This field is required" else ""
             },
             errorMessage = errors[passwordKey]?.value ?: "",
-            textStyle = TextStyle(color = Color.Black)
+            textStyle = TextStyle(
+                color = Color.Black,
+                fontSize = 17.sp,
+                fontFamily = FontFamily.SansSerif
+            )
         )
     }
 
