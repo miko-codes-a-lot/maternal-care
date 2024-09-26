@@ -53,7 +53,6 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
-import org.maternalcare.modules.main.residence.enum.CheckupStatus
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.user.model.dto.AddressDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
@@ -65,7 +64,7 @@ fun ResidencesPrev() {
     ResidencesUI(
         navController = rememberNavController(),
         currentUser = UserDto(),
-        addressDto = AddressDto(id = null, name = "test", code = "loc_test")
+        addressDto = AddressDto(id = null, name = "test", code = "loc_test"),
     )
 }
 
@@ -79,8 +78,8 @@ fun ResidencesUI(
     isArchive: Boolean = false,
 ) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
-
-    val residences =
+    var searchQuery by remember { mutableStateOf("") }
+    val residences = remember(searchQuery) {
         if (dateOfCheckup != null)
             residenceViewModel.fetchUsersByCheckup(
                 userId = currentUser.id.toObjectId(),
@@ -94,9 +93,13 @@ fun ResidencesUI(
                 addressName = addressDto?.name,
                 isArchive = isArchive,
             )
-
+    }
+    val filteredResidences = residences.filter {
+        it.firstName.contains(searchQuery, ignoreCase = true) ||
+        it.middleName!!.contains(searchQuery, ignoreCase = true) ||
+        it.lastName.contains(searchQuery, ignoreCase = true)
+    }
     val isShowFloatingIcon = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin && !isArchive)}
-
     Scaffold(
         floatingActionButton = {
             if (isShowFloatingIcon.value && addressDto != null) {
@@ -113,7 +116,11 @@ fun ResidencesUI(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(40.dp))
-            SearchIcon(navController)
+            SearchIcon(
+                navController = navController,
+                searchQuery = searchQuery,
+                onSearchQueryChanged = { searchQuery = it },
+            )
             Spacer(modifier = Modifier.padding(bottom = 3.dp))
             LazyColumn(
                 modifier = Modifier
@@ -122,7 +129,7 @@ fun ResidencesUI(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(residences) { residence ->
+                items(filteredResidences) { residence ->
                     SingleItemCard(userDto = residence, navController = navController)
                 }
             }
@@ -182,7 +189,7 @@ fun SingleItemCard(userDto: UserDto, navController: NavController) {
             Spacer(modifier = Modifier.width(10.dp))
             UsersImageContainer()
             Text(
-                text = "${userDto.firstName} ${userDto.lastName}",
+                text = "${userDto.firstName} ${userDto.middleName} ${userDto.lastName}",
                 fontSize = 18.sp,
                 fontFamily = FontFamily.SansSerif,
                 modifier = Modifier
@@ -200,12 +207,15 @@ fun SingleItemCard(userDto: UserDto, navController: NavController) {
 }
 
 @Composable
-fun SearchIcon(navController: NavController) {
-    var searchQuery by remember { mutableStateOf("") }
+fun SearchIcon(
+    navController: NavController,
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+) {
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = searchQuery,
-        onValueChange = { searchQuery = it },
+        onValueChange = { onSearchQueryChanged(it) },
         leadingIcon = {
             IconButton(onClick = { } ) {
                 Icon(
@@ -217,13 +227,15 @@ fun SearchIcon(navController: NavController) {
             }
         },
         trailingIcon = {
-            IconButton(onClick = {navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))}) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "Close Icon",
-                    tint = Color.Black,
-                    modifier = Modifier.size(24.dp)
-                )
+            if (searchQuery.isNotEmpty()) {
+                IconButton(onClick = { onSearchQueryChanged("") }) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Clear Search",
+                        tint = Color.Black,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
         },
         colors = OutlinedTextFieldDefaults.colors(
@@ -265,4 +277,3 @@ fun FloatingIcon(navController: NavController, addressDto: AddressDto) {
         }
     }
 }
-
