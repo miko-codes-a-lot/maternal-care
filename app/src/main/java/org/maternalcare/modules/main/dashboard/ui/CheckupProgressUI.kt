@@ -20,18 +20,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import org.maternalcare.modules.main.residence.ui.ListAddress
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 
-//@Preview
-//@Composable
-//fun CheckupProgressUIPreview() {
-//    CheckupProgressUI(rememberNavController(), true, UserViewModel)
-//}
+@Preview
+@Composable
+fun CheckupProgressUIPreview() {
+    CheckupProgressUI(rememberNavController(), true, userViewModel = hiltViewModel())
+}
 
 @SuppressLint("DefaultLocale")
 @Composable
@@ -42,6 +44,7 @@ fun CheckupProgressUI(
 ) {
     val addressCheckupPercentages = userViewModel.getCompleteCheckupPercentages()
     val overallCompletedPercentage = addressCheckupPercentages["Overall Completed Address Percentage"] ?: 0.0
+    val getAllListAddressCheckupPercentage = userViewModel.getAllListAddressCheckupPercentages()
 
     Column(
         modifier = Modifier
@@ -53,10 +56,8 @@ fun CheckupProgressUI(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            //Sample value
             val completePercentage = "${String.format("%.2f", overallCompletedPercentage)}%"
             val incompletePercentage = "${String.format("%.2f", 100 - overallCompletedPercentage)}%"
-
             Spacer(modifier = Modifier.padding(top = 50.dp))
 
             AverageStatusContainer(
@@ -64,10 +65,14 @@ fun CheckupProgressUI(
                 incompletePercentage = incompletePercentage,
                 isComplete = isComplete
             )
-
             Spacer(modifier = Modifier.height(30.dp))
 
-            ListAddress(navController = navController, isShowPercent = true)
+            ListAddress(
+                navController = navController,
+                isShowPercent = true,
+                isComplete = isComplete,
+                addressPercentages = getAllListAddressCheckupPercentage
+            )
         }
     }
 }
@@ -91,7 +96,6 @@ fun AverageStatusContainer(completePercentage: String, incompletePercentage: Str
             } else {
                 AverageStats(label = "Incomplete", value = incompletePercentage)
             }
-
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 result
             }
