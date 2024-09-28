@@ -1,7 +1,13 @@
 package org.maternalcare.modules.main.residence.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import android.net.Uri
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -32,7 +39,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,15 +49,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import exportToPDF
+import kotlinx.coroutines.delay
+import openFile
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
@@ -58,6 +68,8 @@ import org.maternalcare.modules.main.user.model.dto.AddressDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.shared.ext.toObjectId
 
+
+@RequiresApi(Build.VERSION_CODES.Q)
 @Preview(showSystemUi = true)
 @Composable
 fun ResidencesPrev() {
@@ -68,6 +80,7 @@ fun ResidencesPrev() {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ResidencesUI(
@@ -78,8 +91,15 @@ fun ResidencesUI(
     isArchive: Boolean = false,
 ) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
+    var debouncedQuery by remember { mutableStateOf("") }
     var searchQuery by remember { mutableStateOf("") }
-    val residences = remember(searchQuery) {
+
+    LaunchedEffect(searchQuery) {
+        delay(500L)
+        debouncedQuery = searchQuery
+    }
+
+    val residences = remember(debouncedQuery) {
         if (dateOfCheckup != null)
             residenceViewModel.fetchUsersByCheckup(
                 userId = currentUser.id.toObjectId(),
@@ -95,15 +115,36 @@ fun ResidencesUI(
             )
     }
     val filteredResidences = residences.filter {
-        it.firstName.contains(searchQuery, ignoreCase = true) ||
-        it.middleName!!.contains(searchQuery, ignoreCase = true) ||
-        it.lastName.contains(searchQuery, ignoreCase = true)
+        it.firstName.contains(debouncedQuery, ignoreCase = true) ||
+        it.middleName?.contains(debouncedQuery, ignoreCase = true) ?: false ||
+        it.lastName.contains(debouncedQuery, ignoreCase = true)
     }
-    val isShowFloatingIcon = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin && !isArchive)}
+    val isShowFloatingIcon = rememberSaveable { mutableStateOf( !isArchive)}
+    val context = LocalContext.current
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFFFFFFF)),
         floatingActionButton = {
             if (isShowFloatingIcon.value && addressDto != null) {
-                FloatingIcon(navController, addressDto)
+                FloatingIcon(
+                    navController,
+                    addressDto,
+                    currentUser,
+                    filteredResidences = filteredResidences,
+                    context = context,
+                    onExportToPDF = { data ->
+                        exportToPDF(
+                            data = data,
+                            onFinish = { file ->
+                                openFile(context, file)
+                            },
+                            onError = { e ->
+                                Toast.makeText(context, "Error creating PDF: ${e.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    }
+                )
             }
         }
     ) {
@@ -251,29 +292,59 @@ fun SearchIcon(
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun FloatingIcon(navController: NavController, addressDto: AddressDto) {
+fun FloatingIcon(
+    navController: NavController,
+    addressDto: AddressDto,
+    currentUser: UserDto,
+    filteredResidences: List<UserDto>,
+    context: Context,
+    onExportToPDF: (List<UserDto>) -> Unit
+) {
+
     Column(
         modifier = Modifier
             .background(Color.Transparent),
         horizontalAlignment = Alignment.End
     ) {
-        FloatingActionButton(
-            onClick = { navController.navigate(MainNav.CreateUser(addressDto.id)) },
-            containerColor = Color(0xFF6650a4),
-            contentColor = Color(0xFFFFFFFF),
-            shape = CircleShape,
-            modifier = Modifier
-                .size(75.dp)
-                .offset(x = (-5).dp, y = (-7).dp)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = "Add",
+        if(currentUser.isSuperAdmin) {
+            FloatingActionButton(
+                onClick = {
+                    onExportToPDF(filteredResidences)
+                },
+                containerColor = Color(0xFF6650a4),
+                contentColor = Color(0xFFFFFFFF),
+                shape = CircleShape,
                 modifier = Modifier
-                    .size(30.dp)
-            )
+                    .size(75.dp)
+                    .offset(x = (-5).dp, y = (-7).dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.printer),
+                    contentDescription = "Export",
+                    modifier = Modifier.size(30.dp),
+                    tint = Color.White
+                )
+            }
+        }else{
+            FloatingActionButton(
+                onClick = { navController.navigate(MainNav.CreateUser(addressDto.id)) },
+                containerColor = Color(0xFF6650a4),
+                contentColor = Color(0xFFFFFFFF),
+                shape = CircleShape,
+                modifier = Modifier
+                    .size(75.dp)
+                    .offset(x = (-5).dp, y = (-7).dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add",
+                    modifier = Modifier
+                        .size(30.dp)
+                )
+            }
         }
     }
 }
