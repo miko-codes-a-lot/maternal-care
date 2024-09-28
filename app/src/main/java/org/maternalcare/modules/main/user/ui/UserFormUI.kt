@@ -647,7 +647,7 @@ fun TextFieldContainer(
                     }
                 },
                 placeholder = if (!isError) {
-                    { Text("Enter value", color = Color.Black, fontSize = 17.sp) }
+                    { Text("Enter value", color = Color.Black, fontSize = 16.sp, fontFamily = FontFamily.SansSerif) }
                 } else null,
                 label = if (isError) {
                     {
