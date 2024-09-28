@@ -76,6 +76,9 @@ fun UsersUI(navController: NavController) {
             .background(Color.White)
     ) {
         Scaffold(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFFFFFFF)),
             floatingActionButton = {
                 FloatParentFloatingIcon(navController)
             }
@@ -96,6 +99,7 @@ fun UsersUI(navController: NavController) {
                 )
                 LazyColumn(
                     modifier = Modifier
+                        .background(Color.White)
                         .height(588.dp)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
