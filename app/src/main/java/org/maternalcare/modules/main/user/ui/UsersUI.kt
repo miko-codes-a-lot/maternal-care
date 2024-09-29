@@ -187,6 +187,7 @@ fun UserSingleLine(
                 text = userDto.email ?: "${userDto.firstName} ${userDto.lastName}",
                 fontSize = 18.sp,
                 fontFamily = FontFamily.SansSerif,
+                color = Color.Black,
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .weight(1f)
