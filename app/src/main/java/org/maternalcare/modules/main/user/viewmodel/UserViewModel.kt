@@ -17,6 +17,7 @@ class UserViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             userService.archiveOldResidences()
+            userService.updateCompletionStatus()
         }
     }
 
