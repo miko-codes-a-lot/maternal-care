@@ -195,7 +195,9 @@ fun TextFieldEditCheckUp(
                         focusedBorderColor = Color.Black,
                         disabledBorderColor = Color.Gray,
                         errorBorderColor = Color.Red,
-                        cursorColor = Color.Black
+                        cursorColor = Color.Black,
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
                     )
                 )
                 HorizontalDivider(
