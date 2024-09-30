@@ -8,14 +8,14 @@ object MainNav {
     object Menu
 
     @Serializable
-    data class Addresses(val status: String, var isArchive: Boolean = false)
+    data class Addresses(val status: String, val isArchive: Boolean = false)
 
     @Serializable
     data class Residences(
         val status: String,
         var isArchive: Boolean = false,
         var addressId: String? = null,
-        var dateOfCheckUp: String? = null
+        var dateOfCheckUp: String? = null,
     )
 
     @Serializable
@@ -62,10 +62,4 @@ object MainNav {
 
     @Serializable
     data class MonitoringCheckup(val isComplete: Boolean)
-
-    @Serializable
-    data class EditCheckup(val checkUpId: String)
-
-    @Serializable
-    object UserPreview
 }
