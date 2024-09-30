@@ -18,6 +18,7 @@ data class UserDto(
     var deletedAt: String? = null,
     var isActive: Boolean = true,
     var isArchive: Boolean = false,
+    var isCompleted: Boolean = false,
     var isSuperAdmin: Boolean = false,
     var isAdmin: Boolean = false,
     var isResidence: Boolean = false,
