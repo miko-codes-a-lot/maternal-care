@@ -22,6 +22,7 @@ class UserService @Inject constructor(private val realm: Realm) {
     fun fetch(
         isResidence: Boolean = false,
         isArchive: Boolean = false,
+        isCompleted: Boolean? = null,
         userId: ObjectId? = null,
         addressName: String? = null,
     ): List<UserDto> {
@@ -29,10 +30,13 @@ class UserService @Inject constructor(private val realm: Realm) {
             .append("isResidence == $0")
             .append(" AND isArchive == $1")
 
-        if (userId != null) query.append(" AND createdById == $2")
-        if (addressName != null) query.append(" AND address = $3")
+        if (isCompleted != null) query.append(" AND isCompleted == $2")
+        if (userId != null) query.append(" AND createdById == $3")
+        if (addressName != null) query.append(" AND address = $4")
 
-        return realm.query<User>(query.toString(), isResidence, isArchive, userId, addressName)
+        return realm.query<User>(
+            query.toString(), isResidence, isArchive, isCompleted, userId, addressName
+        )
             .find()
             .map { user -> user.toDTO() }
     }
