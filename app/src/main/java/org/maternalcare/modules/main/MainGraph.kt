@@ -12,6 +12,7 @@ import org.maternalcare.modules.main.menu.ui.MenuUI
 import org.maternalcare.modules.main.message.ui.MessageListUI
 import org.maternalcare.modules.main.message.ui.MessageUI
 import org.maternalcare.modules.main.reminder.ui.ReminderListUI
+import org.maternalcare.modules.main.residence.enum.CheckupStatus
 import org.maternalcare.modules.main.residence.ui.AddressesUI
 import org.maternalcare.modules.main.residence.ui.CheckupDetailsUI
 import org.maternalcare.modules.main.residence.ui.ChooseCheckupUI
@@ -52,11 +53,17 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 addressDto = residenceViewModel.fetchOneAddress(args.addressId.toObjectId())
             }
             Guard(navController = navController) { currentUser ->
+                val isCompleted = when (args.status) {
+                    CheckupStatus.COMPLETE.name -> true
+                    CheckupStatus.INCOMPLETE.name -> false
+                    else -> null
+                }
                 ResidencesUI(
                     navController = navController,
                     currentUser = currentUser,
                     addressDto = addressDto,
                     isArchive = args.isArchive,
+                    isCompleted = isCompleted,
                     dateOfCheckup = args.dateOfCheckUp,
                 )
             }
@@ -201,15 +208,6 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                     userViewModel = userViewModel
                 )
             }
-        }
-        composable<MainNav.UserPreview> {
-            val userViewModel: UserViewModel = hiltViewModel()
-//            UserPreviewUI(navController = navController, user = UserDto(), title = "Preview Account", onSave = { userDto ->
-//                userViewModel.viewModelScope.launch {
-//                    val result = userViewModel.upsertUser(userDto)
-//                    if (result.isSuccess) { navController.popBackStack() }
-//                }
-//            })
         }
     }
 }
