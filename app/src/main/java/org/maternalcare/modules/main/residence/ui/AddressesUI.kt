@@ -148,8 +148,14 @@ fun ListAddress(
                 addressDto = address,
                 isShowPercent = isShowPercent,
                 onClick = {
+                    val checkupStatus =
+                        if (isComplete)
+                            CheckupStatus.COMPLETE.name
+                        else
+                            CheckupStatus.INCOMPLETE.name
+
                     val residenceRoute = MainNav.Residences(
-                        status = CheckupStatus.ALL.name,
+                        status = checkupStatus,
                         isArchive = isArchive,
                         addressId = address.id
                     )
