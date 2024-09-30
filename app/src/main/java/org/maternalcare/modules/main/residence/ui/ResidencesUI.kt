@@ -1,9 +1,5 @@
 package org.maternalcare.modules.main.residence.ui
 
-import android.annotation.SuppressLint
-import android.content.Context
-import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
@@ -40,6 +36,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -55,6 +52,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -80,8 +78,6 @@ fun ResidencesPrev() {
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.Q)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ResidencesUI(
     navController: NavController,
@@ -89,6 +85,7 @@ fun ResidencesUI(
     addressDto: AddressDto?,
     dateOfCheckup: String? = null,
     isArchive: Boolean = false,
+    isCompleted: Boolean? = null,
 ) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
     var debouncedQuery by remember { mutableStateOf("") }
@@ -112,6 +109,7 @@ fun ResidencesUI(
                 isSuperAdmin = currentUser.isSuperAdmin,
                 addressName = addressDto?.name,
                 isArchive = isArchive,
+                isCompleted = isCompleted,
             )
     }
     val filteredResidences = residences.filter {
@@ -132,7 +130,6 @@ fun ResidencesUI(
                     addressDto,
                     currentUser,
                     filteredResidences = filteredResidences,
-                    context = context,
                     onExportToPDF = { data ->
                         exportToPDF(
                             data = data,
@@ -147,10 +144,11 @@ fun ResidencesUI(
                 )
             }
         }
-    ) {
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(padding)
                 .padding(16.dp)
                 .background(Color.White),
             verticalArrangement = Arrangement.Top,
@@ -158,7 +156,6 @@ fun ResidencesUI(
         ) {
             Spacer(modifier = Modifier.height(40.dp))
             SearchIcon(
-                navController = navController,
                 searchQuery = searchQuery,
                 onSearchQueryChanged = { searchQuery = it },
             )
@@ -249,7 +246,6 @@ fun SingleItemCard(userDto: UserDto, navController: NavController) {
 
 @Composable
 fun SearchIcon(
-    navController: NavController,
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
 ) {
@@ -292,24 +288,20 @@ fun SearchIcon(
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.Q)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FloatingIcon(
     navController: NavController,
     addressDto: AddressDto,
     currentUser: UserDto,
     filteredResidences: List<UserDto>,
-    context: Context,
     onExportToPDF: (List<UserDto>) -> Unit
 ) {
-
     Column(
         modifier = Modifier
             .background(Color.Transparent),
         horizontalAlignment = Alignment.End
     ) {
-        if(currentUser.isSuperAdmin) {
+        if (currentUser.isSuperAdmin) {
             FloatingActionButton(
                 onClick = {
                     onExportToPDF(filteredResidences)
@@ -328,7 +320,7 @@ fun FloatingIcon(
                     tint = Color.White
                 )
             }
-        }else{
+        } else {
             FloatingActionButton(
                 onClick = { navController.navigate(MainNav.CreateUser(addressDto.id)) },
                 containerColor = Color(0xFF6650a4),
