@@ -31,9 +31,16 @@ class ResidenceViewModel @Inject constructor(
         isSuperAdmin: Boolean = false,
         addressName: String?,
         isArchive: Boolean = false,
+        isCompleted: Boolean? = null,
     ): List<UserDto> {
         val id = if (!isSuperAdmin) userId else null
-        return userService.fetch(isResidence = true, isArchive = isArchive, userId = id, addressName = addressName)
+        return userService.fetch(
+            isResidence = true,
+            isArchive = isArchive,
+            isCompleted = isCompleted,
+            userId = id,
+            addressName = addressName
+        )
     }
 
     fun fetchUsersByCheckup(
