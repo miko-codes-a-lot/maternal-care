@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -56,7 +58,7 @@ fun MessageListUI(navController: NavController, currentUser: UserDto) {
     }
     Column(
         modifier = Modifier
-            .height(715.dp)
+            .fillMaxHeight()
             .fillMaxWidth()
             .background(Color.White)
             .padding(16.dp),
@@ -82,7 +84,10 @@ fun MessageListUI(navController: NavController, currentUser: UserDto) {
             )
         }
         Spacer(modifier = Modifier.height(5.dp))
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
             items(users) { userDto ->
                 ListOfMessages(userDto = userDto,navController = navController)
             }
