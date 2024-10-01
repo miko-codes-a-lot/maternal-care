@@ -71,7 +71,8 @@ fun CheckupProgressUI(
                 navController = navController,
                 isShowPercent = true,
                 isComplete = isComplete,
-                addressPercentages = getAllListAddressCheckupPercentage
+                addressPercentages = getAllListAddressCheckupPercentage,
+                isDashboard = true
             )
         }
     }
