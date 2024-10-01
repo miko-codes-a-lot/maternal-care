@@ -75,6 +75,7 @@ fun ResidencesPrev() {
         navController = rememberNavController(),
         currentUser = UserDto(),
         addressDto = AddressDto(id = null, name = "test", code = "loc_test"),
+        isDashboard = true
     )
 }
 
@@ -86,6 +87,7 @@ fun ResidencesUI(
     dateOfCheckup: String? = null,
     isArchive: Boolean = false,
     isCompleted: Boolean? = null,
+    isDashboard: Boolean
 ) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
     var debouncedQuery by remember { mutableStateOf("") }
@@ -109,7 +111,7 @@ fun ResidencesUI(
                 isSuperAdmin = currentUser.isSuperAdmin,
                 addressName = addressDto?.name,
                 isArchive = isArchive,
-                isCompleted = isCompleted,
+                isCompleted = if(isDashboard) isCompleted else null,
             )
     }
     val filteredResidences = residences.filter {
@@ -119,56 +121,65 @@ fun ResidencesUI(
     }
     val isShowFloatingIcon = rememberSaveable { mutableStateOf( !isArchive)}
     val context = LocalContext.current
-    Scaffold(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFFFFFF)),
-        floatingActionButton = {
-            if (isShowFloatingIcon.value && addressDto != null) {
-                FloatingIcon(
-                    navController,
-                    addressDto,
-                    currentUser,
-                    filteredResidences = filteredResidences,
-                    onExportToPDF = { data ->
-                        exportToPDF(
-                            data = data,
-                            onFinish = { file ->
-                                openFile(context, file)
-                            },
-                            onError = { e ->
-                                Toast.makeText(context, "Error creating PDF: ${e.message}", Toast.LENGTH_SHORT).show()
-                            }
-                        )
-                    }
-                )
-            }
-        }
-    ) { padding ->
-        Column(
+            .background(Color.White)
+    ) {
+        Scaffold(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(padding)
-                .padding(16.dp)
-                .background(Color.White),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(40.dp))
-            SearchIcon(
-                searchQuery = searchQuery,
-                onSearchQueryChanged = { searchQuery = it },
-            )
-            Spacer(modifier = Modifier.padding(bottom = 3.dp))
-            LazyColumn(
+                .fillMaxSize(),
+            floatingActionButton = {
+                if (isShowFloatingIcon.value && addressDto != null) {
+                    FloatingIcon(
+                        navController,
+                        addressDto,
+                        currentUser,
+                        filteredResidences = filteredResidences,
+                        onExportToPDF = { data ->
+                            exportToPDF(
+                                data = data,
+                                onFinish = { file ->
+                                    openFile(context, file)
+                                },
+                                onError = { e ->
+                                    Toast.makeText(
+                                        context,
+                                        "Error creating PDF: ${e.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            )
+                        }
+                    )
+                }
+            }
+        ) { padding ->
+            Column(
                 modifier = Modifier
-                    .background(Color.White)
-                    .height(600.dp)
-                    .fillMaxWidth(),
+                    .fillMaxSize()
+                    .background(Color(0xFFFFFFFF))
+                    .padding(padding)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(filteredResidences) { residence ->
-                    SingleItemCard(userDto = residence, navController = navController)
+                Spacer(modifier = Modifier.height(40.dp))
+                SearchIcon(
+                    searchQuery = searchQuery,
+                    onSearchQueryChanged = { searchQuery = it },
+                )
+                Spacer(modifier = Modifier.padding(bottom = 3.dp))
+                LazyColumn(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .height(600.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    items(filteredResidences) { residence ->
+                        SingleItemCard(userDto = residence, navController = navController)
+                    }
                 }
             }
         }
