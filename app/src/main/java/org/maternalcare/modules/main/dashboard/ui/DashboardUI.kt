@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
-import org.maternalcare.modules.main.residence.enum.CheckupStatus
 
 @Composable
 fun DashboardUI(navController: NavController) {
@@ -64,13 +63,13 @@ private fun DashboardMenu (navController: NavController) {
         //Complete
         Spacer(modifier = Modifier.height(10.dp))
         DashboardButton(text = "Complete",iconResId = R.drawable.check) {
-            navController.navigate(MainNav.MonitoringCheckup(isComplete = true))
+            navController.navigate(MainNav.MonitoringCheckup(isComplete = true, dashboard = true))
         }
 
         // Incomplete
         Spacer(modifier = Modifier.height(25.dp))
         DashboardButton(text = "Incomplete",iconResId = R.drawable.clear) {
-            navController.navigate(MainNav.MonitoringCheckup(isComplete = false))
+            navController.navigate(MainNav.MonitoringCheckup(isComplete = false, dashboard = false))
         }
     }
 }
