@@ -65,6 +65,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                     isArchive = args.isArchive,
                     isCompleted = isCompleted,
                     dateOfCheckup = args.dateOfCheckUp,
+                    isDashboard = args.isDashboard
                 )
             }
         }
