@@ -16,6 +16,7 @@ object MainNav {
         var isArchive: Boolean = false,
         var addressId: String? = null,
         var dateOfCheckUp: String? = null,
+        var isDashboard: Boolean
     )
 
     @Serializable
@@ -61,5 +62,5 @@ object MainNav {
     object EditSettings
 
     @Serializable
-    data class MonitoringCheckup(val isComplete: Boolean)
+    data class MonitoringCheckup(val isComplete: Boolean, val dashboard: Boolean)
 }
