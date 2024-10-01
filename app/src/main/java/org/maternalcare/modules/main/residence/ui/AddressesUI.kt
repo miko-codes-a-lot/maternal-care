@@ -1,7 +1,6 @@
 package org.maternalcare.modules.main.residence.ui
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,7 +42,11 @@ fun AddressUIPreview() {
 }
 
 @Composable
-fun AddressesUI(navController: NavController, isArchive: Boolean = false) {
+fun AddressesUI(
+    navController: NavController,
+    isArchive: Boolean = false,
+    isDashboard: Boolean = false
+) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -76,7 +79,8 @@ fun AddressesUI(navController: NavController, isArchive: Boolean = false) {
                  isArchive = isArchive,
                  isShowPercent = false,
                  addressPercentages = mapOf(),
-                 isComplete = true
+                 isComplete = true,
+                 isDashboard = isDashboard
              )
         }
     }
@@ -131,7 +135,8 @@ fun ListAddress(
     isShowPercent: Boolean = false,
     isComplete: Boolean,
     isArchive: Boolean = false,
-    addressPercentages: Map<String, Map<String, Double>>
+    addressPercentages: Map<String, Map<String, Double>>,
+    isDashboard: Boolean
 ) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
     val addresses = residenceViewModel.fetchAddresses()
@@ -157,7 +162,8 @@ fun ListAddress(
                     val residenceRoute = MainNav.Residences(
                         status = checkupStatus,
                         isArchive = isArchive,
-                        addressId = address.id
+                        addressId = address.id,
+                        isDashboard = isDashboard
                     )
                     navController.navigate(residenceRoute)
                 },
