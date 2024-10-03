@@ -247,13 +247,23 @@ fun LabelWithCheckBoxes(
             ){
                 Checkbox(
                     checked = personalChecked,
-                    onCheckedChange = onPersonalCheckedChange,
+                    onCheckedChange = { checked ->
+                        if (label == "Tuberculosis" && checked) {
+                            onFamilyCheckedChange(false)
+                        }
+                        onPersonalCheckedChange(checked)
+                    },
                     colors = CheckboxDefaults.colors(Color(0xFF6650a4))
                 )
                 Spacer(modifier = Modifier.width(45.dp))
                 Checkbox(
                     checked = familyChecked,
-                    onCheckedChange = onFamilyCheckedChange,
+                    onCheckedChange = { checked ->
+                        if (label == "Tuberculosis" && checked) {
+                            onPersonalCheckedChange(false)
+                        }
+                        onFamilyCheckedChange(checked)
+                    },
                     colors = CheckboxDefaults.colors(Color(0xFF6650a4))
                 )
             }
@@ -377,6 +387,9 @@ fun ButtonSaveStatus(
 
     Button(
         onClick = {
+            Log.d("UserID", "User ID is: $userId")
+            Log.d("CurrentUserID", "Current User ID is: ${currentUser.id}")
+
             val userConditionStatus  = UserConditionDto(
                 id = userCondition.id,
                 userId = userId,
@@ -402,12 +415,12 @@ fun ButtonSaveStatus(
                 otherInfectionsDiseases = otherInfectionsDiseases.value,
                 isUnderWeight = isUnderWeight,
                 isOverWeight = isOverWeight,
-                createdById = userCondition.createdById ?: currentUser.id
+                createdById = currentUser.id ?: userCondition.createdById
             )
 
             scope.launch {
                 try {
-                    val result = userViewModel.upsertCondition(userCondition)
+                    val result = userViewModel.upsertCondition(userConditionStatus)
                     if (result.isSuccess) {
                         Log.d("CheckUpSave", "Saving CheckUpDto: $userConditionStatus")
 
