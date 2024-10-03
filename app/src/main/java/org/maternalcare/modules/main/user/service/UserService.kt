@@ -6,6 +6,7 @@ import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.Sort
 import io.realm.kotlin.types.RealmInstant
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
+import org.maternalcare.modules.main.user.model.dto.UserConditionDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.model.entity.Address
 import org.maternalcare.modules.main.user.model.entity.User
@@ -97,7 +98,7 @@ class UserService @Inject constructor(private val realm: Realm) {
                 .firstOrNull()
                 ?.toDTO()
 
-            if (userDto == null) return;
+            if (userDto == null) return
 
             realm.write {
                 userDto.isCompleted = count == 4
@@ -278,6 +279,26 @@ class UserService @Inject constructor(private val realm: Realm) {
                 "Complete" to completedPercentage,
                 "Incomplete" to incompletePercentage
             )
+        }
+    }
+
+//    fun fetchOneCondition(conditionId: ObjectId): UserConditionDto {
+//        return realm.query<UserCondition>("_id == $0", conditionId)
+//            .find()
+//            .first()
+//            .run {
+//                toDTO()
+//            }
+//    }
+
+    suspend fun upsertCondition(data: UserConditionDto): Result<UserConditionDto> {
+        return try {
+            realm.write {
+                val userCondition = copyToRealm(data.toEntity(), updatePolicy = UpdatePolicy.ALL)
+                Result.success(userCondition.toDTO())
+            }
+        } catch (error: Exception) {
+            Result.failure(error)
         }
     }
 }
