@@ -16,7 +16,7 @@ fun UserCheckup.toDTO(): UserCheckupDto {
         bloodPressure = bloodPressure,
         height = height,
         weight = weight,
-        typeOfVaccine = typeOfVaccine,
+        gravidaPara = gravidaPara,
         lastMenstrualPeriod = lastMenstrualPeriod.toInstantString(),
         dateOfCheckUp = dateOfCheckUp.toInstantString(),
         scheduleOfNextCheckUp = scheduleOfNextCheckUp.toInstantString(),
@@ -39,7 +39,7 @@ fun UserCheckupDto.toEntity(): UserCheckup {
         bloodPressure = checkUpDto.bloodPressure
         height = checkUpDto.height
         weight = checkUpDto.weight
-        typeOfVaccine = checkUpDto.typeOfVaccine
+        gravidaPara = checkUpDto.gravidaPara
         lastMenstrualPeriod = checkUpDto.lastMenstrualPeriod.toRealmInstant()
         dateOfCheckUp = checkUpDto.dateOfCheckUp.toRealmInstant()
         scheduleOfNextCheckUp = checkUpDto.scheduleOfNextCheckUp.toRealmInstant()
