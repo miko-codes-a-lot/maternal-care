@@ -16,7 +16,9 @@ import org.maternalcare.modules.main.residence.enum.CheckupStatus
 import org.maternalcare.modules.main.residence.ui.AddressesUI
 import org.maternalcare.modules.main.residence.ui.CheckupDetailsUI
 import org.maternalcare.modules.main.residence.ui.ChooseCheckupUI
+import org.maternalcare.modules.main.residence.ui.ConditionStatusUI
 import org.maternalcare.modules.main.residence.ui.EditCheckupUI
+import org.maternalcare.modules.main.residence.ui.ImmunizationRecordUI
 import org.maternalcare.modules.main.residence.ui.ResidencesPreviewUI
 import org.maternalcare.modules.main.residence.ui.ResidencesUI
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
@@ -24,6 +26,7 @@ import org.maternalcare.modules.main.settings.ui.EditSettingsUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
 import org.maternalcare.modules.main.user.model.dto.AddressDto
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
+import org.maternalcare.modules.main.user.model.dto.UserConditionDto
 import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.modules.main.user.ui.UserCreateUI
 import org.maternalcare.modules.main.user.ui.UserEditUI
@@ -127,12 +130,28 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 )
             }
         }
+        composable<MainNav.ConditionStatus> {
+            val args = it.toRoute<MainNav.ConditionStatus>()
+            val userViewModel: UserViewModel = hiltViewModel()
+            Guard(navController = navController) { currentUser ->
+                val userDto = userViewModel.fetchUser(args.userId)
+                ConditionStatusUI(
+                    navController = navController,
+                    userDto = userDto,
+                    userCondition = UserConditionDto() ,
+                    currentUser = currentUser,
+                )
+            }
+        }
+        composable<MainNav.ImmunizationRecord> {
+            Guard(navController = navController) { currentUser ->
+                ImmunizationRecordUI()
+            }
+        }
         composable<MainNav.Reminders> {
             Guard(navController = navController) { currentUser ->
                 if(currentUser.isAdmin){
                     ReminderListUI(navController, currentUser)
-                }else{
-//                    ReminderDates(onDismiss = { /*TODO*/ }, currentUser = , checkupDto = )
                 }
             }
         }
