@@ -115,7 +115,7 @@ fun ReminderCheckupUI (
 @Composable
 fun CheckUpValueContainer (userDto: UserDto, checkup: UserCheckupDto) {
 
-    val lmpString = checkup.lastMenstrualPeriod ?: ""
+    val lmpString = checkup.lastMenstrualPeriod
     val lmp = stringToInstant(lmpString)
     val aogWeeks = lmp?.let { calculateAgeOFGestation(it) } ?: 0L
 
@@ -133,7 +133,6 @@ fun CheckUpValueContainer (userDto: UserDto, checkup: UserCheckupDto) {
         "Expected Due Date" to edd,
         "Next Check-up" to formatDate(checkup.scheduleOfNextCheckUp),
 //        "Type  Of Vaccine" to checkup.typeOfVaccine
-        "Recommended Type Of Vaccine" to "Tetanus toxoid"
     )
     Column(
         modifier = Modifier
