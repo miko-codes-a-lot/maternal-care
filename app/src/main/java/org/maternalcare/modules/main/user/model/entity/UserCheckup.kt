@@ -23,4 +23,5 @@ class UserCheckup : RealmObject {
     var lastUpdatedAt: RealmInstant = RealmInstant.now()
     var deletedById: ObjectId? = null
     var deletedAt: RealmInstant? = null
+    var isArchive: Boolean = false
 }

@@ -61,8 +61,14 @@ fun UserPreview(){
 @Composable
 fun UsersUI(navController: NavController) {
     val userViewModel: UserViewModel = hiltViewModel()
+    var searchQuery by remember { mutableStateOf("") }
     val users by produceState<List<UserDto>>(emptyList(), userViewModel) {
         value = userViewModel.fetchUsers()
+    }
+    val filteredResidences = users.filter {
+        it.firstName.contains(searchQuery, ignoreCase = true) ||
+        it.middleName!!.contains(searchQuery, ignoreCase = true) ||
+        it.lastName.contains(searchQuery, ignoreCase = true)
     }
     Column(
         modifier = Modifier
@@ -70,6 +76,9 @@ fun UsersUI(navController: NavController) {
             .background(Color.White)
     ) {
         Scaffold(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFFFFFFF)),
             floatingActionButton = {
                 FloatParentFloatingIcon(navController)
             }
@@ -83,14 +92,19 @@ fun UsersUI(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.padding( top = 45.dp) )
-                UsersSearchIcon(navController)
+                UsersSearchIcon(
+                    navController,
+                    searchQuery = searchQuery,
+                    onSearchQueryChanged = { searchQuery = it },
+                )
                 LazyColumn(
                     modifier = Modifier
+                        .background(Color.White)
                         .height(588.dp)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(users) { user ->
+                    items(filteredResidences) { user ->
                         UserSingleLine(userDto = user, navController = navController)
                     }
                 }
@@ -100,12 +114,15 @@ fun UsersUI(navController: NavController) {
 }
 
 @Composable
-fun UsersSearchIcon(navController: NavController) {
-    var searchQuery by remember { mutableStateOf("") }
+fun UsersSearchIcon(
+    navController: NavController,
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+) {
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = searchQuery,
-        onValueChange = { searchQuery = it },
+        onValueChange = { onSearchQueryChanged(it) },
         leadingIcon = {
             IconButton(onClick = { } ) {
                 Icon(
@@ -117,13 +134,15 @@ fun UsersSearchIcon(navController: NavController) {
             }
         },
         trailingIcon = {
-            IconButton(onClick = {navController.navigate(MainNav.Menu)}) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "Close Icon",
-                    tint = Color.Black,
-                    modifier = Modifier.size(24.dp)
-                )
+            if (searchQuery.isNotEmpty()) {
+                IconButton(onClick = { onSearchQueryChanged("") }) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Clear Search",
+                        tint = Color.Black,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
         },
         colors = OutlinedTextFieldDefaults.colors(
@@ -168,6 +187,7 @@ fun UserSingleLine(
                 text = userDto.email ?: "${userDto.firstName} ${userDto.lastName}",
                 fontSize = 18.sp,
                 fontFamily = FontFamily.SansSerif,
+                color = Color.Black,
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .weight(1f)

@@ -27,6 +27,7 @@ fun UserCheckup.toDTO(): UserCheckupDto {
         lastUpdatedAt = lastUpdatedAt.toInstantStringNullable(),
         deletedById = deletedById?.toHexString(),
         deletedAt = deletedAt?.run { this.toInstantStringNullable() },
+        isArchive = isArchive
     )
 }
 
@@ -49,5 +50,6 @@ fun UserCheckupDto.toEntity(): UserCheckup {
         lastUpdatedAt = checkUpDto.createdAt.toRealmInstantNullable() ?: RealmInstant.now()
         deletedById = checkUpDto.deletedById?.toObjectId()
         deletedAt = checkUpDto.deletedAt.toRealmInstantNullable()
+        isArchive = checkUpDto.isArchive
     }
 }

@@ -32,27 +32,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.menu.model.MenuItem
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
 import org.maternalcare.modules.main.user.model.dto.UserDto
-import org.maternalcare.shared.ui.ReminderAlertUI
+import org.maternalcare.modules.main.user.viewmodel.UserViewModel
+import org.maternalcare.shared.ui.ReminderCheckupListUI
+import org.maternalcare.shared.ui.ReminderDates
 
-@Preview(showSystemUi = true)
-@Composable
-fun MenuUIPreview() {
-    MenuUI(navController = rememberNavController(), currentUser = UserDto())
-}
 
 @Composable
-fun MenuUI(navController: NavController, currentUser: UserDto) {
-//    val isReminderAlertVisible = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin) }
+fun MenuUI(
+    navController: NavController,
+    currentUser: UserDto,
+) {
+    val isReminderAlertVisible = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin) }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
@@ -73,13 +72,28 @@ fun MenuUI(navController: NavController, currentUser: UserDto) {
                     .size(100.dp)
                     .align(Alignment.CenterHorizontally)
             )
-//              hide reminder alert
-//            if (isReminderAlertVisible.value) {
-//                ReminderAlertUI(
-//                    isReminderAlert = true,
-//                    onDismiss = { isReminderAlertVisible.value = false }
-//                )
-//            }
+
+            if (isReminderAlertVisible.value) {
+                val userViewModel: UserViewModel = hiltViewModel()
+                if (currentUser.isResidence) {
+                    val checkupDto = userViewModel.fetchCheckUpDetail(currentUser.id!!)
+                    if (checkupDto != null) {
+                        ReminderDates(
+                            isReminderAlert = true,
+                            onDismiss = { isReminderAlertVisible.value = false },
+                            currentUser = currentUser,
+                            checkupDto = checkupDto,
+                        )
+                    }
+                } else if (currentUser.isAdmin) {
+                    val checkupDates = userViewModel.getGroupOfCheckupDate(currentUser.id!!)
+                    ReminderCheckupListUI(
+                        onDismiss = {  isReminderAlertVisible.value = false  },
+                        checkupDto = checkupDates
+                    )
+
+                }
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
             UserPosition(userDto = currentUser)
@@ -158,7 +172,7 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
             MenuItem(text = "Manage User") {
                 navController.navigate(MainNav.User)
             },
-            MenuItem(text = "Data Storage") {
+            MenuItem(text = "Backup Storage") {
                 navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name, isArchive = true))
             },
             MenuItem(text = "Settings") {
@@ -175,7 +189,7 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
             MenuItem(text = "Reminders") {
                 navController.navigate(MainNav.ReminderLists)
             },
-            MenuItem(text = "Data Storage") {
+            MenuItem(text = "Backup Storage") {
                 navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name, isArchive = true))
             },
             MenuItem(text = "Settings") {
@@ -228,27 +242,6 @@ private fun MenuButton(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun CheckUpDateContainer() {
-    val checkUpDetails = listOf( "August 24, 2024" )
-    Row(
-        modifier = Modifier
-            .padding(top = 10.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        checkUpDetails.forEach { dates ->
-            Text(
-                text = dates,
-                textAlign = TextAlign.Center,
-                fontSize = 16.sp,
-                color = Color(0xFF6650a4),
-                fontFamily = (FontFamily.SansSerif)
-            )
-        }
-    }
-}
-
-@Composable
 fun TextContainer(text: String) {
     Column(
         modifier = Modifier
@@ -272,6 +265,8 @@ fun TextContainer(text: String) {
                 textAlign = TextAlign.Center,
                 fontSize = 16.sp,
                 color = Color(0xFF6650a4),
+                modifier = Modifier
+                    .padding(start = 5.dp, end = 5.dp),
                 fontFamily = (FontFamily.SansSerif)
             )
         }

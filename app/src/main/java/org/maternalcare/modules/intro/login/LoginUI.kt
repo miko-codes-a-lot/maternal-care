@@ -1,6 +1,7 @@
 package org.maternalcare.modules.intro.login
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,12 +41,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import org.maternalcare.R
 import org.maternalcare.modules.intro.login.model.dto.LoginDto
@@ -53,13 +52,7 @@ import org.maternalcare.modules.intro.login.viewmodel.LoginViewModel
 import org.maternalcare.modules.intro.login.viewmodel.UserState
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserDto
-import org.maternalcare.shared.ui.ReminderAlertUI
-
-@Preview(showSystemUi = true)
-@Composable
-fun LoginUIPreview() {
-    LoginUI(navController = rememberNavController())
-}
+import org.maternalcare.shared.ui.AlertLogInUI
 
 @Composable
 fun LoginUI(
@@ -103,10 +96,13 @@ fun LoginUI(
 
         ContainerLabelAndValue( statesValue = statesValue)
 
+
         ButtonLogin(
             navController = navController,
             statesValue = statesValue
         )
+
+
         Spacer(modifier = Modifier.height(100.dp))
     }
 }
@@ -138,14 +134,10 @@ fun ButtonLogin(
 
     val loginViewModel: LoginViewModel = hiltViewModel()
     val showAlert = rememberSaveable { mutableStateOf(false) }
-    val messages = remember { mutableListOf<String>() }
 
     if (showAlert.value) {
-        ReminderAlertUI(
-            isReminderAlert = true,
-            listOfText = messages,
+        AlertLogInUI(
             onDismiss = { showAlert.value = false },
-            isError = true
         )
     }
 
@@ -157,19 +149,18 @@ fun ButtonLogin(
                     password = statesValue["Password"]?.value ?: "",
                 )
                 val isSuccess = loginViewModel.login(loginDto)
-
+                Log.d("Login","${loginDto}")
                 if (isSuccess) {
                     coroutineScope.launch {
                         showButton = false
                         vm.signIn()
+
                         navController.navigate(MainNav.Menu) {
                             popUpTo(0)
                         }
                     }
                 } else {
                     showAlert.value = true
-                    messages.clear()
-                    messages.add("Incorrect email or password")
                 }
             },
             modifier = Modifier

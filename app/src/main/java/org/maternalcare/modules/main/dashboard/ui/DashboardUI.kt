@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
-import org.maternalcare.modules.main.residence.enum.CheckupStatus
 
 @Composable
 fun DashboardUI(navController: NavController) {
@@ -64,13 +63,13 @@ private fun DashboardMenu (navController: NavController) {
         //Complete
         Spacer(modifier = Modifier.height(10.dp))
         DashboardButton(text = "Complete",iconResId = R.drawable.check) {
-            navController.navigate(MainNav.MonitoringCheckup)
+            navController.navigate(MainNav.MonitoringCheckup(isComplete = true, dashboard = true))
         }
 
         // Incomplete
         Spacer(modifier = Modifier.height(25.dp))
         DashboardButton(text = "Incomplete",iconResId = R.drawable.clear) {
-            navController.navigate(MainNav.Addresses(CheckupStatus.INCOMPLETE.name))
+            navController.navigate(MainNav.MonitoringCheckup(isComplete = false, dashboard = false))
         }
     }
 }
@@ -94,7 +93,7 @@ private fun DashboardButton(text: String,iconResId: Int? = null, onClick: () -> 
         
         Text(
             text = text,
-            fontSize = 19.sp,
+            fontSize = 18.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.Serif
@@ -104,7 +103,7 @@ private fun DashboardButton(text: String,iconResId: Int? = null, onClick: () -> 
            Image(
                painter = painterResource(id = it),
                contentDescription = null,
-               modifier = Modifier.size(35.dp),
+               modifier = Modifier.size(32.dp),
                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White)
            )
         }

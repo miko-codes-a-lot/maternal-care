@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -68,6 +69,7 @@ fun MessageUIPreview() {
 fun MessageUI(navController: NavController, currentUser: UserDto, userDto: UserDto) {
     Column(
         modifier = Modifier
+            .background(Color.White)
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
@@ -98,10 +100,13 @@ fun MessageContainer(currentUser: UserDto, userDto: UserDto) {
     }
 
     Column(modifier = Modifier
-        .height(660.dp)
+        .background(Color.White)
+//        .height(660) Original Size
+        .height(750.dp)
     ) {
         LazyColumn(
             modifier = Modifier
+                .fillMaxHeight()
                 .background(Color.White)
                 .weight(1f)
                 .fillMaxWidth(),

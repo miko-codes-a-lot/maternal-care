@@ -12,6 +12,7 @@ import org.maternalcare.modules.main.menu.ui.MenuUI
 import org.maternalcare.modules.main.message.ui.MessageListUI
 import org.maternalcare.modules.main.message.ui.MessageUI
 import org.maternalcare.modules.main.reminder.ui.ReminderListUI
+import org.maternalcare.modules.main.residence.enum.CheckupStatus
 import org.maternalcare.modules.main.residence.ui.AddressesUI
 import org.maternalcare.modules.main.residence.ui.CheckupDetailsUI
 import org.maternalcare.modules.main.residence.ui.ChooseCheckupUI
@@ -21,6 +22,7 @@ import org.maternalcare.modules.main.residence.ui.ResidencesUI
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.settings.ui.EditSettingsUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
+import org.maternalcare.modules.main.user.model.dto.AddressDto
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.modules.main.user.ui.UserCreateUI
@@ -46,9 +48,25 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         composable<MainNav.Residences> {
             val args = it.toRoute<MainNav.Residences>()
             val residenceViewModel: ResidenceViewModel = hiltViewModel()
-            val addressDto = residenceViewModel.fetchOneAddress(args.addressId.toObjectId())
+            var addressDto: AddressDto? = null;
+            if (args.addressId != null) {
+                addressDto = residenceViewModel.fetchOneAddress(args.addressId.toObjectId())
+            }
             Guard(navController = navController) { currentUser ->
-                ResidencesUI(navController, currentUser, addressDto)
+                val isCompleted = when (args.status) {
+                    CheckupStatus.COMPLETE.name -> true
+                    CheckupStatus.INCOMPLETE.name -> false
+                    else -> null
+                }
+                ResidencesUI(
+                    navController = navController,
+                    currentUser = currentUser,
+                    addressDto = addressDto,
+                    isArchive = args.isArchive,
+                    isCompleted = isCompleted,
+                    dateOfCheckup = args.dateOfCheckUp,
+                    isDashboard = args.isDashboard
+                )
             }
         }
         composable<MainNav.ResidencePreview> {
@@ -87,7 +105,8 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                         navController,
                         checkupNumber = args.checkupNumber,
                         userDto = userDto,
-                        currentUser = currentUser
+                        currentUser = currentUser,
+                        checkupUser = checkupDto
                     )
                 }
             }
@@ -108,6 +127,15 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 )
             }
         }
+        composable<MainNav.Reminders> {
+            Guard(navController = navController) { currentUser ->
+                if(currentUser.isAdmin){
+                    ReminderListUI(navController, currentUser)
+                }else{
+//                    ReminderDates(onDismiss = { /*TODO*/ }, currentUser = , checkupDto = )
+                }
+            }
+        }
         composable<MainNav.MessagesList> {
             Guard(navController = navController) { currentUser ->
                 MessageListUI(navController, currentUser)
@@ -125,7 +153,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.ReminderLists> {
             Guard(navController = navController) { currentUser ->
-                ReminderListUI(navController)
+                ReminderListUI(navController, currentUser)
             }
         }
         composable<MainNav.Dashboard> {
@@ -172,18 +200,15 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             }
         }
         composable<MainNav.MonitoringCheckup> {
-            Guard(navController = navController) { currentUser ->
-                CheckupProgressUI(navController)
-            }
-        }
-        composable<MainNav.UserPreview> {
+            val args = it.toRoute<MainNav.MonitoringCheckup>()
             val userViewModel: UserViewModel = hiltViewModel()
-//            UserPreviewUI(navController = navController, user = UserDto(), title = "Preview Account", onSave = { userDto ->
-//                userViewModel.viewModelScope.launch {
-//                    val result = userViewModel.upsertUser(userDto)
-//                    if (result.isSuccess) { navController.popBackStack() }
-//                }
-//            })
+            Guard(navController = navController) { currentUser ->
+                CheckupProgressUI(
+                    navController,
+                    isComplete = args.isComplete,
+                    userViewModel = userViewModel
+                )
+            }
         }
     }
 }

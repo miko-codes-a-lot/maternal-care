@@ -1,5 +1,6 @@
 package org.maternalcare.modules.main.residence.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,7 +42,11 @@ fun AddressUIPreview() {
 }
 
 @Composable
-fun AddressesUI(navController: NavController, isArchive: Boolean = false) {
+fun AddressesUI(
+    navController: NavController,
+    isArchive: Boolean = false,
+    isDashboard: Boolean = false
+) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -69,14 +74,29 @@ fun AddressesUI(navController: NavController, isArchive: Boolean = false) {
                 color = Color(0xFF6650a4)
             )
             Spacer(modifier = Modifier.height(10.dp))
-            ListAddress(navController,isShowPercent = false)
+             ListAddress(
+                 navController,
+                 isArchive = isArchive,
+                 isShowPercent = false,
+                 addressPercentages = mapOf(),
+                 isComplete = true,
+                 isDashboard = isDashboard
+             )
         }
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
-private fun ListButton (isShowPercent: Boolean = false, addressDto: AddressDto, onClick: () -> Unit, navController: NavController){
-    ElevatedButton(onClick = onClick,
+private fun ListButton (
+    isShowPercent: Boolean = false,
+    addressDto: AddressDto,
+    onClick: () -> Unit,
+    navController: NavController,
+    percentage: Double
+){
+    ElevatedButton(
+        onClick = onClick,
         colors = ButtonDefaults.elevatedButtonColors(
             containerColor =  Color(0xFF6650a4),
             contentColor = Color(0xFFFFFFFF)
@@ -97,12 +117,10 @@ private fun ListButton (isShowPercent: Boolean = false, addressDto: AddressDto, 
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.Serif,
         )
-
-        if (isShowPercent) {
+        if (isShowPercent && percentage > 0.0) {
             Spacer(modifier = Modifier.width(10.dp))
-
             Text(
-                text = "0%",
+                text = "${String.format("%.2f", percentage)}%",
                 fontSize = 17.sp,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
@@ -111,9 +129,15 @@ private fun ListButton (isShowPercent: Boolean = false, addressDto: AddressDto, 
         }
     }
 }
-
 @Composable
-fun ListAddress (navController: NavController, isShowPercent: Boolean) {
+fun ListAddress(
+    navController: NavController,
+    isShowPercent: Boolean = false,
+    isComplete: Boolean,
+    isArchive: Boolean = false,
+    addressPercentages: Map<String, Map<String, Double>>,
+    isDashboard: Boolean
+) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
     val addresses = residenceViewModel.fetchAddresses()
     LazyColumn(
@@ -121,13 +145,31 @@ fun ListAddress (navController: NavController, isShowPercent: Boolean) {
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         items(addresses) { address ->
-            ListButton(addressDto = address, isShowPercent = isShowPercent, onClick = {
-                val residenceRoute = MainNav.Residences(
-                    status = CheckupStatus.ALL.name,
-                    addressId = address.id
-                )
-                navController.navigate(residenceRoute)
-            }, navController = navController)
+            val percentages = addressPercentages[address.name] ?: mapOf("Complete" to 0.0, "Incomplete" to 0.0)
+            val completePercentage = percentages["Complete"] ?: 0.0
+            val incompletePercentage = percentages["Incomplete"] ?: 0.0
+            val percentageToShow = if (isComplete) completePercentage else incompletePercentage
+            ListButton(
+                addressDto = address,
+                isShowPercent = isShowPercent,
+                onClick = {
+                    val checkupStatus =
+                        if (isComplete)
+                            CheckupStatus.COMPLETE.name
+                        else
+                            CheckupStatus.INCOMPLETE.name
+
+                    val residenceRoute = MainNav.Residences(
+                        status = checkupStatus,
+                        isArchive = isArchive,
+                        addressId = address.id,
+                        isDashboard = isDashboard
+                    )
+                    navController.navigate(residenceRoute)
+                },
+                navController = navController,
+                percentage = percentageToShow
+            )
         }
     }
 }

@@ -8,13 +8,22 @@ object MainNav {
     object Menu
 
     @Serializable
-    data class Addresses(val status: String, var isArchive: Boolean = false)
+    data class Addresses(val status: String, val isArchive: Boolean = false)
 
     @Serializable
-    data class Residences(val status: String, var isArchive: Boolean = false, var addressId: String? = null)
+    data class Residences(
+        val status: String,
+        var isArchive: Boolean = false,
+        var addressId: String? = null,
+        var dateOfCheckUp: String? = null,
+        var isDashboard: Boolean
+    )
 
     @Serializable
     data class ResidencePreview(val userId: String)
+
+    @Serializable
+    object Reminders
 
     @Serializable
     data class ChooseCheckup(val userId: String)
@@ -53,11 +62,5 @@ object MainNav {
     object EditSettings
 
     @Serializable
-    object MonitoringCheckup
-
-    @Serializable
-    data class EditCheckup(val checkUpId: String)
-
-    @Serializable
-    object UserPreview
+    data class MonitoringCheckup(val isComplete: Boolean, val dashboard: Boolean)
 }

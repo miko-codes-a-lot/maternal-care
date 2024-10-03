@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,8 +20,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,9 +47,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -52,10 +61,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.user.model.dto.AddressDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.shared.ext.hashPassword
@@ -63,6 +75,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
+
 
 @Preview(showSystemUi = true)
 @Composable
@@ -89,7 +102,6 @@ fun UserForm(
     val listOfLabel = mutableListOf("First Name", "Middle Name", "Last Name", "Email", "Address", "Mobile Number", "Date Of Birth")
     if (includePassword) listOfLabel.add("Password")
 
-    val userId by remember { mutableStateOf(userDto?.id ?: "") }
     var radioError by remember { mutableStateOf(false) }
 
     val statesValue = remember {
@@ -124,6 +136,9 @@ fun UserForm(
         }
         mutableStateOf(value)
     }
+
+    val residenceViewModel: ResidenceViewModel = hiltViewModel()
+    val addressList by remember { mutableStateOf(residenceViewModel.fetchAddresses()) }
 
     var isActive by remember { mutableStateOf(true) }
     var isButtonEnabled by remember { mutableStateOf(true) }
@@ -160,14 +175,15 @@ fun UserForm(
                 selectedOption = option
                 radioError = false
             },
-            errors = errors
+            errors = errors,
+            addressList = addressList
         )
 
         SwitchButton(isActiveState = isActive, onCheckedChange = { isActive = it } ,scale = 0.7f, switchText = "Active")
 
         ButtonSubmitData(
             statesValue = statesValue,
-            userId = userId,
+            targetUserDto = userDto,
             selectedOption = selectedOption,
             isActiveState = isActive,
             onSubmit = {
@@ -211,6 +227,7 @@ fun ContainerLabelValue(
     radioErrorMsg: String,
     onSelect: (option: String) -> Unit,
     addressDto: AddressDto?,
+    addressList: List<AddressDto>
 ) {
     val firstNameKey = "First Name"
     val firstName = statesValue[firstNameKey]
@@ -222,7 +239,12 @@ fun ContainerLabelValue(
         onErrorChange = { hasError ->
             errors[firstNameKey]?.value = if (hasError) "This field is required" else ""
         },
-        errorMessage = errors[firstNameKey]?.value ?: ""
+        errorMessage = errors[firstNameKey]?.value ?: "",
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 17.sp,
+            fontFamily = FontFamily.SansSerif
+        )
     )
 
     val middleNameKey = "Middle Name"
@@ -233,7 +255,12 @@ fun ContainerLabelValue(
         onValueChange = { newValue -> middleName?.value = newValue },
         isError = false,
         onErrorChange = {},
-        errorMessage = errors[middleNameKey]?.value ?: ""
+        errorMessage = errors[middleNameKey]?.value ?: "",
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 17.sp,
+            fontFamily = FontFamily.SansSerif
+        )
     )
 
     val lastNameKey = "Last Name"
@@ -246,7 +273,12 @@ fun ContainerLabelValue(
         onErrorChange = { hasError ->
             errors[lastNameKey]?.value = if (hasError) "This field is required" else ""
         },
-        errorMessage = errors[lastNameKey]?.value ?: ""
+        errorMessage = errors[lastNameKey]?.value ?: "",
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 17.sp,
+            fontFamily = FontFamily.SansSerif
+        )
     )
 
     val emailKey = "Email"
@@ -259,22 +291,141 @@ fun ContainerLabelValue(
         onErrorChange = { hasError ->
             errors[emailKey]?.value = if (hasError) "This field is required" else ""
         },
-        errorMessage = errors[emailKey]?.value ?: ""
+        errorMessage = errors[emailKey]?.value ?: "",
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 17.sp,
+            fontFamily = FontFamily.SansSerif
+        )
     )
 
-    val addressKey = "Address"
-    val address = statesValue[addressKey]
-    TextFieldContainer(
-        textFieldLabel = addressKey,
-        textFieldValue = address?.value ?: "",
-        onValueChange = { newValue -> address?.value = newValue },
-        isDisable = addressDto != null,
-        isError = errors[addressKey]?.value?.isNotEmpty() == true,
-        onErrorChange = { hasError ->
-            errors[addressKey]?.value = if (hasError) "This field is required" else ""
-        },
-        errorMessage = errors[addressKey]?.value ?: ""
-    )
+    Spacer(modifier = Modifier.height(5.dp))
+    var expanded by remember { mutableStateOf(false) }
+    var selectItem by remember { mutableStateOf(statesValue["Address"]?.value ?: "") }
+    var textFieldSize by remember { mutableStateOf( Size.Zero ) }
+
+    val icon = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown
+
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Address",
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            fontFamily = FontFamily.SansSerif,
+            fontSize = 17.sp
+        )
+
+        Text(text = " : " )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .clickable { expanded = !expanded }
+
+        ) {
+            if(selectItem.isEmpty()){
+                Column {
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 10.dp)
+                            .fillMaxWidth()
+                            .onGloballyPositioned { coordinates ->
+                                textFieldSize = coordinates.size.toSize()
+                            },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (errors["Address"]?.value?.isNotEmpty() == true) {
+                            Text(
+                                text = errors["Address"]?.value ?: "",
+                                color = Color.Red,
+                                fontSize = 12.sp
+                            )
+                        }else{
+                            Text(text = "Select Address",
+                                color = Color.Black,
+                                fontSize = 16.sp,
+                                fontFamily = FontFamily.SansSerif
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Icon(icon, "Dropdown Icon")
+                        }
+
+                    }
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .height(1.dp)
+                            .fillMaxWidth(),
+                        color = if (errors["Address"]?.value?.isNotEmpty() == true) Color.Red else Color.Black
+                    )
+                }
+            }else{
+                TextField(
+                    value = selectItem,
+                    onValueChange = { newValue ->
+                        selectItem = newValue
+                        statesValue["Address"]?.value = newValue
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = Color.White)
+                        .onGloballyPositioned { coordinates ->
+                            textFieldSize = coordinates.size.toSize()
+                        }
+                        .clickable { expanded = !expanded },
+                    trailingIcon = {
+                        Icon(icon,"Dropdown Icon",
+                            modifier = Modifier
+                            .clickable { expanded = !expanded }
+                        )
+                    },
+                    readOnly = true,
+                    textStyle = TextStyle(
+                        color = Color.Black,
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily.SansSerif
+                    ),
+                    colors =
+                    OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                    )
+                )
+            }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .width(260.dp)
+                    .background(color = Color.White)
+                    .heightIn(max = 200.dp)
+                    .offset(y = 8.dp)
+            ) {
+                addressList.forEach { address  ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = address.name,
+                                color = Color.Black,
+                                fontFamily = FontFamily.SansSerif,
+                                fontSize = 16.sp
+                            )
+                        }, onClick = {
+                        selectItem  = address.name
+                        statesValue["Address"]?.value = address.name
+                        expanded = false
+                    })
+                }
+            }
+        }
+    }
 
     val mobileNumberKey = "Mobile Number"
     val mobileNumber = statesValue[mobileNumberKey]
@@ -286,7 +437,12 @@ fun ContainerLabelValue(
         onErrorChange = { hasError ->
             errors[mobileNumberKey]?.value = if (hasError) "This field is required" else ""
         },
-        errorMessage = errors[mobileNumberKey]?.value ?: ""
+        errorMessage = errors[mobileNumberKey]?.value ?: "",
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 17.sp,
+            fontFamily = FontFamily.SansSerif
+        )
     )
 
     val dateOfBirthKey = "Date Of Birth"
@@ -316,7 +472,12 @@ fun ContainerLabelValue(
             onErrorChange = { hasError ->
                 errors[passwordKey]?.value = if (hasError) "This field is required" else ""
             },
-            errorMessage = errors[passwordKey]?.value ?: ""
+            errorMessage = errors[passwordKey]?.value ?: "",
+            textStyle = TextStyle(
+                color = Color.Black,
+                fontSize = 17.sp,
+                fontFamily = FontFamily.SansSerif
+            )
         )
     }
 
@@ -367,7 +528,7 @@ fun ContainerLabelValue(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = 8.dp, top = 3.dp)
                 )
-
+              
                 Row(
                     Modifier
                         .selectable(
@@ -434,9 +595,10 @@ fun TextFieldContainer(
     isError: Boolean,
     onErrorChange: (Boolean) -> Unit,
     isDisable: Boolean = false,
-    errorMessage: String = ""
+    errorMessage: String = "",
+    textStyle: TextStyle
 ) {
-    var isPasswordField = textFieldLabel == "Password"
+    val isPasswordField = textFieldLabel == "Password"
     var isPasswordVisible by remember { mutableStateOf(false) }
     val isPhoneNumberField = textFieldLabel == "Mobile Number"
 
@@ -485,7 +647,7 @@ fun TextFieldContainer(
                     }
                 },
                 placeholder = if (!isError) {
-                    { Text("Enter value", color = Color.Black) }
+                    { Text("Enter value", color = Color.Black, fontSize = 16.sp, fontFamily = FontFamily.SansSerif) }
                 } else null,
                 label = if (isError) {
                     {
@@ -497,6 +659,7 @@ fun TextFieldContainer(
                         )
                     }
                 } else null,
+                textStyle = textStyle,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -688,7 +851,7 @@ fun ButtonSubmitData(
     statesValue: Map<String, MutableState<String>>,
     selectedOption: String,
     isActiveState: Boolean,
-    userId: String,
+    targetUserDto: UserDto?,
     onSubmit: (UserDto) -> Unit,
     errors: Map<String, MutableState<String>>,
     isEnableSubmit: Boolean,
@@ -696,9 +859,10 @@ fun ButtonSubmitData(
     Button(
         onClick = {
 
-            val hasError = validateForm(errors, statesValue)
+                val hasError = validateForm(errors, statesValue)
             if (!hasError) {
                 val userDto = UserDto(
+                    id =  targetUserDto?.id,
                     firstName = statesValue["First Name"]?.value ?: "",
                     middleName = statesValue["Middle Name"]?.value ?: "",
                     lastName = statesValue["Last Name"]?.value ?: "",
@@ -706,18 +870,17 @@ fun ButtonSubmitData(
                     address = statesValue["Address"]?.value ?: "",
                     mobileNumber = statesValue["Mobile Number"]?.value ?: "",
                     dateOfBirth = statesValue["Date Of Birth"]?.value ?: "",
+                    password = statesValue["Password"]?.value ?: targetUserDto?.password ?: "",
                     isSuperAdmin = selectedOption == "Admin",
                     isAdmin = selectedOption == "BHW",
                     isResidence = selectedOption == "Residence",
                     isActive = isActiveState
                 )
 
-                val password = statesValue["Password"]?.value
-                if (userId.isEmpty()) {
-                    userDto.password = password?.hashPassword() ?: ""
+                if (targetUserDto?.id == null) {
+                    userDto.password = statesValue["Password"]?.value?.hashPassword() ?: "";
                 } else {
-                    userDto.id = userId
-                    userDto.password = password ?: ""
+                    userDto.password = targetUserDto.password
                 }
 
                 // Invoke callback listener
@@ -821,5 +984,3 @@ fun validateForm(
     }
     return hasError
 }
-
-

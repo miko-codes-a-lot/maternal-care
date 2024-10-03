@@ -149,15 +149,6 @@ fun UserImageUI(
     }
 }
 
-fun saveBitmapToUri(context: Context, bitmap: Bitmap?): Uri? {
-    val file = File(context.cacheDir, "profile_image.png")
-    file.outputStream().use { out ->
-        bitmap?.compress(Bitmap.CompressFormat.PNG, 100, out)
-        out.flush()
-    }
-    return Uri.fromFile(file)
-}
-
 fun getBytesFromUri(context: Context, uri: Uri): ByteArray? {
     return try {
         val inputStream = context.contentResolver.openInputStream(uri)
@@ -165,4 +156,29 @@ fun getBytesFromUri(context: Context, uri: Uri): ByteArray? {
     } catch (e: Exception) {
         null
     }
+}
+
+fun saveBitmapToUri(context: Context, bitmap: Bitmap?, maxWidth: Int = 500, maxHeight: Int = 500): Uri? {
+    val resizedBitmap = bitmap?.let { resizeBitmap(it, maxWidth, maxHeight) }
+
+    val file = File(context.cacheDir, "profile_image.png")
+    file.outputStream().use { out ->
+        resizedBitmap?.compress(Bitmap.CompressFormat.PNG, 80, out)
+        out.flush()
+    }
+    return Uri.fromFile(file)
+}
+
+fun resizeBitmap(bitmap: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap {
+    val aspectRatio = bitmap.width.toFloat() / bitmap.height.toFloat()
+    val width: Int
+    val height: Int
+    if (bitmap.width > bitmap.height) {
+        width = maxWidth
+        height = (maxWidth / aspectRatio).toInt()
+    } else {
+        height = maxHeight
+        width = (maxHeight * aspectRatio).toInt()
+    }
+    return Bitmap.createScaledBitmap(bitmap, width, height, true)
 }

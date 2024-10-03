@@ -1,7 +1,9 @@
 package org.maternalcare.modules.main.user.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.service.UserService
@@ -11,7 +13,14 @@ import javax.inject.Inject
 @HiltViewModel
 class UserViewModel @Inject constructor(
     val userService: UserService
-): ViewModel()  {
+): ViewModel() {
+    init {
+        viewModelScope.launch {
+            userService.archiveOldResidences()
+            userService.updateCompletionStatus()
+        }
+    }
+
     fun fetchUsers(): List<UserDto> {
         return this.userService.fetch()
     }
@@ -34,5 +43,21 @@ class UserViewModel @Inject constructor(
 
     suspend fun upsertCheckUp(checkupDto: UserCheckupDto): Result<UserCheckupDto> {
         return this.userService.upsertCheckUp(checkupDto)
+    }
+
+    fun fetchCheckUpDetail(userId: String): UserCheckupDto? {
+        return userService.fetchCheckUpDetails(userId)
+    }
+
+    fun getGroupOfCheckupDate(adminId: String): List<UserCheckupDto> {
+        return userService.getGroupOfCheckupDates(adminId.toObjectId())
+    }
+
+    fun getCompleteCheckupPercentages(): Map<String, Double> {
+        return userService.fetchAddressCheckupPercentage()
+    }
+
+    fun getAllListAddressCheckupPercentages(): Map<String, Map<String, Double>> {
+        return userService.fetchAddressCompletionPercentages()
     }
 }

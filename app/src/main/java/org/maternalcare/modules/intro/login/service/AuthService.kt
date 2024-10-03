@@ -11,7 +11,12 @@ import javax.inject.Inject
 
 class AuthService @Inject constructor(private val realm: Realm) {
     fun login(loginDto: LoginDto): UserDto? {
-        val user = realm.query<User>("email == $0", loginDto.username)
+        val query = StringBuilder()
+            .append("email == $0")
+            .append(" AND isActive == true")
+            .append(" AND isArchive == false")
+
+        val user = realm.query<User>(query.toString(), loginDto.username)
             .find()
             .firstOrNull()
 
