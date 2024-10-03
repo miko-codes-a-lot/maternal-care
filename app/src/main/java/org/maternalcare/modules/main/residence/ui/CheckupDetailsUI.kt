@@ -94,7 +94,7 @@ fun CheckupDetailsUI(
 
     val checkupLabels = listOf(
         "Blood Pressure", "Height", "Weight",
-//        "Types Of Vaccine",
+        "Gravida Para (GP)",
         "Date Of Checkup",
         "Last Menstrual Period", "Schedule of Next Check-up"
     )
@@ -103,7 +103,7 @@ fun CheckupDetailsUI(
         checkupDto.bloodPressure.toString(),
         checkupDto.height.toString(),
         checkupDto.weight.toString(),
-//        checkupDto.typeOfVaccine,
+        checkupDto.gravidaPara,
         formatDate(checkupDto.dateOfCheckUp),
         formatDate(checkupDto.lastMenstrualPeriod),
         formatDate(checkupDto.scheduleOfNextCheckUp)
@@ -138,7 +138,8 @@ fun CheckupDetailsUI(
             LazyColumn(
                 modifier = Modifier
                     .background(Color.White)
-                    .height(305.dp)
+//                    .height(305.dp)
+                    .height(352 .dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -160,28 +161,6 @@ fun formatIsoDate(isoDate: String): String? {
         } ?: "No Date of Birth"
     } catch (e: DateTimeParseException) {
         "Invalid Date Format"
-    }
-}
-
-@Composable
-fun NumberOfCheckUp(currentCheckup: UserCheckupDto) {
-    val numberOfCheckUp = when (currentCheckup.checkup) {
-        1 -> "1st CheckUp"
-        2 -> "2nd CheckUp"
-        3 -> "3rd CheckUp"
-        else -> "${currentCheckup.checkup}th CheckUp"
-    }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = numberOfCheckUp,
-            fontSize = 22.sp,
-            fontFamily = FontFamily.SansSerif
-        )
     }
 }
 
