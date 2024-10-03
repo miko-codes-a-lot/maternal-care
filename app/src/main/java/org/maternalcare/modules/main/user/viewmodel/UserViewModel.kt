@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
+import org.maternalcare.modules.main.user.model.dto.UserConditionDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.shared.ext.toObjectId
@@ -59,5 +60,13 @@ class UserViewModel @Inject constructor(
 
     fun getAllListAddressCheckupPercentages(): Map<String, Map<String, Double>> {
         return userService.fetchAddressCompletionPercentages()
+    }
+
+//    fun fetchUserCondition(conditionId: String): UserConditionDto {
+//        return userService.fetchOneCondition(conditionId.toObjectId())
+//    }
+
+    suspend fun upsertCondition(conditionDto: UserConditionDto): Result<UserConditionDto> {
+        return this.userService.upsertCondition(conditionDto)
     }
 }
