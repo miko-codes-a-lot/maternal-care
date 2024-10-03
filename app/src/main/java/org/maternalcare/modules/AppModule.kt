@@ -15,6 +15,8 @@ import org.maternalcare.modules.main.message.model.entity.Message
 import org.maternalcare.modules.main.user.model.entity.Address
 import org.maternalcare.modules.main.user.model.entity.User
 import org.maternalcare.modules.main.user.model.entity.UserCheckup
+import org.maternalcare.modules.main.user.model.entity.UserCondition
+import org.maternalcare.modules.main.user.model.entity.UserImmunization
 import javax.inject.Singleton
 
 @Module
@@ -32,7 +34,9 @@ object AppModule {
                 User::class,
                 Message::class,
                 UserCheckup::class,
-                Address::class
+                Address::class,
+                UserCondition::class,
+                UserImmunization::class
             )
 
             val config = SyncConfiguration
@@ -56,6 +60,14 @@ object AppModule {
                     add(
                         realm.query<Address>("_id <> $0", null),
                         name = "Addresses"
+                    )
+                    add(
+                        realm.query<UserCondition>("_id <> $0", null),
+                        name = "UserConditions"
+                    )
+                    add(
+                        realm.query<UserImmunization>("_id <> $0", null),
+                        name = "UserImmunizations"
                     )
                 }
                 .build()
