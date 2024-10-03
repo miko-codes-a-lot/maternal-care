@@ -1,6 +1,5 @@
 package org.maternalcare.modules.main.residence.ui
 
-import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -87,7 +86,7 @@ fun EditCheckupUI(
 ) {
     val listOfLabel = listOf(
         "Blood Pressure", "Height", "Weight",
-//        "Types of Vaccine",
+        "Gravida Para",
         "Date of Check-up", "Last Menstrual Period", "Next Check-up"
     )
     val statesValue = remember {
@@ -97,14 +96,14 @@ fun EditCheckupUI(
                     "Blood Pressure" -> checkupUser?.bloodPressure?.toString() ?: "0.0"
                     "Height" -> checkupUser?.height?.toString() ?: "0.0"
                     "Weight" -> checkupUser?.weight?.toString() ?: "0.0"
-//                    "Types of Vaccine" -> checkupUser?.typeOfVaccine ?: ""
+                    "Gravida Para" -> checkupUser?.gravidaPara ?: ""
                     "Date of Check-up" -> checkupUser?.dateOfCheckUp ?: ""
                     "Last Menstrual Period" -> checkupUser?.lastMenstrualPeriod ?: ""
                     "Next Check-up" -> checkupUser?.scheduleOfNextCheckUp ?: ""
                     else -> ""
                 }
             )
-        }
+        }.toMutableMap()
     }
     Column(
         modifier = Modifier
@@ -231,7 +230,7 @@ fun ButtonSaveEdit(
                 bloodPressure = statesValue["Blood Pressure"]?.value?.toDoubleOrNull() ?: 0.0,
                 height = statesValue["Height"]?.value?.toDoubleOrNull() ?: 0.0,
                 weight = statesValue["Weight"]?.value?.toDoubleOrNull() ?: 0.0,
-                typeOfVaccine = statesValue ["Types of Vaccine"]?.value ?: "",
+                gravidaPara = statesValue["Gravida Para"]?.value ?: "",
                 checkup = checkupNumber,
                 lastMenstrualPeriod = statesValue["Last Menstrual Period"]?.value ?: "",
                 dateOfCheckUp = statesValue["Date of Check-up"]?.value ?: "",
@@ -275,7 +274,6 @@ fun ButtonSaveEdit(
     }
 }
 
-@SuppressLint("RememberReturnType")
 @Composable
 fun EditDatePickerField(
     label: String,
