@@ -35,6 +35,12 @@ object MainNav {
     data class CheckupDetailsEdit(val userId: String, val checkupId: String, val checkupNumber: Int)
 
     @Serializable
+    data class ConditionStatus(val userId: String)
+
+    @Serializable
+    object ImmunizationRecord
+
+    @Serializable
     object MessagesList
 
     @Serializable
