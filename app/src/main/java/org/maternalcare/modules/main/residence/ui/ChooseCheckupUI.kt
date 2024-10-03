@@ -87,8 +87,56 @@ fun ChooseCheckupUI(
                     fontFamily = FontFamily.SansSerif
                 )
             }
+            Spacer(modifier = Modifier.padding(10.dp))
+            ConditionStatusButton(navController,userDto)
+            Spacer(modifier = Modifier.height(15.dp))
+            ImmunizationRecordButton(navController)
             CheckUpNavigationButton(navController, userDto)
         }
+    }
+}
+
+@Composable
+fun ConditionStatusButton(
+    navController: NavController,
+    userDto: UserDto
+    ) {
+    ElevatedButton(
+        onClick = {
+            navController.navigate(MainNav.ConditionStatus(userId = userDto.id!!))
+        },
+        colors = ButtonDefaults.elevatedButtonColors(
+            containerColor =  Color(0xFF6650a4),
+            contentColor = Color(0xFFFFFFFF)
+        ),
+        modifier = Modifier
+            .height(63.dp)
+            .width(280.dp)
+
+    ) {
+        Text(text = "Condition Status", fontFamily = FontFamily.Serif,
+            fontSize = 20.sp
+        )
+    }
+}
+
+@Composable
+fun ImmunizationRecordButton(navController: NavController) {
+    ElevatedButton(
+        onClick = {
+            navController.navigate(MainNav.ImmunizationRecord)
+        },
+        colors = ButtonDefaults.elevatedButtonColors(
+            containerColor =  Color(0xFF6650a4),
+            contentColor = Color(0xFFFFFFFF)
+        ),
+        modifier = Modifier
+            .height(63.dp)
+            .width(280.dp)
+    ) {
+        Text(text = "Immunization Record", fontFamily = FontFamily.Serif,
+            fontSize = 20.sp
+        )
     }
 }
 
@@ -102,7 +150,6 @@ fun ButtonContainer(text : String, onClick:() -> Unit){
         modifier = Modifier
             .height(63.dp)
             .width(280.dp)
-
     ) {
         Text(text = text, fontFamily = FontFamily.Serif,
             fontSize = 20.sp
@@ -132,9 +179,8 @@ fun CheckUpNavigationButton(
     )
     Column(
         modifier = Modifier
-            .height(380.dp)
-            .padding(20.dp),
-        verticalArrangement = Arrangement.Top
+            .height(319.dp),
+        verticalArrangement = Arrangement.Center
     ) {
         listOfCheckup.forEach { checkup ->
             Spacer(modifier = Modifier.height(15.dp))
@@ -189,6 +235,4 @@ fun ProfileUsers (navController: NavController, userDto: UserDto, currentUser: U
             }
         }
     }
-
-
 }
