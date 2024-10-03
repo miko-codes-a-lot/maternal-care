@@ -9,7 +9,7 @@ data class UserCheckupDto(
     var dateOfCheckUp: String = "",
     var lastMenstrualPeriod: String = "",
     var scheduleOfNextCheckUp: String = "",
-    var typeOfVaccine: String = "",
+    var gravidaPara: String = "",
     var checkup: Int = 1,
     var createdById: String? = null,
     var createdAt: String? = null,
