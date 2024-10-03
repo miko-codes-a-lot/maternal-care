@@ -8,7 +8,7 @@ import org.mongodb.kbson.ObjectId
 
 class UserCondition : RealmObject {
     @PrimaryKey
-    var _id: ObjectId = BsonObjectId()
+    var _id: ObjectId = ObjectId()
     var userId: String = ""
     var tuberculosisPersonal: Boolean = false
     var tuberculosisFamily: Boolean = false
@@ -30,8 +30,8 @@ class UserCondition : RealmObject {
     var anemiaFamily: Boolean = false
     var isUnderWeight: Boolean = false
     var isOverWeight: Boolean = false
-    var genitalTractInfection: String? = ""
-    var otherInfectionsDiseases: String? = ""
+    var genitalTractInfection: String = ""
+    var otherInfectionsDiseases: String = ""
     var createdById: ObjectId? = null
     var createdAt: RealmInstant = RealmInstant.now()
     var lastUpdatedById: ObjectId? = null
