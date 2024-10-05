@@ -8,7 +8,7 @@ import org.mongodb.kbson.ObjectId
 
 class UserImmunization : RealmObject {
     @PrimaryKey
-    var _id: ObjectId = BsonObjectId()
+    var _id: ObjectId = ObjectId()
     var userId: String = ""
     var firstDoseGiven: RealmInstant = RealmInstant.now()
     var firstDoseReturn: RealmInstant = RealmInstant.now()
