@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserConditionDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.modules.main.user.model.dto.UserImmunizationDto
 import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.shared.ext.toObjectId
 import javax.inject.Inject
@@ -68,5 +69,9 @@ class UserViewModel @Inject constructor(
 
     suspend fun upsertCondition(conditionDto: UserConditionDto): Result<UserConditionDto> {
         return this.userService.upsertCondition(conditionDto)
+    }
+
+    suspend fun upsertImmunization(immunizationDto: UserImmunizationDto): Result<UserImmunizationDto> {
+        return this.userService.upsertImmunization(immunizationDto)
     }
 }
