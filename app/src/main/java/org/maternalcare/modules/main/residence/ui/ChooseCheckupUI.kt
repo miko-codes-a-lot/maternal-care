@@ -90,7 +90,7 @@ fun ChooseCheckupUI(
             Spacer(modifier = Modifier.padding(10.dp))
             ConditionStatusButton(navController,userDto)
             Spacer(modifier = Modifier.height(15.dp))
-            ImmunizationRecordButton(navController)
+            ImmunizationRecordButton(navController, userDto)
             CheckUpNavigationButton(navController, userDto)
         }
     }
@@ -121,10 +121,13 @@ fun ConditionStatusButton(
 }
 
 @Composable
-fun ImmunizationRecordButton(navController: NavController) {
+fun ImmunizationRecordButton(
+    navController: NavController,
+    userDto: UserDto
+) {
     ElevatedButton(
         onClick = {
-            navController.navigate(MainNav.ImmunizationRecord)
+            navController.navigate(MainNav.ImmunizationRecord(userId = userDto.id!!))
         },
         colors = ButtonDefaults.elevatedButtonColors(
             containerColor =  Color(0xFF6650a4),
