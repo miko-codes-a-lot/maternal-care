@@ -3,9 +3,7 @@ package org.maternalcare.modules.main.residence.ui
 import android.app.DatePickerDialog
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,10 +33,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
-import org.maternalcare.modules.main.user.model.dto.UserConditionDto
+import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.model.dto.UserImmunizationDto
+import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -48,38 +50,40 @@ import java.util.TimeZone
 @Composable
 fun ImmunizationRecordUIPreview() {
     ImmunizationRecordUI(
-//        userDto = UserDto(),
+        navController = rememberNavController(),
+        userDto = UserDto(),
         userImmunization = UserImmunizationDto(),
-//        currentUser = UserDto()
+        currentUser = UserDto()
     )
 }
 
 @Composable
 fun ImmunizationRecordUI(
-//    userDto: UserDto,
-    userImmunization: UserImmunizationDto? = null,
-//    currentUser: UserDto
+    navController: NavController,
+    userDto: UserDto,
+    userImmunization: UserImmunizationDto,
+    currentUser: UserDto
 ) {
     val conditionStates = mapOf(
         "1st Dose" to Pair(
-            remember { mutableStateOf(userImmunization?.firstDoseGiven ?: "") },
-            remember { mutableStateOf(userImmunization?.firstDoseReturn ?: "") }
+            remember { mutableStateOf(userImmunization.firstDoseGiven) },
+            remember { mutableStateOf(userImmunization.firstDoseReturn) }
         ),
         "2nd Dose" to Pair(
-            remember { mutableStateOf(userImmunization?.secondDoseGiven ?: "") },
-            remember { mutableStateOf(userImmunization?.secondDoseReturn ?: "") }
+            remember { mutableStateOf(userImmunization.secondDoseGiven) },
+            remember { mutableStateOf(userImmunization.secondDoseReturn) }
         ),
         "3rd Dose" to Pair(
-            remember { mutableStateOf(userImmunization?.thirdDoseGiven ?: "") },
-            remember { mutableStateOf(userImmunization?.thirdDoseReturn ?: "") }
+            remember { mutableStateOf(userImmunization.thirdDoseGiven) },
+            remember { mutableStateOf(userImmunization.thirdDoseReturn) }
         ),
         "4th Dose" to Pair(
-            remember { mutableStateOf(userImmunization?.fourthDoseGiven ?: "") },
-            remember { mutableStateOf(userImmunization?.fourthDoseReturn ?: "") }
+            remember { mutableStateOf(userImmunization.fourthDoseGiven) },
+            remember { mutableStateOf(userImmunization.fourthDoseReturn) }
         ),
         "5th Dose" to Pair(
-            remember { mutableStateOf(userImmunization?.fifthDoseGiven ?: "") },
-            remember { mutableStateOf(userImmunization?.fifthDoseReturn ?: "") }
+            remember { mutableStateOf(userImmunization.fifthDoseGiven) },
+            remember { mutableStateOf(userImmunization.fifthDoseReturn) }
         )
     )
     Column(
@@ -150,7 +154,11 @@ fun ImmunizationRecordUI(
             ImmunizationValue(conditionStates)
             Spacer(modifier = Modifier.height(20.dp))
             ButtonSaveRecord(
-
+                userId = userDto.id!!,
+                navController = navController,
+                conditionStates = conditionStates,
+                userImmunization = userImmunization,
+                currentUser = currentUser
             )
         }
     }
@@ -259,36 +267,52 @@ fun DatePickerBox(
 
 @Composable
 fun ButtonSaveRecord(
-//    userId: String,
-//    currentUser: UserDto,
+    userId: String,
+    currentUser: UserDto,
+    navController: NavController,
+    conditionStates: Map<String, Pair<MutableState<String>, MutableState<String>>>,
+    userImmunization: UserImmunizationDto,
 ) {
-//    val userViewModel: UserViewModel = hiltViewModel()
+    val userViewModel: UserViewModel = hiltViewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     Button(
         onClick = {
-            val userConditionStatus  = UserConditionDto(
-//                id = userCondition.id,
-//                userId = userId,
 
-//                createdById = userCondition.createdById ?: currentUser.id
+            Log.d("UserID", "User ID is: $userId")
+            Log.d("CurrentUserID", "Current User ID is: ${currentUser.id}")
+
+            val userImmunizationRecord  = UserImmunizationDto(
+                id = userImmunization.id,
+                userId = userId,
+                firstDoseGiven = conditionStates["1st Dose"]?.first?.value ?: "",
+                firstDoseReturn = conditionStates["1st Dose"]?.second?.value ?: "",
+                secondDoseGiven = conditionStates["2nd Dose"]?.first?.value ?: "",
+                secondDoseReturn = conditionStates["2nd Dose"]?.second?.value ?: "",
+                thirdDoseGiven = conditionStates["3rd Dose"]?.first?.value ?: "",
+                thirdDoseReturn = conditionStates["3rd Dose"]?.second?.value ?: "",
+                fourthDoseGiven = conditionStates["4th Dose"]?.first?.value ?: "",
+                fourthDoseReturn = conditionStates["4th Dose"]?.second?.value ?: "",
+                fifthDoseGiven = conditionStates["5th Dose"]?.first?.value ?: "",
+                fifthDoseReturn = conditionStates["5th Dose"]?.second?.value ?: "",
+                createdById = currentUser.id ?: userImmunization.createdById
             )
 
             scope.launch {
                 try {
-//                    val result = userViewModel.upsertCheckUp(userCondition)
-//                    if (result.isSuccess) {
-                    Log.d("CheckUpSave", "Saving CheckUpDto: $userConditionStatus")
+                    val result = userViewModel.upsertImmunization(userImmunizationRecord)
+                    if (result.isSuccess) {
+                    Log.d("CheckUpSave", "Saving CheckUpDto: $userImmunizationRecord")
 
-//                        navController.navigate(MainNav.CheckupDetails(userId, checkupNumber)) {
-//                            popUpTo(MainNav.CheckupDetails(userId, checkupNumber)) {
-//                                inclusive = true
-//                            }
-//                        }
-//                    } else {
-//                        Log.e("saving", "Error: ${result.exceptionOrNull()}")
-//                    }
+                        navController.navigate(MainNav.ImmunizationRecord(userId)) {
+                            popUpTo(MainNav.ImmunizationRecord(userId)) {
+                                inclusive = true
+                            }
+                        }
+                    } else {
+                        Log.e("saving", "Error: ${result.exceptionOrNull()}")
+                    }
                 } catch (e: Exception) {
                     Toast.makeText(
                         context,
