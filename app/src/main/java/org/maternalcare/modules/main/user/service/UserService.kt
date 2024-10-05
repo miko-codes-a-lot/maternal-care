@@ -8,6 +8,7 @@ import io.realm.kotlin.types.RealmInstant
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserConditionDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.modules.main.user.model.dto.UserImmunizationDto
 import org.maternalcare.modules.main.user.model.entity.Address
 import org.maternalcare.modules.main.user.model.entity.User
 import org.maternalcare.modules.main.user.model.entity.UserCheckup
@@ -296,6 +297,17 @@ class UserService @Inject constructor(private val realm: Realm) {
             realm.write {
                 val userCondition = copyToRealm(data.toEntity(), updatePolicy = UpdatePolicy.ALL)
                 Result.success(userCondition.toDTO())
+            }
+        } catch (error: Exception) {
+            Result.failure(error)
+        }
+    }
+
+    suspend fun upsertImmunization(dates: UserImmunizationDto): Result<UserImmunizationDto> {
+        return try {
+            realm.write {
+                val userImmunization = copyToRealm(dates.toEntity(), updatePolicy = UpdatePolicy.ALL)
+                Result.success(userImmunization.toDTO())
             }
         } catch (error: Exception) {
             Result.failure(error)
