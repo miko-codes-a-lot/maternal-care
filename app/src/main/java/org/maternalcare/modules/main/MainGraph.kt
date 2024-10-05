@@ -27,6 +27,7 @@ import org.maternalcare.modules.main.settings.ui.SettingsUI
 import org.maternalcare.modules.main.user.model.dto.AddressDto
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserConditionDto
+import org.maternalcare.modules.main.user.model.dto.UserImmunizationDto
 import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.modules.main.user.ui.UserCreateUI
 import org.maternalcare.modules.main.user.ui.UserEditUI
@@ -144,8 +145,16 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             }
         }
         composable<MainNav.ImmunizationRecord> {
+            val args = it.toRoute<MainNav.ImmunizationRecord>()
+            val userViewModel: UserViewModel = hiltViewModel()
             Guard(navController = navController) { currentUser ->
-                ImmunizationRecordUI()
+                val userDto = userViewModel.fetchUser(args.userId)
+                ImmunizationRecordUI(
+                    navController = navController,
+                    userDto = userDto,
+                    userImmunization = UserImmunizationDto(),
+                    currentUser = currentUser,
+                )
             }
         }
         composable<MainNav.Reminders> {
