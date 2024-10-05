@@ -38,7 +38,7 @@ object MainNav {
     data class ConditionStatus(val userId: String)
 
     @Serializable
-    object ImmunizationRecord
+    data class ImmunizationRecord(val userId: String)
 
     @Serializable
     object MessagesList
