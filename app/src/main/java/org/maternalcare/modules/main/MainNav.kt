@@ -38,6 +38,9 @@ object MainNav {
     data class ConditionStatus(val userId: String)
 
     @Serializable
+    data class StatusPreview(val userId: String)
+
+    @Serializable
     data class ImmunizationRecord(val userId: String)
 
     @Serializable
