@@ -63,9 +63,9 @@ class UserViewModel @Inject constructor(
         return userService.fetchAddressCompletionPercentages()
     }
 
-//    fun fetchUserCondition(conditionId: String): UserConditionDto {
-//        return userService.fetchOneCondition(conditionId.toObjectId())
-//    }
+    fun fetchUserCondition(userId: String): UserConditionDto? {
+        return userService.fetchUserConditionByUserId(userId)
+    }
 
     suspend fun upsertCondition(conditionDto: UserConditionDto): Result<UserConditionDto> {
         return this.userService.upsertCondition(conditionDto)
