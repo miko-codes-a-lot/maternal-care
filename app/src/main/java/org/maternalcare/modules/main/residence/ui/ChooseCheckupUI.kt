@@ -64,7 +64,7 @@ fun ChooseCheckupUI(
     val isStatusVisible = rememberSaveable {
         mutableStateOf((currentUser.isResidence || currentUser.isSuperAdmin) && conditionStatus != null)
     }
-    val isConditionAndVaccineVisible = remember { mutableStateOf(currentUser.isAdmin) }
+    val isConditionVisible = remember { mutableStateOf(currentUser.isAdmin) }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
@@ -98,7 +98,7 @@ fun ChooseCheckupUI(
                 )
             }
 
-            if(isConditionAndVaccineVisible.value){
+            if(isConditionVisible.value){
                 Spacer(modifier = Modifier.padding(10.dp))
                 ConditionStatusButton(navController, userDto)
                 Spacer(modifier = Modifier.height(15.dp))
@@ -107,6 +107,8 @@ fun ChooseCheckupUI(
             if(isStatusVisible.value){
                 Spacer(modifier = Modifier.padding(10.dp))
                 PregnantConditionStatus(navController, userDto)
+                Spacer(modifier = Modifier.height(15.dp))
+                ImmunizationRecordButton(navController, userDto)
             }
             CheckUpNavigationButton(navController, userDto)
         }
