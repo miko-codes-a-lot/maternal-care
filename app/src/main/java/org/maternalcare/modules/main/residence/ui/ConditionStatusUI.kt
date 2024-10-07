@@ -205,8 +205,6 @@ fun ConditionStatusUI(
             onSelect = { selectedOption ->
                 isNormal.value = selectedOption == "Normal"
                 isCritical.value = selectedOption == "Critical"
-                userCondition?.isNormal = isNormal.value
-                userCondition?.isCritical = isCritical.value
 
                 Log.d("ConditionStatusUI", "isNormal: ${isNormal.value}, isCritical: ${isCritical.value}")
             }
