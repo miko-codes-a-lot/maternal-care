@@ -28,21 +28,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import org.maternalcare.modules.main.user.model.dto.UserConditionDto
 
 @Preview(showSystemUi = true)
 @Composable
-fun StatusPreview(){
+fun PregnantStatusPreview(){
     StatusPreviewUI(
-        navController = rememberNavController(),
-        userCondition = UserConditionDto(),
+        userCondition = UserConditionDto()
     )
 }
+
 @Composable
 fun StatusPreviewUI (
-    navController: NavController,
     userCondition: UserConditionDto,
 ){
     Log.d("StatusPreviewUI", "UserCondition value: $userCondition")
@@ -69,7 +66,7 @@ fun StatusPreviewUI (
             .fillMaxSize()
             .background(Color.White)
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Pregnant Status",
@@ -92,7 +89,6 @@ fun ViewStatusData(stateValues: Map<String, MutableState<String>>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-//            .height(529.dp),
             .height(620.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
