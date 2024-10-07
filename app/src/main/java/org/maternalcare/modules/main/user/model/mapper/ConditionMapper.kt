@@ -29,10 +29,11 @@ fun UserCondition.toDTO(): UserConditionDto{
         goitersFamily = goitersFamily,
         anemiaPersonal = anemiaPersonal,
         anemiaFamily = anemiaFamily,
-        isUnderWeight = isUnderWeight,
-        isOverWeight = isOverWeight,
+        isNormal = isNormal,
+        isCritical = isCritical,
         genitalTractInfection = genitalTractInfection,
         otherInfectionsDiseases = otherInfectionsDiseases,
+        notes = notes,
         createdById = createdById?.toHexString(),
         createdAt = createdAt.toInstantStringNullable(),
         lastUpdatedById = lastUpdatedById?.toHexString(),
@@ -65,10 +66,11 @@ fun UserConditionDto.toEntity(): UserCondition {
         goitersFamily = conditionDto.goitersFamily
         anemiaPersonal = conditionDto.anemiaPersonal
         anemiaFamily = conditionDto.anemiaFamily
-        isUnderWeight = conditionDto.isUnderWeight
-        isOverWeight = conditionDto.isOverWeight
+        isNormal = conditionDto.isNormal
+        isCritical = conditionDto.isCritical
         genitalTractInfection = conditionDto.genitalTractInfection
         otherInfectionsDiseases = conditionDto.otherInfectionsDiseases
+        notes = conditionDto.notes
         createdById = conditionDto.createdById?.toObjectId()
         createdAt = conditionDto.createdAt.toRealmInstantNullable() ?: RealmInstant.now()
         lastUpdatedById = conditionDto.lastUpdatedById?.toObjectId()
