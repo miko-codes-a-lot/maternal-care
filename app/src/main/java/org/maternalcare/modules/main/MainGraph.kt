@@ -1,5 +1,9 @@
 package org.maternalcare.modules.main
 
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -21,6 +25,7 @@ import org.maternalcare.modules.main.residence.ui.EditCheckupUI
 import org.maternalcare.modules.main.residence.ui.ImmunizationRecordUI
 import org.maternalcare.modules.main.residence.ui.ResidencesPreviewUI
 import org.maternalcare.modules.main.residence.ui.ResidencesUI
+import org.maternalcare.modules.main.residence.ui.StatusPreviewUI
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.settings.ui.EditSettingsUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
@@ -87,7 +92,14 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
 
             Guard(navController = navController) { currentUser ->
                 val userDto = userViewModel.fetchUser(userId = args.userId)
-                ChooseCheckupUI(navController, currentUser, userDto)
+                val conditionStatus = userViewModel.fetchUserCondition(args.userId)
+
+                ChooseCheckupUI(
+                    navController = navController,
+                    currentUser = currentUser,
+                    userDto = userDto,
+                    conditionStatus = conditionStatus
+                )
             }
         }
         composable<MainNav.CheckupDetails> {
@@ -134,16 +146,31 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         composable<MainNav.ConditionStatus> {
             val args = it.toRoute<MainNav.ConditionStatus>()
             val userViewModel: UserViewModel = hiltViewModel()
+            val userConditionDto by remember { mutableStateOf<UserConditionDto?>(null) }
             Guard(navController = navController) { currentUser ->
                 val userDto = userViewModel.fetchUser(args.userId)
                 ConditionStatusUI(
                     navController = navController,
                     userDto = userDto,
-                    userCondition = UserConditionDto() ,
                     currentUser = currentUser,
+                    userCondition = userConditionDto
                 )
             }
         }
+        composable<MainNav.StatusPreview> {
+            val args = it.toRoute<MainNav.StatusPreview>()
+            val userViewModel: UserViewModel = hiltViewModel()
+            val conditionDto = userViewModel.fetchUserCondition(args.userId)
+            Guard(navController = navController) { currentUser ->
+                if (conditionDto != null) {
+                    StatusPreviewUI(
+                        navController = navController,
+                        userCondition = conditionDto,
+                    )
+                }
+            }
+        }
+
         composable<MainNav.ImmunizationRecord> {
             val args = it.toRoute<MainNav.ImmunizationRecord>()
             val userViewModel: UserViewModel = hiltViewModel()
