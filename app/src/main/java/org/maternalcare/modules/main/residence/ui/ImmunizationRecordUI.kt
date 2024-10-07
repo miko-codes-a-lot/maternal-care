@@ -64,54 +64,86 @@ fun ImmunizationRecordUI(
     userImmunization: UserImmunizationDto,
     currentUser: UserDto
 ) {
-    val isStatusVisible = currentUser.isSuperAdmin || currentUser.isResidence
-
-    val conditionStates = if (isStatusVisible) {
-        mapOf(
-            "1st Dose" to Pair(
-                remember { mutableStateOf("11-05-2024") },
-                remember { mutableStateOf("11-12-2024") }
-            ),
-            "2nd Dose" to Pair(
-                remember { mutableStateOf("11-15-2024") },
-                remember { mutableStateOf("11-20-2024") }
-            ),
-            "3rd Dose" to Pair(
-                remember { mutableStateOf("11-26-2024") },
-                remember { mutableStateOf("12-01-2024") }
-            ),
-            "4th Dose" to Pair(
-                remember { mutableStateOf("12-08-2024") },
-                remember { mutableStateOf("12-16-2024") }
-            ),
-            "5th Dose" to Pair(
-                remember { mutableStateOf("12-24-2024") },
-                remember { mutableStateOf("01-03-2024") }
+    val isSuperAdmin = currentUser.isSuperAdmin
+    val isResidence = currentUser.isResidence
+    val isStatusVisible = isSuperAdmin || isResidence
+    // Set dose states based on user type
+    val conditionStates = when {
+        isResidence -> {
+            // Residence: 1st Dose has valid dates, 2nd to 5th doses are "Not available"
+            mapOf(
+                "1st Dose" to Pair(
+                    remember { mutableStateOf("11-05-2024") },
+                    remember { mutableStateOf("11-12-2024") }
+                ),
+                "2nd Dose" to Pair(
+                    remember { mutableStateOf("Not available") },
+                    remember { mutableStateOf("Not available") }
+                ),
+                "3rd Dose" to Pair(
+                    remember { mutableStateOf("Not available") },
+                    remember { mutableStateOf("Not available") }
+                ),
+                "4th Dose" to Pair(
+                    remember { mutableStateOf("Not available") },
+                    remember { mutableStateOf("Not available") }
+                ),
+                "5th Dose" to Pair(
+                    remember { mutableStateOf("Not available") },
+                    remember { mutableStateOf("Not available") }
+                )
             )
-        )
-    } else {
-        mapOf(
-            "1st Dose" to Pair(
-                remember { mutableStateOf(userImmunization.firstDoseGiven) },
-                remember { mutableStateOf(userImmunization.firstDoseReturn) }
-            ),
-            "2nd Dose" to Pair(
-                remember { mutableStateOf(userImmunization.secondDoseGiven) },
-                remember { mutableStateOf(userImmunization.secondDoseReturn) }
-            ),
-            "3rd Dose" to Pair(
-                remember { mutableStateOf(userImmunization.thirdDoseGiven) },
-                remember { mutableStateOf(userImmunization.thirdDoseReturn) }
-            ),
-            "4th Dose" to Pair(
-                remember { mutableStateOf(userImmunization.fourthDoseGiven) },
-                remember { mutableStateOf(userImmunization.fourthDoseReturn) }
-            ),
-            "5th Dose" to Pair(
-                remember { mutableStateOf(userImmunization.fifthDoseGiven) },
-                remember { mutableStateOf(userImmunization.fifthDoseReturn) }
+        }
+        isSuperAdmin -> {
+            // SuperAdmin: 1st Dose has valid dates, 2nd to 5th doses are "Pending"
+            mapOf(
+                "1st Dose" to Pair(
+                    remember { mutableStateOf("11-05-2024") },
+                    remember { mutableStateOf("11-12-2024") }
+                ),
+                "2nd Dose" to Pair(
+                    remember { mutableStateOf("Pending") },
+                    remember { mutableStateOf("Pending") }
+                ),
+                "3rd Dose" to Pair(
+                    remember { mutableStateOf("Pending") },
+                    remember { mutableStateOf("Pending") }
+                ),
+                "4th Dose" to Pair(
+                    remember { mutableStateOf("Pending") },
+                    remember { mutableStateOf("Pending") }
+                ),
+                "5th Dose" to Pair(
+                    remember { mutableStateOf("Pending") },
+                    remember { mutableStateOf("Pending") }
+                )
             )
-        )
+        }
+        else -> {
+            // Admin: Use actual values from userImmunization object
+            mapOf(
+                "1st Dose" to Pair(
+                    remember { mutableStateOf(userImmunization.firstDoseGiven) },
+                    remember { mutableStateOf(userImmunization.firstDoseReturn) }
+                ),
+                "2nd Dose" to Pair(
+                    remember { mutableStateOf(userImmunization.secondDoseGiven) },
+                    remember { mutableStateOf(userImmunization.secondDoseReturn) }
+                ),
+                "3rd Dose" to Pair(
+                    remember { mutableStateOf(userImmunization.thirdDoseGiven) },
+                    remember { mutableStateOf(userImmunization.thirdDoseReturn) }
+                ),
+                "4th Dose" to Pair(
+                    remember { mutableStateOf(userImmunization.fourthDoseGiven) },
+                    remember { mutableStateOf(userImmunization.fourthDoseReturn) }
+                ),
+                "5th Dose" to Pair(
+                    remember { mutableStateOf(userImmunization.fifthDoseGiven) },
+                    remember { mutableStateOf(userImmunization.fifthDoseReturn) }
+                )
+            )
+        }
     }
 
     Column(
@@ -224,7 +256,7 @@ fun ImmunizationValue(statesValue: Map<String, Pair<MutableState<String>, Mutabl
                 DatePickerBox(
                     dateValue = givenDateState.value,
                     onDateChange = { newDate -> givenDateState.value = newDate },
-                    isEditable = isEditable
+                    isEditable = isEditable && givenDateState.value !in listOf("Pending", "Not available")
                 )
 
                 Spacer(modifier = Modifier.width(15.dp))
@@ -232,7 +264,7 @@ fun ImmunizationValue(statesValue: Map<String, Pair<MutableState<String>, Mutabl
                 DatePickerBox(
                     dateValue = returnDateState.value,
                     onDateChange = { newDate -> returnDateState.value = newDate },
-                    isEditable = isEditable
+                    isEditable = isEditable && givenDateState.value !in listOf("Pending", "Not available")
                 )
             }
         }
@@ -271,17 +303,20 @@ fun DatePickerBox(
     }
 
     val displayFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-    val displayDate = try {
-        if (Regex("\\d{2}-\\d{2}-\\d{4}").matches(dateValue)) {
-            dateValue
-        } else {
+    val displayDate = when {
+        dateValue == "Pending" -> "Pending"
+        dateValue == "Not available" -> "Not available"
+        Regex("\\d{2}-\\d{2}-\\d{4}").matches(dateValue) -> dateValue
+        else -> try {
             SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateValue)?.let {
                 displayFormat.format(it)
             } ?: "Select Date"
+        } catch (e: Exception) {
+            "Select Date"
         }
-    } catch (e: Exception) {
-        "Select Date"
     }
+
+
 //    val displayDate = try {
 //        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateValue)?.let {
 //            displayFormat.format(it)
