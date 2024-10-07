@@ -3,7 +3,6 @@ package org.maternalcare.modules.main.user.model.entity
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import org.mongodb.kbson.BsonObjectId
 import org.mongodb.kbson.ObjectId
 
 class UserCondition : RealmObject {
@@ -28,10 +27,11 @@ class UserCondition : RealmObject {
     var goitersFamily: Boolean = false
     var anemiaPersonal: Boolean = false
     var anemiaFamily: Boolean = false
-    var isUnderWeight: Boolean = false
-    var isOverWeight: Boolean = false
+    var isNormal: Boolean = false
+    var isCritical: Boolean = false
     var genitalTractInfection: String = ""
     var otherInfectionsDiseases: String = ""
+    var notes: String = ""
     var createdById: ObjectId? = null
     var createdAt: RealmInstant = RealmInstant.now()
     var lastUpdatedById: ObjectId? = null
