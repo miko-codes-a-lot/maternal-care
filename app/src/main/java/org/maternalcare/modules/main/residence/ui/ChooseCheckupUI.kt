@@ -1,6 +1,7 @@
 package org.maternalcare.modules.main.residence.ui
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,6 +24,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +39,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.user.model.dto.UserConditionDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 
 @Preview(showSystemUi = true)
@@ -45,7 +48,8 @@ fun ChooseCheckupUIPreview() {
     ChooseCheckupUI(
         navController = rememberNavController(),
         currentUser = UserDto(),
-        userDto = UserDto()
+        userDto = UserDto(),
+        conditionStatus = UserConditionDto()
     )
 }
 
@@ -54,8 +58,13 @@ fun ChooseCheckupUIPreview() {
 fun ChooseCheckupUI(
     navController: NavController,
     currentUser: UserDto,
-    userDto: UserDto
+    userDto: UserDto,
+    conditionStatus: UserConditionDto?
 ) {
+    val isStatusVisible = rememberSaveable {
+        mutableStateOf((currentUser.isResidence || currentUser.isSuperAdmin) && conditionStatus != null)
+    }
+    val isConditionAndVaccineVisible = remember { mutableStateOf(currentUser.isAdmin) }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
@@ -65,10 +74,11 @@ fun ChooseCheckupUI(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val isShowImage = rememberSaveable { mutableStateOf( currentUser.isSuperAdmin || currentUser.isAdmin) }
-
+            val isShowImage = rememberSaveable { mutableStateOf(
+                currentUser.isSuperAdmin || currentUser.isAdmin || currentUser.isResidence
+            ) }
             if(isShowImage.value){
-                ProfileUsers(navController, userDto, currentUser)
+                ProfileUsers(navController, userDto, currentUser, conditionStatus)
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
                     text = userDto.firstName +" "+ userDto.middleName +" "+  userDto.lastName,
@@ -87,10 +97,17 @@ fun ChooseCheckupUI(
                     fontFamily = FontFamily.SansSerif
                 )
             }
-            Spacer(modifier = Modifier.padding(10.dp))
-            ConditionStatusButton(navController,userDto)
-            Spacer(modifier = Modifier.height(15.dp))
-            ImmunizationRecordButton(navController, userDto)
+
+            if(isConditionAndVaccineVisible.value){
+                Spacer(modifier = Modifier.padding(10.dp))
+                ConditionStatusButton(navController, userDto)
+                Spacer(modifier = Modifier.height(15.dp))
+                ImmunizationRecordButton(navController, userDto)
+            }
+            if(isStatusVisible.value){
+                Spacer(modifier = Modifier.padding(10.dp))
+                PregnantConditionStatus(navController, userDto)
+            }
             CheckUpNavigationButton(navController, userDto)
         }
     }
@@ -99,8 +116,8 @@ fun ChooseCheckupUI(
 @Composable
 fun ConditionStatusButton(
     navController: NavController,
-    userDto: UserDto
-    ) {
+    userDto: UserDto,
+) {
     ElevatedButton(
         onClick = {
             navController.navigate(MainNav.ConditionStatus(userId = userDto.id!!))
@@ -115,6 +132,31 @@ fun ConditionStatusButton(
 
     ) {
         Text(text = "Condition Status", fontFamily = FontFamily.Serif,
+            fontSize = 20.sp
+        )
+    }
+}
+
+
+@Composable
+fun PregnantConditionStatus(
+    navController: NavController,
+    userDto: UserDto,
+) {
+    ElevatedButton(
+        onClick = {
+            navController.navigate(MainNav.StatusPreview(userId = userDto.id!!))
+        },
+        colors = ButtonDefaults.elevatedButtonColors(
+            containerColor =  Color(0xFF6650a4),
+            contentColor = Color(0xFFFFFFFF)
+        ),
+        modifier = Modifier
+            .height(63.dp)
+            .width(280.dp)
+
+    ) {
+        Text(text = "Pregnant Condition", fontFamily = FontFamily.Serif,
             fontSize = 20.sp
         )
     }
@@ -194,26 +236,70 @@ fun CheckUpNavigationButton(
 
 
 @Composable
-fun ProfileUsers (navController: NavController, userDto: UserDto, currentUser: UserDto ){
+fun ProfileUsers (
+    navController: NavController,
+    userDto: UserDto,
+    currentUser: UserDto,
+    conditionStatus: UserConditionDto? = null,
+){
     Box(
         Modifier.height(120.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .clip(CircleShape)
-                .background(Color(0xFF6650a4))
-                .border(3.dp, Color(0xFF6650a4), CircleShape),
-            contentAlignment = Alignment.Center
-        ){
-            Icon(
-                painter = painterResource(id = R.drawable.person),
-                contentDescription = "Default placeholder",
+        if (conditionStatus != null) {
+            if(conditionStatus.isNormal){
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(Color.Green)
+                        .border(3.dp, Color(0xFF6650a4), CircleShape),
+                    contentAlignment = Alignment.Center
+                ){
+                    Icon(
+                        painter = painterResource(id = R.drawable.person),
+                        contentDescription = "Default placeholder",
+                        modifier = Modifier
+                            .size(78.dp),
+                        tint = Color.White
+                    )
+                }
+            }else if(conditionStatus.isCritical) {
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(Color.Red)
+                        .border(3.dp, Color(0xFF6650a4), CircleShape),
+                    contentAlignment = Alignment.Center
+                ){
+                    Icon(
+                        painter = painterResource(id = R.drawable.person),
+                        contentDescription = "Default placeholder",
+                        modifier = Modifier
+                            .size(78.dp),
+                        tint = Color.White
+                    )
+                }
+            }
+        }else{
+            Box(
                 modifier = Modifier
-                    .size(78.dp),
-                tint = Color.White
-            )
+                    .size(120.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF6650a4))
+                    .border(3.dp, Color(0xFF6650a4), CircleShape),
+                contentAlignment = Alignment.Center
+            ){
+                Icon(
+                    painter = painterResource(id = R.drawable.person),
+                    contentDescription = "Default placeholder",
+                    modifier = Modifier
+                        .size(78.dp),
+                    tint = Color.White
+                )
+            }
         }
+
         if(currentUser.isAdmin) {
             IconButton(
                 onClick = {
