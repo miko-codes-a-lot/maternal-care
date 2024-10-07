@@ -66,7 +66,7 @@ fun StatusPreviewUI (
             .fillMaxSize()
             .background(Color.White)
             .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Pregnant Status",
