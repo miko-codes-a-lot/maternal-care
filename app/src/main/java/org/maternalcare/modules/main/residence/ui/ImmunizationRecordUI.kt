@@ -64,28 +64,56 @@ fun ImmunizationRecordUI(
     userImmunization: UserImmunizationDto,
     currentUser: UserDto
 ) {
-    val conditionStates = mapOf(
-        "1st Dose" to Pair(
-            remember { mutableStateOf(userImmunization.firstDoseGiven) },
-            remember { mutableStateOf(userImmunization.firstDoseReturn) }
-        ),
-        "2nd Dose" to Pair(
-            remember { mutableStateOf(userImmunization.secondDoseGiven) },
-            remember { mutableStateOf(userImmunization.secondDoseReturn) }
-        ),
-        "3rd Dose" to Pair(
-            remember { mutableStateOf(userImmunization.thirdDoseGiven) },
-            remember { mutableStateOf(userImmunization.thirdDoseReturn) }
-        ),
-        "4th Dose" to Pair(
-            remember { mutableStateOf(userImmunization.fourthDoseGiven) },
-            remember { mutableStateOf(userImmunization.fourthDoseReturn) }
-        ),
-        "5th Dose" to Pair(
-            remember { mutableStateOf(userImmunization.fifthDoseGiven) },
-            remember { mutableStateOf(userImmunization.fifthDoseReturn) }
+    val isStatusVisible = currentUser.isSuperAdmin || currentUser.isResidence
+
+    val conditionStates = if (isStatusVisible) {
+        mapOf(
+            "1st Dose" to Pair(
+                remember { mutableStateOf("11-05-2024") },
+                remember { mutableStateOf("11-12-2024") }
+            ),
+            "2nd Dose" to Pair(
+                remember { mutableStateOf("11-15-2024") },
+                remember { mutableStateOf("11-20-2024") }
+            ),
+            "3rd Dose" to Pair(
+                remember { mutableStateOf("11-26-2024") },
+                remember { mutableStateOf("12-01-2024") }
+            ),
+            "4th Dose" to Pair(
+                remember { mutableStateOf("12-08-2024") },
+                remember { mutableStateOf("12-16-2024") }
+            ),
+            "5th Dose" to Pair(
+                remember { mutableStateOf("12-24-2024") },
+                remember { mutableStateOf("01-03-2024") }
+            )
         )
-    )
+    } else {
+        mapOf(
+            "1st Dose" to Pair(
+                remember { mutableStateOf(userImmunization.firstDoseGiven) },
+                remember { mutableStateOf(userImmunization.firstDoseReturn) }
+            ),
+            "2nd Dose" to Pair(
+                remember { mutableStateOf(userImmunization.secondDoseGiven) },
+                remember { mutableStateOf(userImmunization.secondDoseReturn) }
+            ),
+            "3rd Dose" to Pair(
+                remember { mutableStateOf(userImmunization.thirdDoseGiven) },
+                remember { mutableStateOf(userImmunization.thirdDoseReturn) }
+            ),
+            "4th Dose" to Pair(
+                remember { mutableStateOf(userImmunization.fourthDoseGiven) },
+                remember { mutableStateOf(userImmunization.fourthDoseReturn) }
+            ),
+            "5th Dose" to Pair(
+                remember { mutableStateOf(userImmunization.fifthDoseGiven) },
+                remember { mutableStateOf(userImmunization.fifthDoseReturn) }
+            )
+        )
+    }
+
     Column(
         modifier = Modifier
             .background(Color.White)
@@ -151,21 +179,25 @@ fun ImmunizationRecordUI(
                     Spacer(modifier = Modifier.width(5.dp))
                 }
             }
-            ImmunizationValue(conditionStates)
+//            ImmunizationValue(conditionStates)
+            ImmunizationValue(conditionStates, isEditable = !isStatusVisible)
             Spacer(modifier = Modifier.height(20.dp))
-            ButtonSaveRecord(
-                userId = userDto.id!!,
-                navController = navController,
-                conditionStates = conditionStates,
-                userImmunization = userImmunization,
-                currentUser = currentUser
-            )
+
+            if (!isStatusVisible) {
+                ButtonSaveRecord(
+                    userId = userDto.id!!,
+                    navController = navController,
+                    conditionStates = conditionStates,
+                    userImmunization = userImmunization,
+                    currentUser = currentUser
+                )
+            }
         }
     }
 }
 
 @Composable
-fun ImmunizationValue(statesValue: Map<String, Pair<MutableState<String>, MutableState<String>>>) {
+fun ImmunizationValue(statesValue: Map<String, Pair<MutableState<String>, MutableState<String>>>, isEditable: Boolean) {
     statesValue.forEach { (label, dateStates) ->
         val (givenDateState, returnDateState) = dateStates
         Row(
@@ -191,14 +223,16 @@ fun ImmunizationValue(statesValue: Map<String, Pair<MutableState<String>, Mutabl
             ) {
                 DatePickerBox(
                     dateValue = givenDateState.value,
-                    onDateChange = { newDate -> givenDateState.value = newDate }
+                    onDateChange = { newDate -> givenDateState.value = newDate },
+                    isEditable = isEditable
                 )
 
                 Spacer(modifier = Modifier.width(15.dp))
 
                 DatePickerBox(
                     dateValue = returnDateState.value,
-                    onDateChange = { newDate -> returnDateState.value = newDate }
+                    onDateChange = { newDate -> returnDateState.value = newDate },
+                    isEditable = isEditable
                 )
             }
         }
@@ -214,7 +248,8 @@ fun ImmunizationValue(statesValue: Map<String, Pair<MutableState<String>, Mutabl
 @Composable
 fun DatePickerBox(
     dateValue: String,
-    onDateChange: (String) -> Unit
+    onDateChange: (String) -> Unit,
+    isEditable: Boolean
 ) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
@@ -237,15 +272,28 @@ fun DatePickerBox(
 
     val displayFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
     val displayDate = try {
-        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateValue)?.let {
-            displayFormat.format(it)
-        } ?: "Select Date"
+        if (Regex("\\d{2}-\\d{2}-\\d{4}").matches(dateValue)) {
+            dateValue
+        } else {
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateValue)?.let {
+                displayFormat.format(it)
+            } ?: "Select Date"
+        }
     } catch (e: Exception) {
         "Select Date"
     }
+//    val displayDate = try {
+//        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateValue)?.let {
+//            displayFormat.format(it)
+//        } ?: "Select Date"
+//    } catch (e: Exception) {
+//        "Select Date"
+//    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable { datePickerDialog.show() }
+//        modifier = Modifier.clickable { datePickerDialog.show() }
+        modifier = Modifier
+            .clickable(enabled = isEditable) { datePickerDialog.show() }
     ) {
         Box(
             modifier = Modifier
