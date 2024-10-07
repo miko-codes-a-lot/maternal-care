@@ -12,6 +12,7 @@ import org.maternalcare.modules.main.user.model.dto.UserImmunizationDto
 import org.maternalcare.modules.main.user.model.entity.Address
 import org.maternalcare.modules.main.user.model.entity.User
 import org.maternalcare.modules.main.user.model.entity.UserCheckup
+import org.maternalcare.modules.main.user.model.entity.UserCondition
 import org.maternalcare.modules.main.user.model.mapper.toDTO
 import org.maternalcare.modules.main.user.model.mapper.toEntity
 import org.mongodb.kbson.ObjectId
@@ -283,14 +284,12 @@ class UserService @Inject constructor(private val realm: Realm) {
         }
     }
 
-//    fun fetchOneCondition(conditionId: ObjectId): UserConditionDto {
-//        return realm.query<UserCondition>("_id == $0", conditionId)
-//            .find()
-//            .first()
-//            .run {
-//                toDTO()
-//            }
-//    }
+    fun fetchUserConditionByUserId(userId: String): UserConditionDto? {
+        val result = realm.query<UserCondition>("userId == $0", userId)
+            .find()
+            .firstOrNull()
+        return result?.toDTO()
+    }
 
     suspend fun upsertCondition(data: UserConditionDto): Result<UserConditionDto> {
         return try {
