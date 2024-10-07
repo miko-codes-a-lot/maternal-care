@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -52,66 +53,71 @@ import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 @Composable
 fun ConditionStatusPreview() {
     ConditionStatusUI(
-        navController = rememberNavController(),
+        title = "Create Account",
+         navController = rememberNavController(),
         userDto = UserDto(),
         userCondition = UserConditionDto(),
-        currentUser = UserDto()
+        currentUser = UserDto(),
+
     )
 }
 
 @Composable
 fun ConditionStatusUI(
+    title: String = "Illness History",
     navController: NavController,
     userDto: UserDto,
-    userCondition: UserConditionDto,
-    currentUser: UserDto
-) {
+    userCondition: UserConditionDto?,
+    currentUser: UserDto,
+    ) {
     val conditionStates = mapOf(
         "Tuberculosis" to Pair(
-            remember { mutableStateOf(userCondition.tuberculosisPersonal) },
-            remember { mutableStateOf(userCondition.tuberculosisFamily) }
+            remember { mutableStateOf(userCondition?.tuberculosisPersonal ?: false) },
+            remember { mutableStateOf(userCondition?.tuberculosisFamily ?: false) }
         ),
         "Heart Diseases" to Pair(
-            remember { mutableStateOf(userCondition.heartDiseasesPersonal) },
-            remember { mutableStateOf(userCondition.heartDiseasesFamily) }
+            remember { mutableStateOf(userCondition?.heartDiseasesPersonal ?: false) },
+            remember { mutableStateOf(userCondition?.heartDiseasesFamily ?: false) }
         ),
         "Diabetes" to Pair(
-            remember { mutableStateOf(userCondition.diabetesPersonal) },
-            remember { mutableStateOf(userCondition.diabetesFamily) }
+            remember { mutableStateOf(userCondition?.diabetesPersonal ?: false) },
+            remember { mutableStateOf(userCondition?.diabetesFamily ?: false) }
         ),
         "Hypertension" to Pair(
-            remember { mutableStateOf(userCondition.hypertensionPersonal) },
-            remember { mutableStateOf(userCondition.hypertensionFamily) }
+            remember { mutableStateOf(userCondition?.hypertensionPersonal ?: false) },
+            remember { mutableStateOf(userCondition?.hypertensionFamily ?: false) }
         ),
         "Branchial Asthma" to Pair(
-            remember { mutableStateOf(userCondition.branchialAsthmaPersonal) },
-            remember { mutableStateOf(userCondition.branchialAsthmaFamily) }
+            remember { mutableStateOf(userCondition?.branchialAsthmaPersonal ?: false) },
+            remember { mutableStateOf(userCondition?.branchialAsthmaFamily ?: false) }
         ),
         "Urinary Tract Infection" to Pair(
-            remember { mutableStateOf(userCondition.urinaryTractInfectionPersonal) },
-            remember { mutableStateOf(userCondition.urinaryTractInfectionFamily) }
+            remember { mutableStateOf(userCondition?.urinaryTractInfectionPersonal ?: false) },
+            remember { mutableStateOf(userCondition?.urinaryTractInfectionFamily ?: false) }
         ),
         "Parasitism" to Pair(
-            remember { mutableStateOf(userCondition.parasitismPersonal) },
-            remember { mutableStateOf(userCondition.parasitismFamily) }
+            remember { mutableStateOf(userCondition?.parasitismPersonal ?: false) },
+            remember { mutableStateOf(userCondition?.parasitismFamily ?: false) }
         ),
         "Goiter" to Pair(
-            remember { mutableStateOf(userCondition.goitersPersonal) },
-            remember { mutableStateOf(userCondition.goitersFamily) }
+            remember { mutableStateOf(userCondition?.goitersPersonal ?: false) },
+            remember { mutableStateOf(userCondition?.goitersFamily ?: false) }
         ),
         "Anemia" to Pair(
-            remember { mutableStateOf(userCondition.anemiaPersonal) },
-            remember { mutableStateOf(userCondition.anemiaFamily) }
+            remember { mutableStateOf(userCondition?.anemiaPersonal ?: false) },
+            remember { mutableStateOf(userCondition?.anemiaFamily ?: false) }
         )
     )
 
-    val genitalTractInfection = remember { mutableStateOf(userCondition.genitalTractInfection ?: "") }
-    val otherInfectionsDiseases = remember { mutableStateOf(userCondition.otherInfectionsDiseases ?: "") }
-    val isUnderWeight = remember { mutableStateOf(userCondition.isUnderWeight) }
-    val isOverWeight = remember { mutableStateOf(userCondition.isOverWeight) }
+    val genitalTractInfection = remember { mutableStateOf(userCondition?.genitalTractInfection ?: "") }
+    val otherInfectionsDiseases = remember { mutableStateOf(userCondition?.otherInfectionsDiseases ?: "") }
+    val notes = remember { mutableStateOf(userCondition?.notes ?: "") }
+    val isNormal = remember { mutableStateOf(userCondition?.isNormal ?: false) }
+    val isCritical = remember { mutableStateOf(userCondition?.isCritical ?: false) }
     val textFields = listOf(
         "Genital Tract Infection" to genitalTractInfection,
-        "Other Infections or Diseases" to otherInfectionsDiseases
+        "Other Infections" to otherInfectionsDiseases,
+        "Notes" to notes
     )
     Column(
         modifier = Modifier
@@ -128,7 +134,7 @@ fun ConditionStatusUI(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Illness History",
+                text = title,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.SansSerif,
                 fontSize = 19.sp,
@@ -173,7 +179,7 @@ fun ConditionStatusUI(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(422.dp),
+                .height(300.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(conditionStates.toList()) { (label, states) ->
@@ -194,11 +200,15 @@ fun ConditionStatusUI(
             )
         }
         NutritionalStatus(
-            isUnderWeight = isUnderWeight.value,
-            isOverWeight = isOverWeight.value,
+            isNormal = isNormal.value,
+            isCritical = isCritical.value,
             onSelect = { selectedOption ->
-                isUnderWeight.value = selectedOption == "UnderWeight"
-                isOverWeight.value = selectedOption == "OverWeight"
+                isNormal.value = selectedOption == "Normal"
+                isCritical.value = selectedOption == "Critical"
+                userCondition?.isNormal = isNormal.value
+                userCondition?.isCritical = isCritical.value
+
+                Log.d("ConditionStatusUI", "isNormal: ${isNormal.value}, isCritical: ${isCritical.value}")
             }
         )
         Spacer(modifier = Modifier.height(15.dp))
@@ -208,10 +218,11 @@ fun ConditionStatusUI(
             conditionStates = conditionStates,
             genitalTractInfection = genitalTractInfection,
             otherInfectionsDiseases = otherInfectionsDiseases,
-            isUnderWeight = isUnderWeight.value,
-            isOverWeight = isOverWeight.value,
+            notes = notes,
+            isNormal = isNormal.value,
+            isCritical = isCritical.value,
             currentUser = currentUser,
-            userCondition = userCondition
+            userCondition = userCondition,
         )
     }
 }
@@ -248,7 +259,9 @@ fun LabelWithCheckBoxes(
                 Checkbox(
                     checked = personalChecked,
                     onCheckedChange = { checked ->
-                        if (label == "Tuberculosis" && checked) {
+                        if (label == "Tuberculosis" || label == "Heart Diseases" || label == "Diabetes" || label == "Hypertension"
+                            || label == "Branchial Asthma" || label == "Urinary Tract Infection" || label == "Parasitism"
+                            || label == "Goiter" || label == "Anemia" && checked) {
                             onFamilyCheckedChange(false)
                         }
                         onPersonalCheckedChange(checked)
@@ -259,7 +272,9 @@ fun LabelWithCheckBoxes(
                 Checkbox(
                     checked = familyChecked,
                     onCheckedChange = { checked ->
-                        if (label == "Tuberculosis" && checked) {
+                        if (label == "Tuberculosis" || label == "Heart Diseases" || label == "Diabetes" || label == "Hypertension" ||
+                            label == "Branchial Asthma" || label == "Urinary Tract Infection" || label == "Parasitism" ||
+                            label == "Goiter" || label == "Anemia" && checked) {
                             onPersonalCheckedChange(false)
                         }
                         onFamilyCheckedChange(checked)
@@ -287,18 +302,24 @@ fun TextFieldStatusContainer(label: String, value: String, onValueChange: (Strin
         Text(
             text = label,
             fontWeight = FontWeight.Bold,
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            modifier =  Modifier
+                .padding(top = 5.dp)
         )
         Text(
             text = " : ",
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
-            color = Color.Black
+            color = Color.Black,
+            modifier =  Modifier
+                    .padding(top = 5.dp)
         )
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier
+                .padding(top = 5.dp)
+                .heightIn(min = 60.dp, max = 60.dp)
                 .fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFFFFFFFF),
@@ -317,20 +338,21 @@ fun TextFieldStatusContainer(label: String, value: String, onValueChange: (Strin
 
 @Composable
 fun NutritionalStatus(
-    isUnderWeight: Boolean,
-    isOverWeight: Boolean,
+    isNormal: Boolean,
+    isCritical: Boolean,
     onSelect: (String) -> Unit
 ) {
-    val selectionOption = listOf("UnderWeight", "OverWeight")
+    val selectionOption = listOf("Normal", "Critical")
     val (selectedOption, onOptionSelected) = remember {
         mutableStateOf(
             when {
-                isUnderWeight -> "UnderWeight"
-                isOverWeight -> "OverWeight"
-                else -> "UnderWeight"
+                isNormal -> "Normal"
+                isCritical -> "Critical"
+                else -> "Normal"
             }
         )
     }
+    Log.d("NutritionalStatus", "Initial isNormal: $isNormal, isCritical: $isCritical")
     Row {
         selectionOption.forEach { text ->
             Row(
@@ -376,11 +398,12 @@ fun ButtonSaveStatus(
     conditionStates: Map<String, Pair<MutableState<Boolean>, MutableState<Boolean>>>,
     genitalTractInfection: MutableState<String>,
     otherInfectionsDiseases: MutableState<String>,
+    notes: MutableState<String>,
     navController: NavController,
-    userCondition: UserConditionDto,
-    isUnderWeight: Boolean,
-    isOverWeight: Boolean,
-) {
+    userCondition: UserConditionDto?,
+    isNormal: Boolean,
+    isCritical: Boolean,
+    ) {
     val userViewModel: UserViewModel = hiltViewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -391,7 +414,7 @@ fun ButtonSaveStatus(
             Log.d("CurrentUserID", "Current User ID is: ${currentUser.id}")
 
             val userConditionStatus  = UserConditionDto(
-                id = userCondition.id,
+                id = userCondition?.id,
                 userId = userId,
                 tuberculosisPersonal = conditionStates["Tuberculosis"]?.first?.value ?: false,
                 tuberculosisFamily = conditionStates["Tuberculosis"]?.second?.value ?: false,
@@ -411,18 +434,21 @@ fun ButtonSaveStatus(
                 goitersFamily = conditionStates["Goiter"]?.second?.value ?: false,
                 anemiaPersonal = conditionStates["Anemia"]?.first?.value ?: false,
                 anemiaFamily = conditionStates["Anemia"]?.second?.value ?: false,
+                isNormal = isNormal,
+                isCritical = isCritical,
                 genitalTractInfection = genitalTractInfection.value,
                 otherInfectionsDiseases = otherInfectionsDiseases.value,
-                isUnderWeight = isUnderWeight,
-                isOverWeight = isOverWeight,
-                createdById = currentUser.id ?: userCondition.createdById
+                notes = notes.value,
+                createdById = currentUser.id ?: userCondition?.createdById
             )
+            Log.d("ConditionStatusUI", "userCondition: $userConditionStatus")
 
             scope.launch {
                 try {
                     val result = userViewModel.upsertCondition(userConditionStatus)
                     if (result.isSuccess) {
                         Log.d("CheckUpSave", "Saving CheckUpDto: $userConditionStatus")
+                        Log.d("SaveStatus", "isNormal: $isNormal, isCritical: $isCritical")
 
                         navController.navigate(MainNav.ConditionStatus(userId)) {
                             popUpTo(MainNav.ConditionStatus(userId)) {
