@@ -106,7 +106,7 @@ fun MenuUI(
 @Composable
 fun UserPosition(userDto: UserDto) {
     val userDetails = when {
-        userDto.isSuperAdmin -> listOf("Super Admin")
+        userDto.isSuperAdmin -> listOf("MidWife")
         userDto.isAdmin -> listOf("BHW")
         userDto.isResidence -> listOf("Pregnant")
         else -> listOf("Unknown")
