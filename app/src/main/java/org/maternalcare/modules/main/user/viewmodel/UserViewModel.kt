@@ -71,6 +71,10 @@ class UserViewModel @Inject constructor(
         return this.userService.upsertCondition(conditionDto)
     }
 
+    fun fetchUserImmunization(userId: String): UserImmunizationDto? {
+        return userService.fetchUserImmunizationByUserId(userId)
+    }
+
     suspend fun upsertImmunization(immunizationDto: UserImmunizationDto): Result<UserImmunizationDto> {
         return this.userService.upsertImmunization(immunizationDto)
     }
