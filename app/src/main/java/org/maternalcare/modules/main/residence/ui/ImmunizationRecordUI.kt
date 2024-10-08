@@ -302,7 +302,7 @@ fun DatePickerBox(
                 fontSize = 16.sp,
                 color = textColor,
                 fontFamily = FontFamily.SansSerif,
-                fontWeight = FontWeight.W600
+                fontWeight = FontWeight.W500
             )
         }
     }
