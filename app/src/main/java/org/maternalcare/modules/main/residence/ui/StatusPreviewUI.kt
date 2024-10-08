@@ -45,15 +45,15 @@ fun StatusPreviewUI (
     Log.d("StatusPreviewUI", "UserCondition value: $userCondition")
     val statesValue = remember(userCondition) {
         listOf(
-            "Tuberculosis" to (userCondition.tuberculosisFamily || userCondition.tuberculosisPersonal).toYesNo(),
-            "Heart Diseases" to (userCondition.heartDiseasesFamily || userCondition.heartDiseasesPersonal).toYesNo(),
-            "Diabetes" to (userCondition.diabetesFamily || userCondition.diabetesPersonal).toYesNo(),
-            "Hypertension" to (userCondition.hypertensionFamily || userCondition.hypertensionPersonal).toYesNo(),
-            "Branchial Asthma" to (userCondition.branchialAsthmaFamily || userCondition.branchialAsthmaPersonal).toYesNo(),
-            "Urinary Tract Infection" to (userCondition.urinaryTractInfectionFamily || userCondition.urinaryTractInfectionPersonal).toYesNo(),
-            "Parasitism" to (userCondition.parasitismFamily || userCondition.parasitismPersonal).toYesNo(),
-            "Goiter" to (userCondition.goitersFamily || userCondition.goitersPersonal).toYesNo(),
-            "Anemia" to (userCondition.anemiaFamily || userCondition.anemiaPersonal).toYesNo(),
+            "Tuberculosis" to getConditionStatus(userCondition.tuberculosisFamily, userCondition.tuberculosisPersonal),
+            "Heart Diseases" to getConditionStatus(userCondition.heartDiseasesFamily, userCondition.heartDiseasesPersonal),
+            "Diabetes" to getConditionStatus(userCondition.diabetesFamily, userCondition.diabetesPersonal),
+            "Hypertension" to getConditionStatus(userCondition.hypertensionFamily, userCondition.hypertensionPersonal),
+            "Branchial Asthma" to getConditionStatus(userCondition.branchialAsthmaFamily, userCondition.branchialAsthmaPersonal),
+            "Urinary Tract Infection" to getConditionStatus(userCondition.urinaryTractInfectionFamily, userCondition.urinaryTractInfectionPersonal),
+            "Parasitism" to getConditionStatus(userCondition.parasitismFamily, userCondition.parasitismPersonal),
+            "Goiter" to getConditionStatus(userCondition.goitersFamily, userCondition.goitersPersonal),
+            "Anemia" to getConditionStatus(userCondition.anemiaFamily, userCondition.anemiaPersonal),
             "Genital Tract Infection" to userCondition.genitalTractInfection,
             "Other Infections" to userCondition.otherInfectionsDiseases,
             "Notes" to userCondition.notes,
@@ -69,7 +69,7 @@ fun StatusPreviewUI (
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Pregnant Status",
+        Text(text = "Pregnant Status History",
             fontFamily = FontFamily.Serif,
             fontSize = 24.sp,
             modifier = Modifier
@@ -80,8 +80,12 @@ fun StatusPreviewUI (
     }
 }
 
-fun Boolean?.toYesNo(): String {
-    return if (this == true) "Yes" else "No"
+fun getConditionStatus(family: Boolean, personal: Boolean): String {
+    return when {
+        personal -> "Personal"
+        family -> "Family"
+        else -> "None"
+    }
 }
 
 @Composable
