@@ -13,6 +13,7 @@ import org.maternalcare.modules.main.user.model.entity.Address
 import org.maternalcare.modules.main.user.model.entity.User
 import org.maternalcare.modules.main.user.model.entity.UserCheckup
 import org.maternalcare.modules.main.user.model.entity.UserCondition
+import org.maternalcare.modules.main.user.model.entity.UserImmunization
 import org.maternalcare.modules.main.user.model.mapper.toDTO
 import org.maternalcare.modules.main.user.model.mapper.toEntity
 import org.mongodb.kbson.ObjectId
@@ -300,6 +301,13 @@ class UserService @Inject constructor(private val realm: Realm) {
         } catch (error: Exception) {
             Result.failure(error)
         }
+    }
+
+    fun fetchUserImmunizationByUserId(userId: String): UserImmunizationDto? {
+        val result = realm.query<UserImmunization>("userId == $0", userId)
+            .find()
+            .firstOrNull()
+        return result?.toDTO()
     }
 
     suspend fun upsertImmunization(dates: UserImmunizationDto): Result<UserImmunizationDto> {
