@@ -408,9 +408,6 @@ fun ButtonSaveStatus(
 
     Button(
         onClick = {
-            Log.d("UserID", "User ID is: $userId")
-            Log.d("CurrentUserID", "Current User ID is: ${currentUser.id}")
-
             val userConditionStatus  = UserConditionDto(
                 id = userCondition?.id,
                 userId = userId,
@@ -439,17 +436,12 @@ fun ButtonSaveStatus(
                 notes = notes.value,
                 createdById = currentUser.id ?: userCondition?.createdById
             )
-            Log.d("ConditionStatusUI", "userCondition: $userConditionStatus")
-
             scope.launch {
                 try {
                     val result = userViewModel.upsertCondition(userConditionStatus)
                     if (result.isSuccess) {
-                        Log.d("CheckUpSave", "Saving CheckUpDto: $userConditionStatus")
-                        Log.d("SaveStatus", "isNormal: $isNormal, isCritical: $isCritical")
-
-                        navController.navigate(MainNav.ConditionStatus(userId)) {
-                            popUpTo(MainNav.ConditionStatus(userId)) {
+                        navController.navigate(MainNav.ChooseCheckup(userId)) {
+                            popUpTo(MainNav.ChooseCheckup(userId)) {
                                 inclusive = true
                             }
                         }
