@@ -64,86 +64,31 @@ fun ImmunizationRecordUI(
     userImmunization: UserImmunizationDto,
     currentUser: UserDto
 ) {
-    val isSuperAdmin = currentUser.isSuperAdmin
-    val isResidence = currentUser.isResidence
-    val isStatusVisible = isSuperAdmin || isResidence
-    // Set dose states based on user type
-    val conditionStates = when {
-        isResidence -> {
-            // Residence: 1st Dose has valid dates, 2nd to 5th doses are "Not available"
-            mapOf(
-                "1st Dose" to Pair(
-                    remember { mutableStateOf("11-05-2024") },
-                    remember { mutableStateOf("11-12-2024") }
-                ),
-                "2nd Dose" to Pair(
-                    remember { mutableStateOf("Not available") },
-                    remember { mutableStateOf("Not available") }
-                ),
-                "3rd Dose" to Pair(
-                    remember { mutableStateOf("Not available") },
-                    remember { mutableStateOf("Not available") }
-                ),
-                "4th Dose" to Pair(
-                    remember { mutableStateOf("Not available") },
-                    remember { mutableStateOf("Not available") }
-                ),
-                "5th Dose" to Pair(
-                    remember { mutableStateOf("Not available") },
-                    remember { mutableStateOf("Not available") }
-                )
+    val isAdminShow = currentUser.isAdmin
+
+    val conditionStates = remember {
+        mapOf(
+            "1st Dose" to Pair(
+                mutableStateOf(userImmunization.firstDoseGiven),
+                mutableStateOf(userImmunization.firstDoseReturn)
+            ),
+            "2nd Dose" to Pair(
+                mutableStateOf(userImmunization.secondDoseGiven),
+                mutableStateOf(userImmunization.secondDoseReturn)
+            ),
+            "3rd Dose" to Pair(
+                mutableStateOf(userImmunization.thirdDoseGiven),
+                mutableStateOf(userImmunization.thirdDoseReturn)
+            ),
+            "4th Dose" to Pair(
+                mutableStateOf(userImmunization.fourthDoseGiven),
+                mutableStateOf(userImmunization.fourthDoseReturn)
+            ),
+            "5th Dose" to Pair(
+                mutableStateOf(userImmunization.fifthDoseGiven),
+                mutableStateOf(userImmunization.fifthDoseReturn)
             )
-        }
-        isSuperAdmin -> {
-            // SuperAdmin: 1st Dose has valid dates, 2nd to 5th doses are "Pending"
-            mapOf(
-                "1st Dose" to Pair(
-                    remember { mutableStateOf("11-05-2024") },
-                    remember { mutableStateOf("11-12-2024") }
-                ),
-                "2nd Dose" to Pair(
-                    remember { mutableStateOf("Pending") },
-                    remember { mutableStateOf("Pending") }
-                ),
-                "3rd Dose" to Pair(
-                    remember { mutableStateOf("Pending") },
-                    remember { mutableStateOf("Pending") }
-                ),
-                "4th Dose" to Pair(
-                    remember { mutableStateOf("Pending") },
-                    remember { mutableStateOf("Pending") }
-                ),
-                "5th Dose" to Pair(
-                    remember { mutableStateOf("Pending") },
-                    remember { mutableStateOf("Pending") }
-                )
-            )
-        }
-        else -> {
-            // Admin: Use actual values from userImmunization object
-            mapOf(
-                "1st Dose" to Pair(
-                    remember { mutableStateOf(userImmunization.firstDoseGiven) },
-                    remember { mutableStateOf(userImmunization.firstDoseReturn) }
-                ),
-                "2nd Dose" to Pair(
-                    remember { mutableStateOf(userImmunization.secondDoseGiven) },
-                    remember { mutableStateOf(userImmunization.secondDoseReturn) }
-                ),
-                "3rd Dose" to Pair(
-                    remember { mutableStateOf(userImmunization.thirdDoseGiven) },
-                    remember { mutableStateOf(userImmunization.thirdDoseReturn) }
-                ),
-                "4th Dose" to Pair(
-                    remember { mutableStateOf(userImmunization.fourthDoseGiven) },
-                    remember { mutableStateOf(userImmunization.fourthDoseReturn) }
-                ),
-                "5th Dose" to Pair(
-                    remember { mutableStateOf(userImmunization.fifthDoseGiven) },
-                    remember { mutableStateOf(userImmunization.fifthDoseReturn) }
-                )
-            )
-        }
+        )
     }
 
     Column(
@@ -211,11 +156,14 @@ fun ImmunizationRecordUI(
                     Spacer(modifier = Modifier.width(5.dp))
                 }
             }
-//            ImmunizationValue(conditionStates)
-            ImmunizationValue(conditionStates, isEditable = !isStatusVisible)
+            ImmunizationValue(
+                conditionStates,
+                isEditable = isAdminShow,
+                currentUser = currentUser
+            )
             Spacer(modifier = Modifier.height(20.dp))
 
-            if (!isStatusVisible) {
+            if (isAdminShow) {
                 ButtonSaveRecord(
                     userId = userDto.id!!,
                     navController = navController,
@@ -229,7 +177,14 @@ fun ImmunizationRecordUI(
 }
 
 @Composable
-fun ImmunizationValue(statesValue: Map<String, Pair<MutableState<String>, MutableState<String>>>, isEditable: Boolean) {
+fun ImmunizationValue(
+    statesValue: Map<String, Pair<MutableState<String?>, MutableState<String?>>>,
+    isEditable: Boolean,
+    currentUser: UserDto
+) {
+    val isSuperAdmin = currentUser.isSuperAdmin
+    val isResidence = currentUser.isResidence
+
     statesValue.forEach { (label, dateStates) ->
         val (givenDateState, returnDateState) = dateStates
         Row(
@@ -254,17 +209,18 @@ fun ImmunizationValue(statesValue: Map<String, Pair<MutableState<String>, Mutabl
                 horizontalArrangement = Arrangement.End
             ) {
                 DatePickerBox(
-                    dateValue = givenDateState.value,
+                    dateValue = resolveDateValue(givenDateState.value, isSuperAdmin, isResidence),
                     onDateChange = { newDate -> givenDateState.value = newDate },
-                    isEditable = isEditable && givenDateState.value !in listOf("Pending", "Not available")
+                    isEditable = isEditable
+
                 )
 
                 Spacer(modifier = Modifier.width(15.dp))
 
                 DatePickerBox(
-                    dateValue = returnDateState.value,
+                    dateValue = resolveDateValue(returnDateState.value, isSuperAdmin, isResidence),
                     onDateChange = { newDate -> returnDateState.value = newDate },
-                    isEditable = isEditable && givenDateState.value !in listOf("Pending", "Not available")
+                    isEditable = isEditable
                 )
             }
         }
@@ -274,6 +230,17 @@ fun ImmunizationValue(statesValue: Map<String, Pair<MutableState<String>, Mutabl
             thickness = 1.dp,
             color = Color.Black
         )
+    }
+}
+
+fun resolveDateValue(date: String?, isSuperAdmin: Boolean, isResidence: Boolean): String {
+    return when {
+        date.isNullOrEmpty() -> {
+            if (isSuperAdmin) "Pending"
+            else if (isResidence) "Not available"
+            else "Select Date"
+        }
+        else -> date
     }
 }
 
@@ -301,12 +268,10 @@ fun DatePickerBox(
             calendar.get(Calendar.DAY_OF_MONTH)
         )
     }
-
     val displayFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-    val displayDate = when {
-        dateValue == "Pending" -> "Pending"
-        dateValue == "Not available" -> "Not available"
-        Regex("\\d{2}-\\d{2}-\\d{4}").matches(dateValue) -> dateValue
+    val displayDate = when (dateValue) {
+        "Pending" -> "Pending"
+        "Not available" -> "Not available"
         else -> try {
             SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateValue)?.let {
                 displayFormat.format(it)
@@ -315,18 +280,13 @@ fun DatePickerBox(
             "Select Date"
         }
     }
-
-
-//    val displayDate = try {
-//        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateValue)?.let {
-//            displayFormat.format(it)
-//        } ?: "Select Date"
-//    } catch (e: Exception) {
-//        "Select Date"
-//    }
+    val textColor = if (dateValue.isNotEmpty() && dateValue != "Select Date" && dateValue != "Pending" && dateValue != "Not available") {
+        Color(0xFF6650a4)
+    } else {
+        Color.Black
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-//        modifier = Modifier.clickable { datePickerDialog.show() }
         modifier = Modifier
             .clickable(enabled = isEditable) { datePickerDialog.show() }
     ) {
@@ -340,56 +300,49 @@ fun DatePickerBox(
             Text(
                 text = displayDate,
                 fontSize = 16.sp,
-                color = Color.Black,
-                fontFamily = FontFamily.SansSerif
+                color = textColor,
+                fontFamily = FontFamily.SansSerif,
+                fontWeight = FontWeight.W600
             )
         }
     }
 }
-
 
 @Composable
 fun ButtonSaveRecord(
     userId: String,
     currentUser: UserDto,
     navController: NavController,
-    conditionStates: Map<String, Pair<MutableState<String>, MutableState<String>>>,
+    conditionStates: Map<String, Pair<MutableState<String?>, MutableState<String?>>>,
     userImmunization: UserImmunizationDto,
 ) {
     val userViewModel: UserViewModel = hiltViewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
     Button(
         onClick = {
-
-            Log.d("UserID", "User ID is: $userId")
-            Log.d("CurrentUserID", "Current User ID is: ${currentUser.id}")
-
             val userImmunizationRecord  = UserImmunizationDto(
                 id = userImmunization.id,
                 userId = userId,
-                firstDoseGiven = conditionStates["1st Dose"]?.first?.value ?: "",
-                firstDoseReturn = conditionStates["1st Dose"]?.second?.value ?: "",
-                secondDoseGiven = conditionStates["2nd Dose"]?.first?.value ?: "",
-                secondDoseReturn = conditionStates["2nd Dose"]?.second?.value ?: "",
-                thirdDoseGiven = conditionStates["3rd Dose"]?.first?.value ?: "",
-                thirdDoseReturn = conditionStates["3rd Dose"]?.second?.value ?: "",
-                fourthDoseGiven = conditionStates["4th Dose"]?.first?.value ?: "",
-                fourthDoseReturn = conditionStates["4th Dose"]?.second?.value ?: "",
-                fifthDoseGiven = conditionStates["5th Dose"]?.first?.value ?: "",
-                fifthDoseReturn = conditionStates["5th Dose"]?.second?.value ?: "",
+                firstDoseGiven = conditionStates["1st Dose"]?.first?.value,
+                firstDoseReturn = conditionStates["1st Dose"]?.second?.value,
+                secondDoseGiven = conditionStates["2nd Dose"]?.first?.value,
+                secondDoseReturn = conditionStates["2nd Dose"]?.second?.value,
+                thirdDoseGiven = conditionStates["3rd Dose"]?.first?.value,
+                thirdDoseReturn = conditionStates["3rd Dose"]?.second?.value,
+                fourthDoseGiven = conditionStates["4th Dose"]?.first?.value,
+                fourthDoseReturn = conditionStates["4th Dose"]?.second?.value,
+                fifthDoseGiven = conditionStates["5th Dose"]?.first?.value,
+                fifthDoseReturn = conditionStates["5th Dose"]?.second?.value,
                 createdById = currentUser.id ?: userImmunization.createdById
             )
-
             scope.launch {
                 try {
                     val result = userViewModel.upsertImmunization(userImmunizationRecord)
                     if (result.isSuccess) {
-                    Log.d("CheckUpSave", "Saving CheckUpDto: $userImmunizationRecord")
 
-                        navController.navigate(MainNav.ImmunizationRecord(userId)) {
-                            popUpTo(MainNav.ImmunizationRecord(userId)) {
+                        navController.navigate(MainNav.ChooseCheckup(userId)) {
+                            popUpTo(MainNav.ChooseCheckup(userId)) {
                                 inclusive = true
                             }
                         }
