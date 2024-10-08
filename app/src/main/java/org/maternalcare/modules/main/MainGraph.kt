@@ -147,13 +147,24 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             val userViewModel: UserViewModel = hiltViewModel()
             val userConditionDto by remember { mutableStateOf<UserConditionDto?>(null) }
             Guard(navController = navController) { currentUser ->
-                val userDto = userViewModel.fetchUser(args.userId)
-                ConditionStatusUI(
-                    navController = navController,
-                    userDto = userDto,
-                    currentUser = currentUser,
-                    userCondition = userConditionDto
-                )
+                if(userConditionDto != null){
+                    val userDto = userViewModel.fetchUser(args.userId)
+                    ConditionStatusUI(
+                        navController = navController,
+                        userDto = userDto,
+                        currentUser = currentUser,
+                        userCondition = userConditionDto
+                    )
+                }else{
+                    val userDto = userViewModel.fetchUser(args.userId)
+                    val conditionDto = userViewModel.fetchUserCondition(args.userId)
+                    ConditionStatusUI(
+                        navController = navController,
+                        userDto = userDto,
+                        currentUser = currentUser,
+                        userCondition = conditionDto
+                    )
+                }
             }
         }
         composable<MainNav.StatusPreview> {
@@ -172,15 +183,48 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         composable<MainNav.ImmunizationRecord> {
             val args = it.toRoute<MainNav.ImmunizationRecord>()
             val userViewModel: UserViewModel = hiltViewModel()
+            val immunizationDto = userViewModel.fetchUserImmunization(args.userId)
             Guard(navController = navController) { currentUser ->
-                val userDto = userViewModel.fetchUser(args.userId)
-                ImmunizationRecordUI(
-                    navController = navController,
-                    userDto = userDto,
-                    userImmunization = UserImmunizationDto(),
-                    currentUser = currentUser,
-                )
+                if(immunizationDto != null){
+                    val userDto = userViewModel.fetchUser(args.userId)
+                    ImmunizationRecordUI(
+                        navController = navController,
+                        userDto = userDto,
+                        userImmunization = immunizationDto,
+                        currentUser = currentUser,
+                    )
+                }
+                else{
+                    val userDto = userViewModel.fetchUser(args.userId)
+                    ImmunizationRecordUI(
+                        navController = navController,
+                        userDto = userDto,
+                        userImmunization = UserImmunizationDto(),
+                        currentUser = currentUser,
+                    )
+                }
             }
+//            Guard(navController = navController) { currentUser ->
+//                if(userImmunizationDto != null){
+//                    val userDto = userViewModel.fetchUser(args.userId)
+//                    ImmunizationRecordUI(
+//                        navController = navController,
+//                        userDto = userDto,
+//                        userImmunization = UserImmunizationDto(),
+//                        currentUser = currentUser,
+//                    )
+//                }
+//                val userDto = userViewModel.fetchUser(args.userId)
+//                val immunizationDto = userViewModel.fetchUserImmunization(args.userId)
+//                if (immunizationDto != null) {
+//                    ImmunizationRecordUI(
+//                        navController = navController,
+//                        userDto = userDto,
+//                        userImmunization = immunizationDto,
+//                        currentUser = currentUser,
+//                    )
+//                }
+//            }
         }
         composable<MainNav.Reminders> {
             Guard(navController = navController) { currentUser ->
