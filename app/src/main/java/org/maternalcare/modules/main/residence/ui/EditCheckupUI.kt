@@ -25,9 +25,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,6 +49,7 @@ import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
+import org.maternalcare.shared.ui.CheckupPreview
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -222,44 +225,11 @@ fun ButtonSaveEdit(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
+    var showPreview by remember { mutableStateOf(false) }
+
     Button(
         onClick = {
-            val checkUpDto = UserCheckupDto(
-                id = checkupUser.id,
-                userId = userId,
-                bloodPressure = statesValue["Blood Pressure"]?.value?.toDoubleOrNull() ?: 0.0,
-                height = statesValue["Height"]?.value?.toDoubleOrNull() ?: 0.0,
-                weight = statesValue["Weight"]?.value?.toDoubleOrNull() ?: 0.0,
-                gravidaPara = statesValue["Gravida Para"]?.value ?: "",
-                checkup = checkupNumber,
-                lastMenstrualPeriod = statesValue["Last Menstrual Period"]?.value ?: "",
-                dateOfCheckUp = statesValue["Date of Check-up"]?.value ?: "",
-                scheduleOfNextCheckUp = statesValue["Next Check-up"]?.value ?: "",
-                createdById = checkupUser.createdById ?: currentUser.id
-            )
-
-            scope.launch {
-                try {
-                    val result = userViewModel.upsertCheckUp(checkUpDto)
-                    if (result.isSuccess) {
-                        Log.d("CheckUpSave", "Saving CheckUpDto: $checkUpDto")
-
-                        navController.navigate(MainNav.CheckupDetails(userId, checkupNumber)) {
-                            popUpTo(MainNav.CheckupDetails(userId, checkupNumber)) {
-                                inclusive = true
-                            }
-                        }
-                    } else {
-                        Log.e("saving", "Error: ${result.exceptionOrNull()}")
-                    }
-                } catch (e: Exception) {
-                    Toast.makeText(
-                        context,
-                        "Error updating data: ${e.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
+            showPreview = true
         },
         modifier = Modifier
             .width(360.dp)
@@ -272,6 +242,54 @@ fun ButtonSaveEdit(
     ) {
         Text(text = "Confirm", fontSize = 17.sp)
     }
+
+    if (showPreview) {
+        CheckupPreview(
+            statesValue = statesValue,
+            onDismiss = { showPreview = false },
+            onConfirm = {
+                showPreview = false
+
+                val checkUpDto = UserCheckupDto(
+                    id = checkupUser.id,
+                    userId = userId,
+                    bloodPressure = statesValue["Blood Pressure"]?.value?.toDoubleOrNull() ?: 0.0,
+                    height = statesValue["Height"]?.value?.toDoubleOrNull() ?: 0.0,
+                    weight = statesValue["Weight"]?.value?.toDoubleOrNull() ?: 0.0,
+                    gravidaPara = statesValue["Gravida Para"]?.value ?: "",
+                    checkup = checkupNumber,
+                    lastMenstrualPeriod = statesValue["Last Menstrual Period"]?.value ?: "",
+                    dateOfCheckUp = statesValue["Date of Check-up"]?.value ?: "",
+                    scheduleOfNextCheckUp = statesValue["Next Check-up"]?.value ?: "",
+                    createdById = checkupUser.createdById ?: currentUser.id
+                )
+
+                // Save the data to the database
+                scope.launch {
+                    try {
+                        val result = userViewModel.upsertCheckUp(checkUpDto)
+                        if (result.isSuccess) {
+                            Log.d("CheckUpSave", "Saving CheckUpDto: $checkUpDto")
+                            navController.navigate(MainNav.CheckupDetails(userId, checkupNumber)) {
+                                popUpTo(MainNav.CheckupDetails(userId, checkupNumber)) {
+                                    inclusive = true
+                                }
+                            }
+                        } else {
+                            Log.e("saving", "Error: ${result.exceptionOrNull()}")
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            context,
+                            "Error updating data: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        )
+    }
+
 }
 
 @Composable
