@@ -86,7 +86,7 @@ fun AverageStatusContainer(completePercentage: String, incompletePercentage: Str
             containerColor = Color(0xFF6650a4),
             contentColor = Color.White
         ),
-        modifier = Modifier.size(width = 265.dp, height = 105.dp)
+        modifier = Modifier.size(width = 295.dp, height = 125.dp)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
