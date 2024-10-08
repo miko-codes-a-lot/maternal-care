@@ -10,16 +10,16 @@ class UserImmunization : RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId()
     var userId: String = ""
-    var firstDoseGiven: RealmInstant = RealmInstant.now()
-    var firstDoseReturn: RealmInstant = RealmInstant.now()
-    var secondDoseGiven: RealmInstant = RealmInstant.now()
-    var secondDoseReturn: RealmInstant = RealmInstant.now()
-    var thirdDoseGiven: RealmInstant = RealmInstant.now()
-    var thirdDoseReturn: RealmInstant = RealmInstant.now()
-    var fourthDoseGiven: RealmInstant = RealmInstant.now()
-    var fourthDoseReturn: RealmInstant = RealmInstant.now()
-    var fifthDoseGiven: RealmInstant = RealmInstant.now()
-    var fifthDoseReturn: RealmInstant = RealmInstant.now()
+    var firstDoseGiven: RealmInstant? = null
+    var firstDoseReturn: RealmInstant? = null
+    var secondDoseGiven: RealmInstant? = null
+    var secondDoseReturn: RealmInstant? = null
+    var thirdDoseGiven: RealmInstant? = null
+    var thirdDoseReturn: RealmInstant? = null
+    var fourthDoseGiven: RealmInstant? = null
+    var fourthDoseReturn: RealmInstant? = null
+    var fifthDoseGiven: RealmInstant? = null
+    var fifthDoseReturn: RealmInstant? = null
     var createdById: ObjectId? = null
     var createdAt: RealmInstant = RealmInstant.now()
     var lastUpdatedById: ObjectId? = null
