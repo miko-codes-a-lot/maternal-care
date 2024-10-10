@@ -204,7 +204,7 @@ class UserService @Inject constructor(private val realm: Realm) {
         return realm.query<UserCheckup>(
             "userId == $0",
             userId
-        ).sort("dateOfCheckUp", Sort.DESCENDING)
+        ).sort("scheduleOfNextCheckUp", Sort.DESCENDING)
             .find()
             .firstOrNull()
             ?.run { toDTO() }
@@ -214,10 +214,10 @@ class UserService @Inject constructor(private val realm: Realm) {
         val currentDate: RealmInstant = RealmInstant.from(Instant.now().epochSecond, 0)
         val query = StringBuilder()
             .append("createdById == $0")
-            .append(" AND dateOfCheckUp > $1")
+            .append(" AND scheduleOfNextCheckUp > $1")
         return realm.query<UserCheckup>(query.toString(), adminId, currentDate)
-            .distinct("dateOfCheckUp")
-            .sort("dateOfCheckUp", Sort.ASCENDING)
+            .distinct("scheduleOfNextCheckUp")
+            .sort("scheduleOfNextCheckUp", Sort.ASCENDING)
             .find()
             .map { it.toDTO() }
     }
