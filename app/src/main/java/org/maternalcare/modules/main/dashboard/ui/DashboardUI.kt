@@ -60,13 +60,33 @@ fun DashboardUI(navController: NavController) {
 @Composable
 private fun DashboardMenu (navController: NavController) {
     Column {
+//        //Total Pregnant
+//        Spacer(modifier = Modifier.height(10.dp))
+//        DashboardButton(text = "Total Pregnant Records") {
+//            navController.navigate(MainNav.Residences(status = CheckupStatus.ALL.name, isArchive = false,isDashboard = true, dateOfCheckUp = null))
+//        }
+//
+//        //Normal
+//        Spacer(modifier = Modifier.height(15.dp))
+//        DashboardButton(text = "Normal List") {
+////            navController.navigate(MainNav.MonitoringCheckup(isComplete = true, dashboard = true))
+//        }
+//
+//        //Critical
+//        Spacer(modifier = Modifier.height(20.dp))
+//        DashboardButton(text = "Critical List") {
+////            navController.navigate(MainNav.MonitoringCheckup(isComplete = true, dashboard = true))
+//        }
+
         //Complete
         Spacer(modifier = Modifier.height(10.dp))
+//        Spacer(modifier = Modifier.height(20.dp))
         DashboardButton(text = "Complete",iconResId = R.drawable.check) {
             navController.navigate(MainNav.MonitoringCheckup(isComplete = true, dashboard = true))
         }
 
         // Incomplete
+//        Spacer(modifier = Modifier.height(25.dp))
         Spacer(modifier = Modifier.height(25.dp))
         DashboardButton(text = "Incomplete",iconResId = R.drawable.clear) {
             navController.navigate(MainNav.MonitoringCheckup(isComplete = false, dashboard = false))
