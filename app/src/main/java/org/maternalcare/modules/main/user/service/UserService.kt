@@ -265,25 +265,26 @@ class UserService @Inject constructor(private val realm: Realm) {
         return addressPercentageMap
     }
 
-    fun fetchAddressCompletionPercentages(): Map<String, Map<String, Double>> {
+    fun fetchAddressWithCompleteCheckup(): Map<String, Map<String,Int>>{
         val addresses = realm.query<Address>().find()
         return addresses.associate { address ->
             val usersAtAddress = realm.query<User>(
-                "address == $0 AND isResidence == true", address.name
+                "address == $0 And isResidence == true", address.name
             ).find()
             val (usersWithFourCheckups, usersWithoutFourCheckups) = usersAtAddress.partition { user ->
                 val checkups = realm.query<UserCheckup>("userId == $0", user._id.toHexString()).find()
                 checkups.size >= 4
             }
-            val totalUsers = usersAtAddress.size.toDouble()
-            val completedPercentage = if (totalUsers > 0) (usersWithFourCheckups.size / totalUsers) * 100 else 0.0
-            val incompletePercentage = if (totalUsers > 0) (usersWithoutFourCheckups.size / totalUsers) * 100 else 0.0
+            val totalUsers = usersAtAddress.size
+            val usersCompleteCheckup = if(totalUsers > 0) (usersWithFourCheckups.size) else 0
+            val usersNotCompleteCheckup = if(totalUsers > 0) (usersWithoutFourCheckups.size) else 0
             address.name to mapOf(
-                "Complete" to completedPercentage,
-                "Incomplete" to incompletePercentage
+                "Complete" to usersCompleteCheckup,
+                "Incomplete" to usersNotCompleteCheckup
             )
         }
     }
+
 
     fun fetchUserConditionByUserId(userId: String): UserConditionDto? {
         val result = realm.query<UserCondition>("userId == $0", userId)
