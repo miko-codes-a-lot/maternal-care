@@ -222,6 +222,13 @@ class UserService @Inject constructor(private val realm: Realm) {
             .map { it.toDTO() }
     }
 
+    fun getAllUserWithCheckups(userId: String): List<UserCheckupDto> {
+        val query = "userId == $0 AND checkup > 0"
+        return realm.query<UserCheckup>(query, userId)
+            .find()
+            .map { it.toDTO() }
+    }
+
     fun getMyUpcomingCheckup(residenceId: String): List<UserCheckupDto> {
         val currentDate: RealmInstant = RealmInstant.from(Instant.now().epochSecond, 0)
         val query = StringBuilder()
