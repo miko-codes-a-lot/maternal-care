@@ -55,6 +55,10 @@ class UserViewModel @Inject constructor(
         return userService.getGroupOfCheckupDates(adminId.toObjectId())
     }
 
+    fun getAllUserWithCheckup(userId: String): List<UserCheckupDto> {
+        return userService.getAllUserWithCheckups(userId)
+    }
+
     fun getCompleteCheckupPercentages(): Map<String, Double> {
         return userService.fetchAddressCheckupPercentage()
     }
