@@ -44,7 +44,7 @@ fun CheckupProgressUI(
 ) {
     val addressCheckupPercentages = userViewModel.getCompleteCheckupPercentages()
     val overallCompletedPercentage = addressCheckupPercentages["Overall Completed Address Percentage"] ?: 0.0
-    val getAllListAddressCheckupPercentage = userViewModel.getAllListAddressCheckupPercentages()
+    val getAllListAddressCheckups = userViewModel.getAllListAddressCheckup()
 
     Column(
         modifier = Modifier
@@ -71,7 +71,7 @@ fun CheckupProgressUI(
                 navController = navController,
                 isShowPercent = true,
                 isComplete = isComplete,
-                addressPercentages = getAllListAddressCheckupPercentage,
+                addressFetchAll = getAllListAddressCheckups,
                 isDashboard = true
             )
         }
