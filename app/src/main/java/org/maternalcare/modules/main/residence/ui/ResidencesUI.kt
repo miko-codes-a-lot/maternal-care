@@ -97,7 +97,30 @@ fun ResidencesUI(
         delay(500L)
         debouncedQuery = searchQuery
     }
-
+//    val residences = remember(debouncedQuery) {
+//        when {
+//            isDashboard -> {
+//                residenceViewModel.fetchUsersWithCheckups(currentUser.id.toObjectId())
+//            }
+//            dateOfCheckup != null -> {
+//                residenceViewModel.fetchUsersByCheckup(
+//                    userId = currentUser.id.toObjectId(),
+//                    isSuperAdmin = currentUser.isSuperAdmin,
+//                    dateOfCheckup = dateOfCheckup
+//                )
+//            }
+//            else -> {
+//                // Default fetch users based on other criteria
+//                residenceViewModel.fetchUsers(
+//                    userId = currentUser.id.toObjectId(),
+//                    isSuperAdmin = currentUser.isSuperAdmin,
+//                    addressName = addressDto?.name,
+//                    isArchive = isArchive,
+//                    isCompleted = if (isDashboard) isCompleted else null,
+//                )
+//            }
+//        }
+//    }
     val residences = remember(debouncedQuery) {
         if (dateOfCheckup != null)
             residenceViewModel.fetchUsersByCheckup(
