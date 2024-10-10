@@ -93,7 +93,7 @@ fun ReminderCheckupListUI (
                 }
 
                 val uniqueCheckupDetails = checkupDto
-                    .map { formatListDates(it.dateOfCheckUp) }
+                    .map { formatListDates(it.scheduleOfNextCheckUp) }
                     .toSet()
                     .mapIndexed { index, date -> index + 1 to date }
 
