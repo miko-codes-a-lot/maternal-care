@@ -178,7 +178,7 @@ fun ResidencesUI(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     items(filteredResidences) { residence ->
-                        SingleItemCard(userDto = residence, navController = navController)
+                        SingleItemCard(userDto = residence, navController = navController, isDashboard)
                     }
                 }
             }
@@ -222,7 +222,12 @@ fun UsersImageContainer(imageUri: Uri? = null) {
 }
 
 @Composable
-fun SingleItemCard(userDto: UserDto, navController: NavController) {
+fun SingleItemCard(
+    userDto: UserDto,
+    navController: NavController,
+    isDashboard: Boolean
+) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
