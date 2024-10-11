@@ -3,7 +3,6 @@ package org.maternalcare.modules.main.residence.ui
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -59,6 +58,7 @@ import coil.compose.AsyncImage
 import exportToPDF
 import kotlinx.coroutines.delay
 import openFile
+import org.maternalcare.MainActivity
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
@@ -68,7 +68,6 @@ import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.shared.ext.toObjectId
 
 
-@RequiresApi(Build.VERSION_CODES.Q)
 @Preview(showSystemUi = true)
 @Composable
 fun ResidencesPrev() {
@@ -166,6 +165,7 @@ fun ResidencesUI(
                         filteredResidences = filteredResidences,
                         onExportToPDF = { data ->
                             exportToPDF(
+                                context = context,
                                 data = data,
                                 onFinish = { file ->
                                     openFile(context, file)
@@ -339,6 +339,8 @@ fun FloatingIcon(
     filteredResidences: List<UserDto>,
     onExportToPDF: (List<UserDto>) -> Unit
 ) {
+    val context = LocalContext.current
+    val activity = context as? MainActivity
     Column(
         modifier = Modifier
             .background(Color.Transparent),
@@ -347,6 +349,9 @@ fun FloatingIcon(
         if (currentUser.isSuperAdmin) {
             FloatingActionButton(
                 onClick = {
+                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P && activity != null) {
+                        activity.requestStoragePermission()
+                    }
                     onExportToPDF(filteredResidences)
                 },
                 containerColor = Color(0xFF6650a4),
