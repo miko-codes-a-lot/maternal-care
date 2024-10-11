@@ -51,4 +51,35 @@ class ResidenceViewModel @Inject constructor(
         val id = if (!isSuperAdmin) userId else null
         return userService.fetchByCheckup(userId = id, dateOfCheckup = dateOfCheckup)
     }
+
+    fun fetchAllUsersByCheckup(
+        userId: ObjectId,
+        isSuperAdmin: Boolean = false,
+        checkup: Int,
+        isArchive: Boolean = false,
+    ): List<UserDto> {
+        val id = if(!isSuperAdmin) userId else null
+        return userService.fetchAllCheckup(userId = id, checkup = checkup, isArchive = isArchive )
+    }
+
+    fun fetchAllUsersWithNormalCondition(
+        userId: ObjectId,
+        isSuperAdmin: Boolean = false,
+        isNormal: Boolean,
+        isArchive: Boolean = false
+    ): List<UserDto> {
+        val id = if(!isSuperAdmin) userId else null
+        return userService.fetchUsersWithNormalCondition(userId = id, isNormal = isNormal, isArchive = isArchive)
+    }
+
+    fun fetchAllUsersWithCriticalCondition(
+        userId: ObjectId,
+        isSuperAdmin: Boolean = false,
+        isCritical: Boolean,
+        isArchive: Boolean = false
+    ): List<UserDto> {
+        val id = if(!isSuperAdmin) userId else null
+        return userService.fetchUsersWithCriticalCondition(userId = id, isCritical = isCritical, isArchive = isArchive)
+    }
+
 }
