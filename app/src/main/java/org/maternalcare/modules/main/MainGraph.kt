@@ -73,7 +73,8 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                     isArchive = args.isArchive,
                     isCompleted = isCompleted,
                     dateOfCheckup = args.dateOfCheckUp,
-                    isDashboard = args.isDashboard
+                    isDashboard = args.isDashboard,
+                    status = args.status
                 )
             }
         }
@@ -303,6 +304,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 CheckupProgressUI(
                     navController,
                     isComplete = args.isComplete,
+                    isArchive = args.isArchive,
                     userViewModel = userViewModel
                 )
             }
