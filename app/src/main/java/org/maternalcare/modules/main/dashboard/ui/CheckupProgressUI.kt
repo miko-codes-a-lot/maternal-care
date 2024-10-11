@@ -32,7 +32,7 @@ import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 @Preview
 @Composable
 fun CheckupProgressUIPreview() {
-    CheckupProgressUI(rememberNavController(), true, userViewModel = hiltViewModel())
+    CheckupProgressUI(rememberNavController(), true, userViewModel = hiltViewModel(), isArchive = true)
 }
 
 @SuppressLint("DefaultLocale")
@@ -40,9 +40,10 @@ fun CheckupProgressUIPreview() {
 fun CheckupProgressUI(
     navController: NavController,
     isComplete: Boolean,
+    isArchive: Boolean,
     userViewModel: UserViewModel = hiltViewModel()
 ) {
-    val addressCheckupPercentages = userViewModel.getCompleteCheckupPercentages()
+    val addressCheckupPercentages = userViewModel.getCompleteCheckupPercentages(isArchive = isArchive)
     val overallCompletedPercentage = addressCheckupPercentages["Overall Completed Address Percentage"] ?: 0.0
     val getAllListAddressCheckups = userViewModel.getAllListAddressCheckup()
 
@@ -72,6 +73,7 @@ fun CheckupProgressUI(
                 isShowPercent = true,
                 isComplete = isComplete,
                 addressFetchAll = getAllListAddressCheckups,
+                isArchive = isArchive,
                 isDashboard = true
             )
         }
