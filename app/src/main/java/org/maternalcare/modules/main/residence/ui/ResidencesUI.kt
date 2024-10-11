@@ -61,6 +61,7 @@ import kotlinx.coroutines.delay
 import openFile
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.residence.enum.CheckupStatus
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.user.model.dto.AddressDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
@@ -75,7 +76,8 @@ fun ResidencesPrev() {
         navController = rememberNavController(),
         currentUser = UserDto(),
         addressDto = AddressDto(id = null, name = "test", code = "loc_test"),
-        isDashboard = true
+        isDashboard = true,
+        status = "PREGNANT"
     )
 }
 
@@ -87,7 +89,8 @@ fun ResidencesUI(
     dateOfCheckup: String? = null,
     isArchive: Boolean = false,
     isCompleted: Boolean? = null,
-    isDashboard: Boolean
+    isDashboard: Boolean,
+    status: String
 ) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
     var debouncedQuery by remember { mutableStateOf("") }
@@ -97,45 +100,47 @@ fun ResidencesUI(
         delay(500L)
         debouncedQuery = searchQuery
     }
-//    val residences = remember(debouncedQuery) {
-//        when {
-//            isDashboard -> {
-//                residenceViewModel.fetchUsersWithCheckups(currentUser.id.toObjectId())
-//            }
-//            dateOfCheckup != null -> {
-//                residenceViewModel.fetchUsersByCheckup(
-//                    userId = currentUser.id.toObjectId(),
-//                    isSuperAdmin = currentUser.isSuperAdmin,
-//                    dateOfCheckup = dateOfCheckup
-//                )
-//            }
-//            else -> {
-//                // Default fetch users based on other criteria
-//                residenceViewModel.fetchUsers(
-//                    userId = currentUser.id.toObjectId(),
-//                    isSuperAdmin = currentUser.isSuperAdmin,
-//                    addressName = addressDto?.name,
-//                    isArchive = isArchive,
-//                    isCompleted = if (isDashboard) isCompleted else null,
-//                )
-//            }
-//        }
-//    }
-    val residences = remember(debouncedQuery) {
-        if (dateOfCheckup != null)
+    val residences = when {
+        status == CheckupStatus.PREGNANT.name -> {
+            residenceViewModel.fetchAllUsersByCheckup(
+                userId = currentUser.id.toObjectId(),
+                isSuperAdmin = currentUser.isSuperAdmin,
+                checkup = 1,
+                isArchive = isArchive,
+            )
+        }
+        dateOfCheckup != null -> {
             residenceViewModel.fetchUsersByCheckup(
                 userId = currentUser.id.toObjectId(),
                 isSuperAdmin = currentUser.isSuperAdmin,
                 dateOfCheckup = dateOfCheckup
             )
-        else
+        }
+        status == CheckupStatus.NORMAL.name -> {
+            residenceViewModel.fetchAllUsersWithNormalCondition(
+                userId = currentUser.id.toObjectId(),
+                isSuperAdmin = currentUser.isSuperAdmin,
+                isNormal = true,
+                isArchive = isArchive
+            )
+        }
+        status == CheckupStatus.CRITICAL.name -> {
+            residenceViewModel.fetchAllUsersWithCriticalCondition(
+                userId = currentUser.id.toObjectId(),
+                isSuperAdmin = currentUser.isSuperAdmin,
+                isCritical = true,
+                isArchive = isArchive
+            )
+        }
+        else -> {
             residenceViewModel.fetchUsers(
                 userId = currentUser.id.toObjectId(),
                 isSuperAdmin = currentUser.isSuperAdmin,
                 addressName = addressDto?.name,
                 isArchive = isArchive,
-                isCompleted = if(isDashboard) isCompleted else null,
+                isCompleted = if(isDashboard) isCompleted else null
             )
+        }
     }
     val filteredResidences = residences.filter {
         it.firstName.contains(debouncedQuery, ignoreCase = true) ||
@@ -201,7 +206,7 @@ fun ResidencesUI(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     items(filteredResidences) { residence ->
-                        SingleItemCard(userDto = residence, navController = navController, isDashboard)
+                        SingleItemCard(userDto = residence, navController = navController)
                     }
                 }
             }
@@ -247,8 +252,7 @@ fun UsersImageContainer(imageUri: Uri? = null) {
 @Composable
 fun SingleItemCard(
     userDto: UserDto,
-    navController: NavController,
-    isDashboard: Boolean
+    navController: NavController
 ) {
 
     Column(
