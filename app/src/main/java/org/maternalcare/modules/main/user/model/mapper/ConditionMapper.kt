@@ -40,6 +40,7 @@ fun UserCondition.toDTO(): UserConditionDto{
         lastUpdatedAt = lastUpdatedAt.toInstantStringNullable(),
         deletedById = deletedById?.toHexString(),
         deletedAt = deletedAt?.run { this.toInstantStringNullable() },
+        isArchive = isArchive
     )
 }
 
@@ -77,5 +78,6 @@ fun UserConditionDto.toEntity(): UserCondition {
         lastUpdatedAt = conditionDto.createdAt.toRealmInstantNullable() ?: RealmInstant.now()
         deletedById = conditionDto.deletedById?.toObjectId()
         deletedAt = conditionDto.deletedAt.toRealmInstantNullable()
+        isArchive = conditionDto.isArchive
     }
 }
