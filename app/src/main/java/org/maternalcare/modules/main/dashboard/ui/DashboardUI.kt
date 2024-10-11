@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.residence.enum.CheckupStatus
 
 @Composable
 fun DashboardUI(navController: NavController) {
@@ -60,36 +61,34 @@ fun DashboardUI(navController: NavController) {
 @Composable
 private fun DashboardMenu (navController: NavController) {
     Column {
-//        //Total Pregnant
-//        Spacer(modifier = Modifier.height(10.dp))
-//        DashboardButton(text = "Total Pregnant Records") {
-//            navController.navigate(MainNav.Residences(status = CheckupStatus.ALL.name, isArchive = false,isDashboard = true, dateOfCheckUp = null))
-//        }
-//
-//        //Normal
-//        Spacer(modifier = Modifier.height(15.dp))
-//        DashboardButton(text = "Normal List") {
-////            navController.navigate(MainNav.MonitoringCheckup(isComplete = true, dashboard = true))
-//        }
-//
-//        //Critical
-//        Spacer(modifier = Modifier.height(20.dp))
-//        DashboardButton(text = "Critical List") {
-////            navController.navigate(MainNav.MonitoringCheckup(isComplete = true, dashboard = true))
-//        }
+        //Total Pregnant
+        Spacer(modifier = Modifier.height(10.dp))
+        DashboardButton(text = "Total Pregnant Records") {
+            navController.navigate(MainNav.Residences(status = CheckupStatus.PREGNANT.name, isArchive = false, isDashboard = true))
+        }
+
+        //Normal
+        Spacer(modifier = Modifier.height(15.dp))
+        DashboardButton(text = "Normal List") {
+            navController.navigate(MainNav.Residences(status = CheckupStatus.NORMAL.name, isArchive = false,isDashboard = true))
+        }
+
+        //Critical
+        Spacer(modifier = Modifier.height(15.dp))
+        DashboardButton(text = "Critical List") {
+            navController.navigate(MainNav.Residences(status = CheckupStatus.CRITICAL.name, isArchive = false,isDashboard = true))
+        }
 
         //Complete
-        Spacer(modifier = Modifier.height(10.dp))
-//        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(15.dp))
         DashboardButton(text = "Complete",iconResId = R.drawable.check) {
-            navController.navigate(MainNav.MonitoringCheckup(isComplete = true, dashboard = true))
+            navController.navigate(MainNav.MonitoringCheckup(isComplete = true, dashboard = true, isArchive = false))
         }
 
         // Incomplete
-//        Spacer(modifier = Modifier.height(25.dp))
-        Spacer(modifier = Modifier.height(25.dp))
+        Spacer(modifier = Modifier.height(15.dp))
         DashboardButton(text = "Incomplete",iconResId = R.drawable.clear) {
-            navController.navigate(MainNav.MonitoringCheckup(isComplete = false, dashboard = false))
+            navController.navigate(MainNav.MonitoringCheckup(isComplete = false, dashboard = false, isArchive = false))
         }
     }
 }
@@ -104,7 +103,7 @@ private fun DashboardButton(text: String,iconResId: Int? = null, onClick: () -> 
         ),
         modifier = Modifier
             .width(280.dp)
-            .height(70.dp),
+            .height(63.dp),
         elevation = ButtonDefaults.elevatedButtonElevation(
             defaultElevation = 4.dp,
             pressedElevation = 8.dp
@@ -113,7 +112,7 @@ private fun DashboardButton(text: String,iconResId: Int? = null, onClick: () -> 
         
         Text(
             text = text,
-            fontSize = 18.sp,
+            fontSize = 17.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.Serif
