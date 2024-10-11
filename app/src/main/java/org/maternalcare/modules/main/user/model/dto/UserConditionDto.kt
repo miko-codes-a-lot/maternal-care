@@ -32,4 +32,5 @@ data class UserConditionDto(
     var lastUpdatedAt: String? = null,
     var deletedById: String? = null,
     var deletedAt: String? = null,
+    var isArchive: Boolean = false,
 )
