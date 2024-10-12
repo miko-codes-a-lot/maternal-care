@@ -150,16 +150,11 @@ fun ResidencesUI(
     val pregnantCount = if (status == CheckupStatus.PREGNANT.name) {
         residences.count { user ->
             val checkup = residenceViewModel.getCheckupForUser(user.id!!)
-            checkup?.checkup == 1
+            checkup?.checkup!! >= 1
         }
     } else {
         0
     }
-
-
-    Log.d("Residences", residences.toString())
-
-//    val pregnantCount = residences.count { it.residences == CheckupStatus.PREGNANT.name }
     val isShowFloatingIcon = rememberSaveable { mutableStateOf( !isArchive)}
     val context = LocalContext.current
     Column(
