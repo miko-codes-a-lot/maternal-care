@@ -2,6 +2,7 @@ package org.maternalcare.modules.main.residence.ui
 
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -146,6 +147,19 @@ fun ResidencesUI(
         it.middleName?.contains(debouncedQuery, ignoreCase = true) ?: false ||
         it.lastName.contains(debouncedQuery, ignoreCase = true)
     }
+    val pregnantCount = if (status == CheckupStatus.PREGNANT.name) {
+        residences.count { user ->
+            val checkup = residenceViewModel.getCheckupForUser(user.id!!)
+            checkup?.checkup == 1
+        }
+    } else {
+        0
+    }
+
+
+    Log.d("Residences", residences.toString())
+
+//    val pregnantCount = residences.count { it.residences == CheckupStatus.PREGNANT.name }
     val isShowFloatingIcon = rememberSaveable { mutableStateOf( !isArchive)}
     val context = LocalContext.current
     Column(
@@ -192,7 +206,29 @@ fun ResidencesUI(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(40.dp))
+                if (status == CheckupStatus.PREGNANT.name) {
+                    Box(
+                        modifier = Modifier
+                            .background(Color.White)
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(
+                                text = "Total of Pregnant: $pregnantCount",
+                                color = Color.Black,
+                                fontSize = 18.sp,
+                                fontFamily = FontFamily.SansSerif
+                            )
+                        }
+                    }
+                }else{
+                    Spacer(modifier = Modifier.height(40.dp))
+                }
                 SearchIcon(
                     searchQuery = searchQuery,
                     onSearchQueryChanged = { searchQuery = it },
