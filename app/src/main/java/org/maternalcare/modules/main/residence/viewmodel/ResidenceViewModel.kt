@@ -3,6 +3,7 @@ package org.maternalcare.modules.main.residence.viewmodel
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.maternalcare.modules.main.user.model.dto.AddressDto
+import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.service.AddressService
 import org.maternalcare.modules.main.user.service.UserService
@@ -41,6 +42,10 @@ class ResidenceViewModel @Inject constructor(
             userId = id,
             addressName = addressName
         )
+    }
+
+    fun getCheckupForUser(userId: String): UserCheckupDto? {
+        return userService.fetchCheckUpDetails(userId)
     }
 
     fun fetchUsersByCheckup(
