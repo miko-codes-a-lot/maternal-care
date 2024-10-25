@@ -29,4 +29,7 @@ class User : RealmObject {
     var isAdmin: Boolean = false
     var isResidence: Boolean = false
     var imageBase64: String? = null
+    var resetPasswordToken: String? = null
+    var resetTokenExpiration: RealmInstant? = null
+    var isVerified: Boolean = false
 }
