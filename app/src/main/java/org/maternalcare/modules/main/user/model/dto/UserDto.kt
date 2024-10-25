@@ -23,4 +23,7 @@ data class UserDto(
     var isAdmin: Boolean = false,
     var isResidence: Boolean = false,
     var imageBase64: String? = null,
+    var resetPasswordToken: String? = null,
+    var resetTokenExpiration: String? = null,
+    var isVerified: Boolean = false,
 )
