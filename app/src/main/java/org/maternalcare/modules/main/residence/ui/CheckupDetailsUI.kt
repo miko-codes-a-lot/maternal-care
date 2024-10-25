@@ -66,14 +66,16 @@ fun CheckupDetailsUI(
     userDto: UserDto,
     checkupNumber: Int
     ) {
-    val isShowReminderDialog = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin) }
+    if (checkupDto.dateOfCheckUp.isNotEmpty()) {
+        val isShowReminderDialog = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin) }
 
-    if (isShowReminderDialog.value){
-        ReminderCheckupUI(
-            onDismiss = { isShowReminderDialog.value = false},
-            checkup = checkupDto,
-            userDto = userDto
-        )
+        if (isShowReminderDialog.value) {
+            ReminderCheckupUI(
+                onDismiss = { isShowReminderDialog.value = false },
+                checkup = checkupDto,
+                userDto = userDto
+            )
+        }
     }
 
     val fullName = listOfNotNull(
