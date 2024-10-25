@@ -78,4 +78,13 @@ class UserViewModel @Inject constructor(
     suspend fun upsertImmunization(immunizationDto: UserImmunizationDto): Result<UserImmunizationDto> {
         return this.userService.upsertImmunization(immunizationDto)
     }
+
+    fun fetchUserByEmail(email: String): UserDto? {
+        return userService.fetchByEmail(email)
+    }
+
+    fun fetchUserByEmailAndToken(email: String, token: String): UserDto? {
+        return userService.fetchEmailAndToken(email, token)
+    }
+
 }
