@@ -108,7 +108,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             Guard(navController = navController) { currentUser ->
                 val checkupDto = userViewModel.fetchUserCheckupByNumber(args.userId, args.checkupNumber)
                 val userDto = userViewModel.fetchUser(userId = args.userId)
-                if (checkupDto != null || currentUser.isSuperAdmin) {
+                if (checkupDto != null || currentUser.isSuperAdmin || currentUser.isResidence) {
                     CheckupDetailsUI(
                         navController,
                         currentUser,
@@ -205,27 +205,6 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                     )
                 }
             }
-//            Guard(navController = navController) { currentUser ->
-//                if(userImmunizationDto != null){
-//                    val userDto = userViewModel.fetchUser(args.userId)
-//                    ImmunizationRecordUI(
-//                        navController = navController,
-//                        userDto = userDto,
-//                        userImmunization = UserImmunizationDto(),
-//                        currentUser = currentUser,
-//                    )
-//                }
-//                val userDto = userViewModel.fetchUser(args.userId)
-//                val immunizationDto = userViewModel.fetchUserImmunization(args.userId)
-//                if (immunizationDto != null) {
-//                    ImmunizationRecordUI(
-//                        navController = navController,
-//                        userDto = userDto,
-//                        userImmunization = immunizationDto,
-//                        currentUser = currentUser,
-//                    )
-//                }
-//            }
         }
         composable<MainNav.Reminders> {
             Guard(navController = navController) { currentUser ->
