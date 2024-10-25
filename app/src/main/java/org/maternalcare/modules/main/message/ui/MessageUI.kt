@@ -101,7 +101,6 @@ fun MessageContainer(currentUser: UserDto, userDto: UserDto) {
 
     Column(modifier = Modifier
         .background(Color.White)
-//        .height(660) Original Size
         .height(750.dp)
     ) {
         LazyColumn(
@@ -208,7 +207,9 @@ fun MessageInputField(onSend: (message: String) -> Unit) {
                 .weight(1f)
                 .padding(8.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = Color.White
+                unfocusedContainerColor = Color.White,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black
             )
         )
         Icon(
