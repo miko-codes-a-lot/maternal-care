@@ -71,6 +71,7 @@ fun UserPreviewUI(
         Text(text = title,
             fontFamily = FontFamily.Serif,
             fontSize = 24.sp,
+            color = Color.Black,
             modifier = Modifier
                 .padding(bottom = 3.dp, top = 7.dp)
         )
@@ -82,7 +83,11 @@ fun UserPreviewUI(
         Spacer(modifier = Modifier.padding(top = 9.dp))
 
         TextButton(onClick = onCancel) {
-            Text(text = "cancel", modifier = Modifier,fontSize = 15.sp)
+            Text(
+                text = "cancel",
+                modifier = Modifier,
+                fontSize = 15.sp
+            )
         }
     }
 }
@@ -116,11 +121,12 @@ fun TextContainer(textLabel: String, textValue: String) {
             text = textLabel,
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.SansSerif,
+            color = Color.Black,
             fontSize = 18.sp,
                 modifier = Modifier
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(" : ",fontWeight = FontWeight.Bold)
+            Text(" : ",fontWeight = FontWeight.Bold, color = Color.Black)
             Spacer(modifier = Modifier.width(8.dp))
             Box(
                 modifier = Modifier
@@ -131,6 +137,7 @@ fun TextContainer(textLabel: String, textValue: String) {
                 ) {
                     Text(
                         text = textValue,
+                        color = Color.Black,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 12.dp),
@@ -140,7 +147,7 @@ fun TextContainer(textLabel: String, textValue: String) {
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth(),
                         thickness = 1.dp,
-                        color = Color.Gray
+                        color = Color.Black
                     )
                 }
             }
@@ -182,7 +189,8 @@ fun ButtonPreview(
             .height(54.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(0xFF6650a4),
-            contentColor = Color(0xFFFFFFFF)
+            contentColor = Color(0xFFFFFFFF),
+
         )
     ) {
         Text(text = "Confirm", fontSize = 17.sp)
