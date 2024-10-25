@@ -32,7 +32,10 @@ fun User.toDTO(): UserDto {
         isActive = isActive,
         isCompleted = isCompleted,
         isArchive = isArchive,
-        imageBase64 = imageBase64
+        imageBase64 = imageBase64,
+        resetPasswordToken = resetPasswordToken,
+        resetTokenExpiration = resetTokenExpiration?.toInstantStringNullable(),
+        isVerified = isVerified
     )
 }
 
@@ -63,5 +66,8 @@ fun UserDto.toEntity(): User {
         isArchive = userDto.isArchive
         isCompleted = userDto.isCompleted
         imageBase64 = userDto.imageBase64
+        resetPasswordToken = userDto.resetPasswordToken
+        resetTokenExpiration = userDto.resetTokenExpiration?.toRealmInstantNullable()
+        isVerified = userDto.isVerified
     }
 }
