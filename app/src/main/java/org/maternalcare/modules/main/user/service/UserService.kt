@@ -16,6 +16,7 @@ import org.maternalcare.modules.main.user.model.entity.UserCondition
 import org.maternalcare.modules.main.user.model.entity.UserImmunization
 import org.maternalcare.modules.main.user.model.mapper.toDTO
 import org.maternalcare.modules.main.user.model.mapper.toEntity
+import org.maternalcare.shared.ext.hashPassword
 import org.mongodb.kbson.BsonObjectId.Companion.invoke
 import org.mongodb.kbson.ObjectId
 import java.time.Instant
@@ -24,6 +25,33 @@ import java.time.ZoneOffset
 import javax.inject.Inject
 
 class UserService @Inject constructor(private val realm: Realm) {
+    fun fetchByEmail(email: String): UserDto? {
+        val user = realm.query<User>("email == $0", email).find().firstOrNull()
+        return user?.toDTO()
+    }
+
+    fun fetchEmailAndToken(email: String, token: String): UserDto? {
+        val user = realm.query<User>("email == $0 AND resetPasswordToken == $1", email, token).find().firstOrNull()
+        if (user != null) {
+            return user.toDTO()
+        }
+        return null
+    }
+
+    suspend fun saveNewPassword(email: String, token: String, newPassword: String): Boolean {
+        val hashedPassword = newPassword.hashPassword()
+        return realm.write {
+            val user = fetchEmailAndToken(email, token)
+            if (user != null) {
+                user.password = hashedPassword
+                copyToRealm(user.toEntity(), updatePolicy = UpdatePolicy.ALL)
+                true
+            } else {
+                false
+            }
+        }
+    }
+
     fun fetch(
         isResidence: Boolean = false,
         isArchive: Boolean = false,
