@@ -9,4 +9,14 @@ object IntroNav {
 
     @Serializable
     object Login
+
+    @Serializable
+    object ForgotPassword
+
+    @Serializable
+    data class TokenVerification(val email: String)
+
+    @Serializable
+    data class ResetPassword(val email: String, val passwordToken: String)
+
 }
