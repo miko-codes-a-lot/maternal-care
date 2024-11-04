@@ -36,8 +36,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.modules.main.user.model.dto.UserTrimesterRecordDto
 import org.maternalcare.shared.ui.ReminderCheckupUI
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -54,7 +56,9 @@ fun CheckupPrev() {
         checkupDto = UserCheckupDto(),
         userDto = UserDto(),
         checkupNumber = 1,
-        )
+        pregnantRecordId = UserBirthRecordDto(),
+        trimesterRecordId = UserTrimesterRecordDto()
+    )
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -64,8 +68,10 @@ fun CheckupDetailsUI(
     currentUser: UserDto,
     checkupDto: UserCheckupDto,
     userDto: UserDto,
-    checkupNumber: Int
-    ) {
+    checkupNumber: Int,
+    pregnantRecordId: UserBirthRecordDto,
+    trimesterRecordId: UserTrimesterRecordDto
+) {
     if (checkupDto.dateOfCheckUp.isNotEmpty()) {
         val isShowReminderDialog = rememberSaveable { mutableStateOf(!currentUser.isSuperAdmin) }
 
@@ -95,7 +101,7 @@ fun CheckupDetailsUI(
     )
 
     val checkupLabels = listOf(
-        "Blood Pressure", "Height", "Weight",
+        "Blood Pressure (MM HG)", "Height (CM)", "Weight (KG)",
         "Gravida Para (GP)",
         "Date Of Checkup",
         "Last Menstrual Period", "Schedule of Next Check-up"
@@ -113,7 +119,7 @@ fun CheckupDetailsUI(
     Scaffold(
         floatingActionButton = {
             if (!currentUser.isSuperAdmin && !currentUser.isResidence) {
-                ParentFloatingIcon(navController, userDto, checkupDto, checkupNumber)
+                ParentFloatingIcon(navController, userDto, checkupDto, checkupNumber, pregnantRecordId, trimesterRecordId)
             }
         }
     ) {
@@ -219,7 +225,9 @@ fun ParentFloatingIcon(
     navController: NavController,
     userDto: UserDto,
     currentCheckup: UserCheckupDto,
-    checkupNumber: Int
+    checkupNumber: Int,
+    pregnantRecordId: UserBirthRecordDto,
+    trimesterRecordId: UserTrimesterRecordDto
 ) {
     Column(
         modifier = Modifier
@@ -228,14 +236,13 @@ fun ParentFloatingIcon(
     ) {
         FloatingActionButton(
             onClick = {
-                navController.navigate(MainNav.CheckupDetailsEdit(userDto.id!!, currentCheckup.id!!, checkupNumber))
+                navController.navigate(MainNav.CheckupDetailsEdit(userDto.id!!, currentCheckup.id!!, checkupNumber, pregnantRecordId.id!!, trimesterRecordId.id!!))
               },
             containerColor = Color(0xFF6650a4),
             contentColor = Color(0xFFFFFFFF),
             shape = CircleShape,
             modifier = Modifier
                 .size(72.dp)
-//                .offset(x = (-7).dp, y = (5).dp)
                 .offset(x = (-7).dp, y = (2).dp)
         ) {
             Icon(
