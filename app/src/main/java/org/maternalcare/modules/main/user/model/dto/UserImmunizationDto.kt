@@ -3,6 +3,7 @@ package org.maternalcare.modules.main.user.model.dto
 data class UserImmunizationDto(
     var id: String? = null,
     var userId: String = "",
+    var pregnantRecordId: String = "",
     var firstDoseGiven: String? = null,
     var firstDoseReturn: String? = null,
     var secondDoseGiven: String? = null,
