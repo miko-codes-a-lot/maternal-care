@@ -37,30 +37,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserConditionDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
-
-@Preview(showSystemUi = true)
-@Composable
-fun ConditionStatusPreview() {
-    ConditionStatusUI(
-        title = "Create Account",
-         navController = rememberNavController(),
-        userDto = UserDto(),
-        userCondition = UserConditionDto(),
-        currentUser = UserDto(),
-
-    )
-}
 
 @Composable
 fun ConditionStatusUI(
@@ -440,8 +425,8 @@ fun ButtonSaveStatus(
                 try {
                     val result = userViewModel.upsertCondition(userConditionStatus)
                     if (result.isSuccess) {
-                        navController.navigate(MainNav.ChooseCheckup(userId)) {
-                            popUpTo(MainNav.ChooseCheckup(userId)) {
+                        navController.navigate(MainNav.HealthRecord(userId)) {
+                            popUpTo(MainNav.HealthRecord(userId)) {
                                 inclusive = true
                             }
                         }
