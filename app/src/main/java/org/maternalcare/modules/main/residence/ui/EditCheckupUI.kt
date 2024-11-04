@@ -46,8 +46,10 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.modules.main.user.model.dto.UserTrimesterRecordDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 import org.maternalcare.shared.ui.CheckupPreview
 import java.text.SimpleDateFormat
@@ -75,7 +77,9 @@ fun EditCheckupUIPreview() {
         checkupNumber = 1,
         userDto = UserDto(),
         checkupUser = mockCheckups,
-        currentUser = UserDto()
+        currentUser = UserDto(),
+        pregnantRecordId = UserBirthRecordDto(),
+        trimesterRecordId = UserTrimesterRecordDto()
     )
 }
 
@@ -85,21 +89,24 @@ fun EditCheckupUI(
     checkupNumber: Int,
     userDto: UserDto,
     checkupUser: UserCheckupDto? = null,
-    currentUser: UserDto
+    currentUser: UserDto,
+    pregnantRecordId: UserBirthRecordDto,
+    trimesterRecordId: UserTrimesterRecordDto
+
 ) {
     val listOfLabel = listOf(
-        "Blood Pressure", "Height", "Weight",
-        "Gravida Para",
+        "Blood Pressure (MM HG)", "Height (CM)", "Weight (KG)",
+        "Gravida Para (GP)",
         "Date of Check-up", "Last Menstrual Period", "Next Check-up"
     )
     val statesValue = remember {
         listOfLabel.associateWith {
             mutableStateOf(
                 when (it) {
-                    "Blood Pressure" -> checkupUser?.bloodPressure?.toString() ?: "0.0"
-                    "Height" -> checkupUser?.height?.toString() ?: "0.0"
-                    "Weight" -> checkupUser?.weight?.toString() ?: "0.0"
-                    "Gravida Para" -> checkupUser?.gravidaPara ?: ""
+                    "Blood Pressure (MM HG)" -> checkupUser?.bloodPressure?.toString() ?: "0.0"
+                    "Height (CM)" -> checkupUser?.height?.toString() ?: "0.0"
+                    "Weight (KG)" -> checkupUser?.weight?.toString() ?: "0.0"
+                    "Gravida Para (GP)" -> checkupUser?.gravidaPara ?: ""
                     "Date of Check-up" -> checkupUser?.dateOfCheckUp ?: ""
                     "Last Menstrual Period" -> checkupUser?.lastMenstrualPeriod ?: ""
                     "Next Check-up" -> checkupUser?.scheduleOfNextCheckUp ?: ""
@@ -124,7 +131,9 @@ fun EditCheckupUI(
             checkupNumber = checkupNumber,
             navController = navController,
             checkupUser = checkupUser ?: UserCheckupDto(),
-            currentUser = currentUser
+            currentUser = currentUser,
+            pregnantRecordId = pregnantRecordId.id!!,
+            trimesterRecordId = trimesterRecordId.id!!
         )
     }
 }
@@ -183,15 +192,16 @@ fun TextFieldEditCheckUp(
                 Text(" : ", fontWeight = FontWeight.Bold)
                 TextField(
                     value = textFieldValue,
-                    onValueChange = {
-                        onValueChange(it)
+                    onValueChange = {  input ->
+                    val numericInput = input.filter { it.isDigit() || it == '.' }
+                        onValueChange(numericInput)
                     },
                     placeholder = {
                         Text("Enter value", color = Color.Black)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp),
+                        .height(53.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedBorderColor = Color.Black,
                         focusedBorderColor = Color.Black,
@@ -219,7 +229,9 @@ fun ButtonSaveEdit(
     navController: NavController,
     checkupNumber: Int,
     currentUser: UserDto,
-    checkupUser: UserCheckupDto
+    checkupUser: UserCheckupDto,
+    pregnantRecordId: String,
+    trimesterRecordId: String
 ) {
     val userViewModel: UserViewModel = hiltViewModel()
     val context = LocalContext.current
@@ -253,30 +265,30 @@ fun ButtonSaveEdit(
                 val checkUpDto = UserCheckupDto(
                     id = checkupUser.id,
                     userId = userId,
-                    bloodPressure = statesValue["Blood Pressure"]?.value?.toDoubleOrNull() ?: 0.0,
-                    height = statesValue["Height"]?.value?.toDoubleOrNull() ?: 0.0,
-                    weight = statesValue["Weight"]?.value?.toDoubleOrNull() ?: 0.0,
-                    gravidaPara = statesValue["Gravida Para"]?.value ?: "",
+                    pregnantRecordId = pregnantRecordId,
+                    trimesterRecordId = trimesterRecordId,
+                    bloodPressure = statesValue["Blood Pressure (MM HG)"]?.value?.toDoubleOrNull() ?: 0.0,
+                    height = statesValue["Height (CM)"]?.value?.toDoubleOrNull() ?: 0.0,
+                    weight = statesValue["Weight (KG)"]?.value?.toDoubleOrNull() ?: 0.0,
+                    gravidaPara = statesValue["Gravida Para (GP)"]?.value ?: "",
                     checkup = checkupNumber,
                     lastMenstrualPeriod = statesValue["Last Menstrual Period"]?.value ?: "",
                     dateOfCheckUp = statesValue["Date of Check-up"]?.value ?: "",
                     scheduleOfNextCheckUp = statesValue["Next Check-up"]?.value ?: "",
                     createdById = checkupUser.createdById ?: currentUser.id
                 )
-
                 // Save the data to the database
                 scope.launch {
                     try {
                         val result = userViewModel.upsertCheckUp(checkUpDto)
                         if (result.isSuccess) {
-                            Log.d("CheckUpSave", "Saving CheckUpDto: $checkUpDto")
-                            navController.navigate(MainNav.CheckupDetails(userId, checkupNumber)) {
-                                popUpTo(MainNav.CheckupDetails(userId, checkupNumber)) {
+                            navController.navigate(MainNav.CheckupDetails(userId, checkupNumber, pregnantRecordId, trimesterRecordId)) {
+                                popUpTo(MainNav.CheckupDetails(userId, checkupNumber, pregnantRecordId, trimesterRecordId)) {
                                     inclusive = true
                                 }
                             }
                         } else {
-                            Log.e("saving", "Error: ${result.exceptionOrNull()}")
+                            Log.e("saving", "Error: Saving ")
                         }
                     } catch (e: Exception) {
                         Toast.makeText(
