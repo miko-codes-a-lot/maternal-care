@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserConditionDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.model.dto.UserImmunizationDto
+import org.maternalcare.modules.main.user.model.dto.UserTrimesterRecordDto
 import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.shared.ext.toObjectId
 import javax.inject.Inject
@@ -39,8 +41,8 @@ class UserViewModel @Inject constructor(
         return this.userService.fetchOneCheckup(checkUpId.toObjectId())
     }
 
-    fun fetchUserCheckupByNumber(userId: String, checkUpNumber: Int): UserCheckupDto? {
-        return userService.fetchCheckupDetailByNumber(userId, checkUpNumber)
+    fun fetchUserCheckupByNumber(userId: String, checkUpNumber: Int, pregnantRecordId: String, pregnantTrimesterId: String): UserCheckupDto? {
+        return userService.fetchCheckupDetailByNumber(userId, checkUpNumber, pregnantRecordId, pregnantTrimesterId)
     }
 
     suspend fun upsertCheckUp(checkupDto: UserCheckupDto): Result<UserCheckupDto> {
@@ -67,12 +69,16 @@ class UserViewModel @Inject constructor(
         return userService.fetchUserConditionByUserId(userId)
     }
 
+    fun fetchUserConditionRecord(userId: String): UserConditionDto? {
+        return userService.fetchUserConditionByRecord(userId)
+    }
+
     suspend fun upsertCondition(conditionDto: UserConditionDto): Result<UserConditionDto> {
         return this.userService.upsertCondition(conditionDto)
     }
 
-    fun fetchUserImmunization(userId: String): UserImmunizationDto? {
-        return userService.fetchUserImmunizationByUserId(userId)
+    fun fetchUserImmunization(userId: String, pregnantRecordId: String): UserImmunizationDto? {
+        return userService.fetchUserImmunizationByUserId(userId, pregnantRecordId)
     }
 
     suspend fun upsertImmunization(immunizationDto: UserImmunizationDto): Result<UserImmunizationDto> {
@@ -87,4 +93,27 @@ class UserViewModel @Inject constructor(
         return userService.fetchEmailAndToken(email, token)
     }
 
+    fun fetchPregnancyUser(pregnancyRecordId: String): UserBirthRecordDto {
+        return userService.fetchOnePregnancy(pregnancyRecordId)
+    }
+
+    fun getHealthRecords(userId: String): List<UserBirthRecordDto> {
+        return userService.fetchListHealthRecordUser(userId)
+    }
+
+    suspend fun upsertHealthRecord(healthRecordDto: UserBirthRecordDto): Result<UserBirthRecordDto> {
+        return this.userService.upsertHealthRecord(healthRecordDto)
+    }
+
+    fun fetchTrimester(trimesterUserId: String): UserTrimesterRecordDto {
+        return userService.fetchOneTrimester(trimesterUserId)
+    }
+
+    fun getTrimesterRecords(pregnantTrimesterId: String, pregnantRecordId: String): List<UserTrimesterRecordDto> {
+        return userService.fetchListTrimesterRecordUser(pregnantTrimesterId, pregnantRecordId)
+    }
+
+    suspend fun upsertTrimesterRecord(trimesterRecordDto: UserTrimesterRecordDto): Result<UserTrimesterRecordDto> {
+        return this.userService.upsertTrimesterRecord(trimesterRecordDto)
+    }
 }
