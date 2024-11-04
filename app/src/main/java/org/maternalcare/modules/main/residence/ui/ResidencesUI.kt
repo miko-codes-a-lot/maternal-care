@@ -65,6 +65,7 @@ import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.user.model.dto.AddressDto
+import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.shared.ext.toObjectId
 
@@ -90,12 +91,11 @@ fun ResidencesUI(
     isArchive: Boolean = false,
     isCompleted: Boolean? = null,
     isDashboard: Boolean,
-    status: String
+    status: String,
 ) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
     var debouncedQuery by remember { mutableStateOf("") }
     var searchQuery by remember { mutableStateOf("") }
-
     LaunchedEffect(searchQuery) {
         delay(500L)
         debouncedQuery = searchQuery
@@ -295,7 +295,7 @@ fun SingleItemCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { navController.navigate(MainNav.ChooseCheckup(userDto.id!!)) },
+                .clickable { navController.navigate(MainNav.HealthRecord(userDto.id!!)) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(modifier = Modifier.width(10.dp))
