@@ -3,13 +3,13 @@ package org.maternalcare.modules.main.user.model.entity
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import org.mongodb.kbson.BsonObjectId
 import org.mongodb.kbson.ObjectId
 
 class UserImmunization : RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId()
     var userId: String = ""
+    var pregnantRecordId: String = ""
     var firstDoseGiven: RealmInstant? = null
     var firstDoseReturn: RealmInstant? = null
     var secondDoseGiven: RealmInstant? = null
