@@ -3,16 +3,15 @@ package org.maternalcare.modules.main.user.model.mapper
 import io.realm.kotlin.types.RealmInstant
 import org.maternalcare.modules.main.user.model.dto.UserImmunizationDto
 import org.maternalcare.modules.main.user.model.entity.UserImmunization
-import org.maternalcare.shared.ext.toInstantString
 import org.maternalcare.shared.ext.toInstantStringNullable
 import org.maternalcare.shared.ext.toObjectId
-import org.maternalcare.shared.ext.toRealmInstant
 import org.maternalcare.shared.ext.toRealmInstantNullable
 
 fun UserImmunization.toDTO(): UserImmunizationDto{
     return UserImmunizationDto(
         id = _id.toHexString(),
         userId = userId,
+        pregnantRecordId = pregnantRecordId,
         firstDoseGiven = firstDoseGiven?.run { this.toInstantStringNullable() },
         firstDoseReturn = firstDoseReturn.run { this.toInstantStringNullable() },
         secondDoseGiven = secondDoseGiven.run { this.toInstantStringNullable() },
@@ -37,6 +36,7 @@ fun UserImmunizationDto.toEntity(): UserImmunization {
     return UserImmunization().apply{
         _id = immunizationDto.id.toObjectId()
         userId = immunizationDto.userId
+        pregnantRecordId = immunizationDto.pregnantRecordId
         firstDoseGiven = immunizationDto.firstDoseGiven.toRealmInstantNullable()
         firstDoseReturn = immunizationDto.firstDoseReturn.toRealmInstantNullable()
         secondDoseGiven = immunizationDto.secondDoseGiven.toRealmInstantNullable()
