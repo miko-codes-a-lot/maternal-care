@@ -5,15 +5,19 @@ import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.Sort
 import io.realm.kotlin.types.RealmInstant
+import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserConditionDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.model.dto.UserImmunizationDto
+import org.maternalcare.modules.main.user.model.dto.UserTrimesterRecordDto
 import org.maternalcare.modules.main.user.model.entity.Address
 import org.maternalcare.modules.main.user.model.entity.User
+import org.maternalcare.modules.main.user.model.entity.UserBirthRecord
 import org.maternalcare.modules.main.user.model.entity.UserCheckup
 import org.maternalcare.modules.main.user.model.entity.UserCondition
 import org.maternalcare.modules.main.user.model.entity.UserImmunization
+import org.maternalcare.modules.main.user.model.entity.UserTrimesterRecord
 import org.maternalcare.modules.main.user.model.mapper.toDTO
 import org.maternalcare.modules.main.user.model.mapper.toEntity
 import org.maternalcare.shared.ext.hashPassword
@@ -274,11 +278,10 @@ class UserService @Inject constructor(private val realm: Realm) {
             }
     }
 
-    fun fetchCheckupDetailByNumber(userId: String, checkupNumber: Int): UserCheckupDto? {
-        val userCheckup = realm.query<UserCheckup>("userId == $0 AND checkup == $1", userId, checkupNumber)
+    fun fetchCheckupDetailByNumber(userId: String, checkupNumber: Int, pregnantRecordId: String, pregnantTrimesterId: String): UserCheckupDto? {
+        val userCheckup = realm.query<UserCheckup>("userId == $0 AND checkup == $1 AND pregnantRecordId == $2 AND trimesterRecordId == $3", userId, checkupNumber, pregnantRecordId, pregnantTrimesterId)
             .find()
             .firstOrNull()
-
         return userCheckup?.toDTO()
     }
 
@@ -353,7 +356,7 @@ class UserService @Inject constructor(private val realm: Realm) {
                     "userId == $0",
                     user._id.toHexString()
                 ).find()
-                checkups.size >= 4
+                checkups.size >= 3
             }
             val percentage = if (usersAtAddress.isNotEmpty()) {
                 (usersWithFourCheckups.size.toDouble() / usersAtAddress.size.toDouble()) * 100
@@ -381,7 +384,7 @@ class UserService @Inject constructor(private val realm: Realm) {
             ).find()
             val (usersWithFourCheckups, usersWithoutFourCheckups) = usersAtAddress.partition { user ->
                 val checkups = realm.query<UserCheckup>("userId == $0", user._id.toHexString()).find()
-                checkups.size >= 4
+                checkups.size >= 3
             }
             val totalUsers = usersAtAddress.size
             val usersCompleteCheckup = if(totalUsers > 0) (usersWithFourCheckups.size) else 0
@@ -393,8 +396,14 @@ class UserService @Inject constructor(private val realm: Realm) {
         }
     }
 
-
     fun fetchUserConditionByUserId(userId: String): UserConditionDto? {
+        val result = realm.query<UserCondition>("userId == $0", userId)
+            .find()
+            .firstOrNull()
+        return result?.toDTO()
+    }
+
+    fun fetchUserConditionByRecord(userId: String): UserConditionDto? {
         val result = realm.query<UserCondition>("userId == $0", userId)
             .find()
             .firstOrNull()
@@ -412,8 +421,8 @@ class UserService @Inject constructor(private val realm: Realm) {
         }
     }
 
-    fun fetchUserImmunizationByUserId(userId: String): UserImmunizationDto? {
-        val result = realm.query<UserImmunization>("userId == $0", userId)
+    fun fetchUserImmunizationByUserId(userId: String, pregnantRecordId: String): UserImmunizationDto? {
+        val result = realm.query<UserImmunization>("userId == $0 And pregnantRecordId == $1", userId ,pregnantRecordId)
             .find()
             .firstOrNull()
         return result?.toDTO()
@@ -424,6 +433,63 @@ class UserService @Inject constructor(private val realm: Realm) {
             realm.write {
                 val userImmunization = copyToRealm(dates.toEntity(), updatePolicy = UpdatePolicy.ALL)
                 Result.success(userImmunization.toDTO())
+            }
+        } catch (error: Exception) {
+            Result.failure(error)
+        }
+    }
+
+    suspend fun upsertHealthRecord(records: UserBirthRecordDto): Result<UserBirthRecordDto> {
+        return try {
+            realm.write {
+                val userHealthRecord = copyToRealm(records.toEntity(), updatePolicy = UpdatePolicy.ALL)
+                Result.success(userHealthRecord.toDTO())
+            }
+        } catch (error: Exception) {
+            Result.failure(error)
+        }
+    }
+
+    fun fetchOnePregnancy(pregnancyRecordId: String): UserBirthRecordDto {
+        return realm.query<UserBirthRecord>("_id == $0", ObjectId(pregnancyRecordId))
+            .find()
+            .first()
+            .run {
+                toDTO()
+            }
+    }
+
+    fun fetchListHealthRecordUser(userId: String): List<UserBirthRecordDto> {
+        return realm.query<UserBirthRecord>("pregnancyUserId == $0", userId)
+            .sort("childOrder", Sort.DESCENDING)
+            .find()
+            .map { it.toDTO() }
+    }
+
+    fun fetchOneTrimester(trimesterUserId: String): UserTrimesterRecordDto {
+        return realm.query<UserTrimesterRecord>("_id == $0", ObjectId(trimesterUserId))
+            .find()
+            .first()
+            .run {
+                toDTO()
+            }
+    }
+
+    fun fetchListTrimesterRecordUser(pregnantTrimesterId: String, pregnantRecordId: String): List<UserTrimesterRecordDto> {
+        return realm.query<UserTrimesterRecord>(
+            "trimesterUserId == $0 AND pregnancyUserId == $1",
+            pregnantTrimesterId, pregnantRecordId
+        )
+            .sort("trimesterOrder", Sort.ASCENDING)
+            .find()
+            .map { it.toDTO() }
+    }
+
+    suspend fun upsertTrimesterRecord(trimesterRecord: UserTrimesterRecordDto): Result<UserTrimesterRecordDto> {
+        return try {
+            realm.write {
+                val userTrimesterRecord = copyToRealm(trimesterRecord.toEntity(), updatePolicy = UpdatePolicy.ALL)
+                Result.success(userTrimesterRecord.toDTO())
             }
         } catch (error: Exception) {
             Result.failure(error)
