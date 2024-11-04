@@ -196,7 +196,7 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
         )
         userDto.isResidence -> listOf(
             MenuItem(text = "Profile") {
-                navController.navigate(MainNav.ChooseCheckup(userId = userDto.id!!))
+                navController.navigate(MainNav.HealthRecord(userId = userDto.id!!))
             },
             MenuItem(text = "Messages") {
                 navController.navigate(MainNav.Messages(userId = userDto.createdById!!))
