@@ -9,6 +9,8 @@ class UserCheckup : RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId()
     var userId: String = ""
+    var pregnantRecordId: String = ""
+    var trimesterRecordId: String = ""
     var bloodPressure: Double = 0.0
     var height: Double = 0.0
     var weight: Double = 0.0
