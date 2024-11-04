@@ -30,42 +30,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.model.dto.UserImmunizationDto
+import org.maternalcare.modules.main.user.model.dto.UserTrimesterRecordDto
+import org.maternalcare.modules.main.user.model.entity.UserTrimesterRecord
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
-@Preview(showSystemUi = true)
-@Composable
-fun ImmunizationRecordUIPreview() {
-    ImmunizationRecordUI(
-        navController = rememberNavController(),
-        userDto = UserDto(),
-        userImmunization = UserImmunizationDto(),
-        currentUser = UserDto()
-    )
-}
-
 @Composable
 fun ImmunizationRecordUI(
     navController: NavController,
     userDto: UserDto,
     userImmunization: UserImmunizationDto,
-    currentUser: UserDto
+    currentUser: UserDto,
+    pregnantRecord: UserBirthRecordDto,
 ) {
     val isAdminShow = currentUser.isAdmin
-
     val conditionStates = remember {
         mapOf(
             "1st Dose" to Pair(
@@ -169,7 +159,8 @@ fun ImmunizationRecordUI(
                     navController = navController,
                     conditionStates = conditionStates,
                     userImmunization = userImmunization,
-                    currentUser = currentUser
+                    currentUser = currentUser,
+                    pregnantRecordId = pregnantRecord.id!!,
                 )
             }
         }
@@ -315,6 +306,7 @@ fun ButtonSaveRecord(
     navController: NavController,
     conditionStates: Map<String, Pair<MutableState<String?>, MutableState<String?>>>,
     userImmunization: UserImmunizationDto,
+    pregnantRecordId: String,
 ) {
     val userViewModel: UserViewModel = hiltViewModel()
     val context = LocalContext.current
@@ -324,6 +316,7 @@ fun ButtonSaveRecord(
             val userImmunizationRecord  = UserImmunizationDto(
                 id = userImmunization.id,
                 userId = userId,
+                pregnantRecordId = pregnantRecordId,
                 firstDoseGiven = conditionStates["1st Dose"]?.first?.value,
                 firstDoseReturn = conditionStates["1st Dose"]?.second?.value,
                 secondDoseGiven = conditionStates["2nd Dose"]?.first?.value,
@@ -340,9 +333,8 @@ fun ButtonSaveRecord(
                 try {
                     val result = userViewModel.upsertImmunization(userImmunizationRecord)
                     if (result.isSuccess) {
-
-                        navController.navigate(MainNav.ChooseCheckup(userId)) {
-                            popUpTo(MainNav.ChooseCheckup(userId)) {
+                        navController.navigate(MainNav.ChooseCheckup(userId, pregnantRecordId = pregnantRecordId, pregnantTrimesterId = userId)) {
+                            popUpTo(MainNav.ChooseCheckup(userId, pregnantRecordId = pregnantRecordId, pregnantTrimesterId = userId )) {
                                 inclusive = true
                             }
                         }
