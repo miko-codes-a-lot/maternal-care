@@ -13,6 +13,8 @@ fun UserCheckup.toDTO(): UserCheckupDto {
     return UserCheckupDto(
         id = _id.toHexString(),
         userId = userId,
+        pregnantRecordId = pregnantRecordId,
+        trimesterRecordId = trimesterRecordId,
         bloodPressure = bloodPressure,
         height = height,
         weight = weight,
@@ -36,6 +38,8 @@ fun UserCheckupDto.toEntity(): UserCheckup {
     return UserCheckup().apply {
         _id = checkUpDto.id.toObjectId()
         userId = checkUpDto.userId
+        pregnantRecordId = checkUpDto.pregnantRecordId
+        trimesterRecordId = checkUpDto.trimesterRecordId
         bloodPressure = checkUpDto.bloodPressure
         height = checkUpDto.height
         weight = checkUpDto.weight
