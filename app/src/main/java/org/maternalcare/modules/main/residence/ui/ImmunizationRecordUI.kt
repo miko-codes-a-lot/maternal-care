@@ -333,11 +333,7 @@ fun ButtonSaveRecord(
                 try {
                     val result = userViewModel.upsertImmunization(userImmunizationRecord)
                     if (result.isSuccess) {
-                        navController.navigate(MainNav.ChooseCheckup(userId, pregnantRecordId = pregnantRecordId, pregnantTrimesterId = userId)) {
-                            popUpTo(MainNav.ChooseCheckup(userId, pregnantRecordId = pregnantRecordId, pregnantTrimesterId = userId )) {
-                                inclusive = true
-                            }
-                        }
+                        navController.popBackStack()
                     } else {
                         Log.e("saving", "Error: ${result.exceptionOrNull()}")
                     }
