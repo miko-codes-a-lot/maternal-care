@@ -1,5 +1,6 @@
 package org.maternalcare.modules.main.residence.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -59,7 +60,7 @@ fun ChooseCheckupUI(
             .fillMaxSize()
             .background(Color(0xFFFFFFFF)),
         floatingActionButton = {
-            if(trimesterRecord.size != 3 && userDto.isSuperAdmin){
+            if (currentUser.isAdmin && trimesterRecord.size != 3) {
                 FloatingTrimesterRecords(navController, userDto, pregnantRecordId)
             }
         }
