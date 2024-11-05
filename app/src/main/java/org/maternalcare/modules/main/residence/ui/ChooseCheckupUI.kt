@@ -51,7 +51,7 @@ fun ChooseCheckupUI(
     trimesterRecord: List<UserTrimesterRecordDto>,
 ) {
     val isStatusVisible = rememberSaveable {
-        mutableStateOf(currentUser.isResidence || currentUser.isSuperAdmin && conditionStatus != null)
+        mutableStateOf(currentUser.isResidence || currentUser.isSuperAdmin || conditionStatus != null)
     }
     val isConditionVisible = remember { mutableStateOf(currentUser.isAdmin || isStatusVisible.value) }
     Scaffold(
@@ -59,7 +59,7 @@ fun ChooseCheckupUI(
             .fillMaxSize()
             .background(Color(0xFFFFFFFF)),
         floatingActionButton = {
-            if(trimesterRecord.size != 3){
+            if(trimesterRecord.size != 3 && userDto.isSuperAdmin){
                 FloatingTrimesterRecords(navController, userDto, pregnantRecordId)
             }
         }
