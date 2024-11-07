@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.android.dagger.hilt)
     alias(libs.plugins.realm.kotlin)
     id("kotlin-kapt")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -51,6 +52,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -87,6 +89,8 @@ dependencies {
     implementation(libs.realm.kotlin.sync)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.jbcrypt)
+    implementation(libs.play.services.maps)
+    implementation(libs.maps.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
