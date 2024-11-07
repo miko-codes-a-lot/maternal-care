@@ -13,10 +13,12 @@ fun UserCheckup.toDTO(): UserCheckupDto {
     return UserCheckupDto(
         id = _id.toHexString(),
         userId = userId,
+        pregnantRecordId = pregnantRecordId,
+        trimesterRecordId = trimesterRecordId,
         bloodPressure = bloodPressure,
         height = height,
         weight = weight,
-        typeOfVaccine = typeOfVaccine,
+        gravidaPara = gravidaPara,
         lastMenstrualPeriod = lastMenstrualPeriod.toInstantString(),
         dateOfCheckUp = dateOfCheckUp.toInstantString(),
         scheduleOfNextCheckUp = scheduleOfNextCheckUp.toInstantString(),
@@ -36,10 +38,12 @@ fun UserCheckupDto.toEntity(): UserCheckup {
     return UserCheckup().apply {
         _id = checkUpDto.id.toObjectId()
         userId = checkUpDto.userId
+        pregnantRecordId = checkUpDto.pregnantRecordId
+        trimesterRecordId = checkUpDto.trimesterRecordId
         bloodPressure = checkUpDto.bloodPressure
         height = checkUpDto.height
         weight = checkUpDto.weight
-        typeOfVaccine = checkUpDto.typeOfVaccine
+        gravidaPara = checkUpDto.gravidaPara
         lastMenstrualPeriod = checkUpDto.lastMenstrualPeriod.toRealmInstant()
         dateOfCheckUp = checkUpDto.dateOfCheckUp.toRealmInstant()
         scheduleOfNextCheckUp = checkUpDto.scheduleOfNextCheckUp.toRealmInstant()

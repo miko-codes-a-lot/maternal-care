@@ -148,12 +148,14 @@ fun UsersSearchIcon(
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedBorderColor = Color.Black,
             focusedBorderColor = Color.Black,
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = Color.Black,
             disabledBorderColor = Color.Gray,
             errorBorderColor = Color.Red,
             cursorColor = Color.Black
         ),
         placeholder = {
-            Text(text = "Search...", color = Color.Gray)
+            Text(text = "Search...", color = Color.Black)
         }
     )
 }

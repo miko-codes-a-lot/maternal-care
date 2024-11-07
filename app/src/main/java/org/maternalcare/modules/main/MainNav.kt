@@ -26,13 +26,22 @@ object MainNav {
     object Reminders
 
     @Serializable
-    data class ChooseCheckup(val userId: String)
+    data class ChooseCheckup(val userId: String, val pregnantRecordId: String, val pregnantTrimesterId: String)
 
     @Serializable
-    data class CheckupDetails(val userId: String, val checkupNumber: Int)
+    data class CheckupDetails(val userId: String, val checkupNumber: Int, val pregnantRecordId: String, val pregnantTrimesterId: String)
 
     @Serializable
-    data class CheckupDetailsEdit(val userId: String, val checkupId: String, val checkupNumber: Int)
+    data class CheckupDetailsEdit(val userId: String, val checkupId: String, val checkupNumber: Int, val pregnantRecordId: String, val pregnantTrimesterId: String)
+
+    @Serializable
+    data class ConditionStatus(val userId: String)
+
+    @Serializable
+    data class StatusPreview(val userId: String)
+
+    @Serializable
+    data class ImmunizationRecord(val userId: String, val pregnantRecordId: String)
 
     @Serializable
     object MessagesList
@@ -62,5 +71,17 @@ object MainNav {
     object EditSettings
 
     @Serializable
-    data class MonitoringCheckup(val isComplete: Boolean, val dashboard: Boolean)
+    data class MonitoringCheckup(val isComplete: Boolean, val dashboard: Boolean, val isArchive: Boolean)
+
+    @Serializable
+    data class HealthRecord(val userId: String)
+
+    @Serializable
+    data class CreateRecord(val userId: String)
+
+    @Serializable
+    data class CreateTrimester(val userId: String, val pregnantRecordId: String)
+
+    @Serializable
+    data class TrimesterCheckUpList(val userId: String, val pregnantRecordId: String, val trimesterId: String)
 }

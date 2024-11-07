@@ -2,8 +2,8 @@ package org.maternalcare.modules.main.residence.ui
 
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -59,15 +59,17 @@ import coil.compose.AsyncImage
 import exportToPDF
 import kotlinx.coroutines.delay
 import openFile
+import org.maternalcare.MainActivity
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.residence.enum.CheckupStatus
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.user.model.dto.AddressDto
+import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.shared.ext.toObjectId
 
 
-@RequiresApi(Build.VERSION_CODES.Q)
 @Preview(showSystemUi = true)
 @Composable
 fun ResidencesPrev() {
@@ -75,7 +77,8 @@ fun ResidencesPrev() {
         navController = rememberNavController(),
         currentUser = UserDto(),
         addressDto = AddressDto(id = null, name = "test", code = "loc_test"),
-        isDashboard = true
+        isDashboard = true,
+        status = "PREGNANT"
     )
 }
 
@@ -87,37 +90,70 @@ fun ResidencesUI(
     dateOfCheckup: String? = null,
     isArchive: Boolean = false,
     isCompleted: Boolean? = null,
-    isDashboard: Boolean
+    isDashboard: Boolean,
+    status: String,
 ) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
     var debouncedQuery by remember { mutableStateOf("") }
     var searchQuery by remember { mutableStateOf("") }
-
     LaunchedEffect(searchQuery) {
         delay(500L)
         debouncedQuery = searchQuery
     }
-
-    val residences = remember(debouncedQuery) {
-        if (dateOfCheckup != null)
+    val residences = when {
+        status == CheckupStatus.PREGNANT.name -> {
+            residenceViewModel.fetchAllUsersByCheckup(
+                userId = currentUser.id.toObjectId(),
+                isSuperAdmin = currentUser.isSuperAdmin,
+                checkup = 1,
+                isArchive = isArchive,
+            )
+        }
+        dateOfCheckup != null -> {
             residenceViewModel.fetchUsersByCheckup(
                 userId = currentUser.id.toObjectId(),
                 isSuperAdmin = currentUser.isSuperAdmin,
                 dateOfCheckup = dateOfCheckup
             )
-        else
+        }
+        status == CheckupStatus.NORMAL.name -> {
+            residenceViewModel.fetchAllUsersWithNormalCondition(
+                userId = currentUser.id.toObjectId(),
+                isSuperAdmin = currentUser.isSuperAdmin,
+                isNormal = true,
+                isArchive = isArchive
+            )
+        }
+        status == CheckupStatus.CRITICAL.name -> {
+            residenceViewModel.fetchAllUsersWithCriticalCondition(
+                userId = currentUser.id.toObjectId(),
+                isSuperAdmin = currentUser.isSuperAdmin,
+                isCritical = true,
+                isArchive = isArchive
+            )
+        }
+        else -> {
             residenceViewModel.fetchUsers(
                 userId = currentUser.id.toObjectId(),
                 isSuperAdmin = currentUser.isSuperAdmin,
                 addressName = addressDto?.name,
                 isArchive = isArchive,
-                isCompleted = if(isDashboard) isCompleted else null,
+                isCompleted = if(isDashboard) isCompleted else null
             )
+        }
     }
     val filteredResidences = residences.filter {
         it.firstName.contains(debouncedQuery, ignoreCase = true) ||
         it.middleName?.contains(debouncedQuery, ignoreCase = true) ?: false ||
         it.lastName.contains(debouncedQuery, ignoreCase = true)
+    }
+    val pregnantCount = if (status == CheckupStatus.PREGNANT.name) {
+        residences.count { user ->
+            val checkup = residenceViewModel.getCheckupForUser(user.id!!)
+            checkup?.checkup!! >= 1
+        }
+    } else {
+        0
     }
     val isShowFloatingIcon = rememberSaveable { mutableStateOf( !isArchive)}
     val context = LocalContext.current
@@ -138,6 +174,7 @@ fun ResidencesUI(
                         filteredResidences = filteredResidences,
                         onExportToPDF = { data ->
                             exportToPDF(
+                                context = context,
                                 data = data,
                                 onFinish = { file ->
                                     openFile(context, file)
@@ -164,7 +201,29 @@ fun ResidencesUI(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(40.dp))
+                if (status == CheckupStatus.PREGNANT.name) {
+                    Box(
+                        modifier = Modifier
+                            .background(Color.White)
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(
+                                text = "Total of Pregnant: $pregnantCount",
+                                color = Color.Black,
+                                fontSize = 18.sp,
+                                fontFamily = FontFamily.SansSerif
+                            )
+                        }
+                    }
+                }else{
+                    Spacer(modifier = Modifier.height(40.dp))
+                }
                 SearchIcon(
                     searchQuery = searchQuery,
                     onSearchQueryChanged = { searchQuery = it },
@@ -222,7 +281,11 @@ fun UsersImageContainer(imageUri: Uri? = null) {
 }
 
 @Composable
-fun SingleItemCard(userDto: UserDto, navController: NavController) {
+fun SingleItemCard(
+    userDto: UserDto,
+    navController: NavController
+) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -232,7 +295,7 @@ fun SingleItemCard(userDto: UserDto, navController: NavController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { navController.navigate(MainNav.ChooseCheckup(userDto.id!!)) },
+                .clickable { navController.navigate(MainNav.HealthRecord(userDto.id!!)) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(modifier = Modifier.width(10.dp))
@@ -288,13 +351,15 @@ fun SearchIcon(
         },
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedBorderColor = Color.Black,
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = Color.Black,
             focusedBorderColor = Color.Black,
             disabledBorderColor = Color.Gray,
             errorBorderColor = Color.Red,
             cursorColor = Color.Black
         ),
         placeholder = {
-            Text(text = "Search...", color = Color.Gray)
+            Text(text = "Search...", color = Color.Black)
         }
     )
 }
@@ -307,6 +372,8 @@ fun FloatingIcon(
     filteredResidences: List<UserDto>,
     onExportToPDF: (List<UserDto>) -> Unit
 ) {
+    val context = LocalContext.current
+    val activity = context as? MainActivity
     Column(
         modifier = Modifier
             .background(Color.Transparent),
@@ -315,6 +382,9 @@ fun FloatingIcon(
         if (currentUser.isSuperAdmin) {
             FloatingActionButton(
                 onClick = {
+                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P && activity != null) {
+                        activity.requestStoragePermission()
+                    }
                     onExportToPDF(filteredResidences)
                 },
                 containerColor = Color(0xFF6650a4),

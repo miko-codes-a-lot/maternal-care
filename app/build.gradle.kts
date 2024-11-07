@@ -57,6 +57,9 @@ android {
     }
     packaging {
         resources {
+            excludes += "META-INF/NOTICE.md"
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/DEPENDENCIES"
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
@@ -77,6 +80,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.android.hilt)
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.places)
     kapt(libs.android.hilt.compiler)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.realm.kotlin.base)
@@ -92,6 +96,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.coil.compose)
     implementation (libs.itextpdf)
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+
 }
 
 kapt {

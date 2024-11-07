@@ -106,7 +106,7 @@ fun MenuUI(
 @Composable
 fun UserPosition(userDto: UserDto) {
     val userDetails = when {
-        userDto.isSuperAdmin -> listOf("Super Admin")
+        userDto.isSuperAdmin -> listOf("MidWife")
         userDto.isAdmin -> listOf("BHW")
         userDto.isResidence -> listOf("Pregnant")
         else -> listOf("Unknown")
@@ -132,7 +132,6 @@ private fun Menu(navController: NavController, userDto: UserDto) {
     val menuItems = getMenuItems(navController = navController, userDto = userDto)
     Box(
         modifier = Modifier
-            .height(395.dp)
             .border(
                 BorderStroke(2.dp, Color(0xFF6650a4)),
                 RoundedCornerShape(14.dp),
@@ -145,7 +144,6 @@ private fun Menu(navController: NavController, userDto: UserDto) {
         LazyColumn(
             modifier = Modifier
                 .padding(top = 10.dp, bottom = 10.dp)
-                .height(380.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -198,9 +196,7 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
         )
         userDto.isResidence -> listOf(
             MenuItem(text = "Profile") {
-                navController.navigate(MainNav.ChooseCheckup(userId = userDto.id!!))
-            },
-            MenuItem(text = "Module") {
+                navController.navigate(MainNav.HealthRecord(userId = userDto.id!!))
             },
             MenuItem(text = "Messages") {
                 navController.navigate(MainNav.Messages(userId = userDto.createdById!!))

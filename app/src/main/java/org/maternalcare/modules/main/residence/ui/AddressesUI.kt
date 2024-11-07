@@ -78,7 +78,7 @@ fun AddressesUI(
                  navController,
                  isArchive = isArchive,
                  isShowPercent = false,
-                 addressPercentages = mapOf(),
+                 addressFetchAll = mapOf(),
                  isComplete = true,
                  isDashboard = isDashboard
              )
@@ -93,7 +93,7 @@ private fun ListButton (
     addressDto: AddressDto,
     onClick: () -> Unit,
     navController: NavController,
-    percentage: Double
+    totalToShow: Int
 ){
     ElevatedButton(
         onClick = onClick,
@@ -117,14 +117,14 @@ private fun ListButton (
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.Serif,
         )
-        if (isShowPercent && percentage > 0.0) {
+        if (isShowPercent && totalToShow > 0.0) {
             Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = "${String.format("%.2f", percentage)}%",
+                text = "- " +String.format("%d", totalToShow),
                 fontSize = 17.sp,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Serif,
+                fontFamily = FontFamily.Monospace,
             )
         }
     }
@@ -135,7 +135,7 @@ fun ListAddress(
     isShowPercent: Boolean = false,
     isComplete: Boolean,
     isArchive: Boolean = false,
-    addressPercentages: Map<String, Map<String, Double>>,
+    addressFetchAll: Map<String, Map<String, Int>>,
     isDashboard: Boolean
 ) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
@@ -145,10 +145,11 @@ fun ListAddress(
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         items(addresses) { address ->
-            val percentages = addressPercentages[address.name] ?: mapOf("Complete" to 0.0, "Incomplete" to 0.0)
-            val completePercentage = percentages["Complete"] ?: 0.0
-            val incompletePercentage = percentages["Incomplete"] ?: 0.0
-            val percentageToShow = if (isComplete) completePercentage else incompletePercentage
+            val total = addressFetchAll[address.name] ?: mapOf("Complete" to 0, "Incomplete" to 0)
+            val completeTotal = total["Complete"] ?: 0
+            val incompleteTotal = total["Incomplete"] ?: 0
+            val totalToShow = if (isComplete) completeTotal else incompleteTotal
+
             ListButton(
                 addressDto = address,
                 isShowPercent = isShowPercent,
@@ -168,7 +169,7 @@ fun ListAddress(
                     navController.navigate(residenceRoute)
                 },
                 navController = navController,
-                percentage = percentageToShow
+                totalToShow = totalToShow
             )
         }
     }

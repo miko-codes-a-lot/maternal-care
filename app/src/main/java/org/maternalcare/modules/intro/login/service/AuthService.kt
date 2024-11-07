@@ -9,7 +9,10 @@ import org.maternalcare.modules.main.user.model.mapper.toDTO
 import org.maternalcare.shared.ext.verifyPassword
 import javax.inject.Inject
 
-class AuthService @Inject constructor(private val realm: Realm) {
+class AuthService @Inject constructor(
+    private val realm: Realm,
+    private val emailService: EmailService
+) {
     fun login(loginDto: LoginDto): UserDto? {
         val query = StringBuilder()
             .append("email == $0")
@@ -25,5 +28,12 @@ class AuthService @Inject constructor(private val realm: Realm) {
         }
 
         return user.toDTO()
+    }
+    suspend fun requestPasswordReset(email: String): Boolean {
+        return emailService.requestPasswordResetToken(email)
+    }
+
+    suspend fun verifyToken(email: String, token: String): Boolean {
+        return emailService.verifyResetToken(email, token)
     }
 }

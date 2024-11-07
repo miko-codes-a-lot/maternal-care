@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -41,12 +42,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import org.maternalcare.R
+import org.maternalcare.modules.intro.IntroNav
 import org.maternalcare.modules.intro.login.model.dto.LoginDto
 import org.maternalcare.modules.intro.login.viewmodel.LoginViewModel
 import org.maternalcare.modules.intro.login.viewmodel.UserState
@@ -54,9 +58,15 @@ import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.shared.ui.AlertLogInUI
 
+@Preview(showSystemUi = true)
+@Composable
+fun LoginPreview(){
+    LoginUI(navController = rememberNavController())
+}
+
 @Composable
 fun LoginUI(
-    userDto: UserDto? = null,
+    userDto: UserDto? = null, 
     navController: NavController
 ) {
     Column(
@@ -67,7 +77,6 @@ fun LoginUI(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val listOfLabel = listOf("Email Account","Password")
-
         val statesValue = remember {
             listOfLabel.associateWith {
                 mutableStateOf(
@@ -89,19 +98,33 @@ fun LoginUI(
 
         Text(text = "Login to your account",
             fontSize = 23.sp,
-            fontFamily = FontFamily.Serif
+            fontFamily = FontFamily.Serif,
+            color = Color.Black
         )
 
         Spacer(modifier = Modifier.height(15.dp))
 
         ContainerLabelAndValue( statesValue = statesValue)
 
-
         ButtonLogin(
             navController = navController,
             statesValue = statesValue
         )
 
+        Spacer(modifier = Modifier.height(15.dp))
+
+        TextButton(
+            onClick = {
+                navController.navigate(IntroNav.ForgotPassword)
+            }
+        ){
+            Text(
+                text = "Forgot password ?",
+                fontSize = 15.sp,
+                fontFamily = FontFamily.Serif,
+                color = Color.Red
+            )
+        }
 
         Spacer(modifier = Modifier.height(100.dp))
     }

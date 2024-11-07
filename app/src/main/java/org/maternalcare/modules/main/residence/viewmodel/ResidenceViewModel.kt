@@ -3,6 +3,7 @@ package org.maternalcare.modules.main.residence.viewmodel
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.maternalcare.modules.main.user.model.dto.AddressDto
+import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.service.AddressService
 import org.maternalcare.modules.main.user.service.UserService
@@ -43,6 +44,10 @@ class ResidenceViewModel @Inject constructor(
         )
     }
 
+    fun getCheckupForUser(userId: String): UserCheckupDto? {
+        return userService.fetchCheckUpDetails(userId)
+    }
+
     fun fetchUsersByCheckup(
         userId: ObjectId,
         isSuperAdmin: Boolean = false,
@@ -51,4 +56,35 @@ class ResidenceViewModel @Inject constructor(
         val id = if (!isSuperAdmin) userId else null
         return userService.fetchByCheckup(userId = id, dateOfCheckup = dateOfCheckup)
     }
+
+    fun fetchAllUsersByCheckup(
+        userId: ObjectId,
+        isSuperAdmin: Boolean = false,
+        checkup: Int,
+        isArchive: Boolean = false,
+    ): List<UserDto> {
+        val id = if(!isSuperAdmin) userId else null
+        return userService.fetchAllCheckup(userId = id, checkup = checkup, isArchive = isArchive )
+    }
+
+    fun fetchAllUsersWithNormalCondition(
+        userId: ObjectId,
+        isSuperAdmin: Boolean = false,
+        isNormal: Boolean,
+        isArchive: Boolean = false
+    ): List<UserDto> {
+        val id = if(!isSuperAdmin) userId else null
+        return userService.fetchUsersWithNormalCondition(userId = id, isNormal = isNormal, isArchive = isArchive)
+    }
+
+    fun fetchAllUsersWithCriticalCondition(
+        userId: ObjectId,
+        isSuperAdmin: Boolean = false,
+        isCritical: Boolean,
+        isArchive: Boolean = false
+    ): List<UserDto> {
+        val id = if(!isSuperAdmin) userId else null
+        return userService.fetchUsersWithCriticalCondition(userId = id, isCritical = isCritical, isArchive = isArchive)
+    }
+
 }

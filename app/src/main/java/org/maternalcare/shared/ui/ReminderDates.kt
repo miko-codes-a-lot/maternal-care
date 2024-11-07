@@ -128,7 +128,7 @@ fun CheckUpDateContainer(
 ) {
     val checkupMap: HashMap<Int, String> = when {
         userDto.isResidence -> {
-            hashMapOf(1 to formatDates(checkupDto.dateOfCheckUp))
+            hashMapOf(1 to formatDates(checkupDto.scheduleOfNextCheckUp))
         }
         else -> hashMapOf()
     }

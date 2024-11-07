@@ -5,13 +5,23 @@ import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.Sort
 import io.realm.kotlin.types.RealmInstant
+import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
+import org.maternalcare.modules.main.user.model.dto.UserConditionDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.modules.main.user.model.dto.UserImmunizationDto
+import org.maternalcare.modules.main.user.model.dto.UserTrimesterRecordDto
 import org.maternalcare.modules.main.user.model.entity.Address
 import org.maternalcare.modules.main.user.model.entity.User
+import org.maternalcare.modules.main.user.model.entity.UserBirthRecord
 import org.maternalcare.modules.main.user.model.entity.UserCheckup
+import org.maternalcare.modules.main.user.model.entity.UserCondition
+import org.maternalcare.modules.main.user.model.entity.UserImmunization
+import org.maternalcare.modules.main.user.model.entity.UserTrimesterRecord
 import org.maternalcare.modules.main.user.model.mapper.toDTO
 import org.maternalcare.modules.main.user.model.mapper.toEntity
+import org.maternalcare.shared.ext.hashPassword
+import org.mongodb.kbson.BsonObjectId.Companion.invoke
 import org.mongodb.kbson.ObjectId
 import java.time.Instant
 import java.time.LocalDate
@@ -19,6 +29,33 @@ import java.time.ZoneOffset
 import javax.inject.Inject
 
 class UserService @Inject constructor(private val realm: Realm) {
+    fun fetchByEmail(email: String): UserDto? {
+        val user = realm.query<User>("email == $0", email).find().firstOrNull()
+        return user?.toDTO()
+    }
+
+    fun fetchEmailAndToken(email: String, token: String): UserDto? {
+        val user = realm.query<User>("email == $0 AND resetPasswordToken == $1", email, token).find().firstOrNull()
+        if (user != null) {
+            return user.toDTO()
+        }
+        return null
+    }
+
+    suspend fun saveNewPassword(email: String, token: String, newPassword: String): Boolean {
+        val hashedPassword = newPassword.hashPassword()
+        return realm.write {
+            val user = fetchEmailAndToken(email, token)
+            if (user != null) {
+                user.password = hashedPassword
+                copyToRealm(user.toEntity(), updatePolicy = UpdatePolicy.ALL)
+                true
+            } else {
+                false
+            }
+        }
+    }
+
     fun fetch(
         isResidence: Boolean = false,
         isArchive: Boolean = false,
@@ -69,6 +106,78 @@ class UserService @Inject constructor(private val realm: Realm) {
         return users
     }
 
+    fun fetchAllCheckup(userId: ObjectId?, checkup: Int, isArchive: Boolean = false): List<UserDto> {
+        val query = StringBuilder()
+            .append("isArchive == false")
+            .append(" AND checkup >= $0")
+        if (userId != null) query.append(" AND createdById == $0")
+        val checkups = realm.query<UserCheckup>(query.toString(), checkup, userId
+        ).find()
+        val users = mutableListOf<UserDto>()
+        val seenUserIds = mutableSetOf<String>()
+        checkups.forEach { userCheckup ->
+            if (!seenUserIds.contains(userCheckup.userId)) {
+                val user = realm.query<User>(
+                    "_id == $0 AND isResidence == true AND isArchive == false",
+                    ObjectId(userCheckup.userId)
+                ).find().firstOrNull()
+                if (user != null) {
+                    users.add(user.toDTO())
+                    seenUserIds.add(userCheckup.userId)
+                }
+            }
+        }
+        return users
+    }
+
+    fun fetchUsersWithNormalCondition(userId: ObjectId?, isNormal: Boolean, isArchive: Boolean = false): List<UserDto> {
+        val query = StringBuilder()
+            .append("isArchive == false")
+            .append(" AND isNormal == $0")
+        if (userId != null) query.append(" AND createdById == $0")
+        val conditions = realm.query<UserCondition>(query.toString(), isNormal, userId
+        ).find()
+        val users = mutableListOf<UserDto>()
+        val seenUserIds = mutableSetOf<String>()
+        conditions.forEach { userConditions ->
+            if (!seenUserIds.contains(userConditions.userId)) {
+                val user = realm.query<User>(
+                    "_id == $0 AND isResidence == true AND isArchive == false",
+                    ObjectId(userConditions.userId)
+                ).find().firstOrNull()
+                if (user != null) {
+                    users.add(user.toDTO())
+                    seenUserIds.add(userConditions.userId)
+                }
+            }
+        }
+        return users
+    }
+
+    fun fetchUsersWithCriticalCondition(userId: ObjectId?, isCritical: Boolean, isArchive: Boolean = false): List<UserDto> {
+        val query = StringBuilder()
+            .append("isArchive == false")
+            .append(" AND isCritical == $0")
+        if (userId != null) query.append(" AND createdById == $0")
+        val conditions = realm.query<UserCondition>(query.toString(), isCritical, userId
+        ).find()
+        val users = mutableListOf<UserDto>()
+        val seenUserIds = mutableSetOf<String>()
+        conditions.forEach { userConditions ->
+            if (!seenUserIds.contains(userConditions.userId)) {
+                val user = realm.query<User>(
+                    "_id == $0 AND isResidence == true AND isArchive == false",
+                    ObjectId(userConditions.userId)
+                ).find().firstOrNull()
+                if (user != null) {
+                    users.add(user.toDTO())
+                    seenUserIds.add(userConditions.userId)
+                }
+            }
+        }
+        return users
+    }
+
     suspend fun upsert(data: UserDto, actionOf: UserDto): Result<UserDto> {
         return try {
             realm.write {
@@ -97,7 +206,7 @@ class UserService @Inject constructor(private val realm: Realm) {
                 .firstOrNull()
                 ?.toDTO()
 
-            if (userDto == null) return;
+            if (userDto == null) return
 
             realm.write {
                 userDto.isCompleted = count == 4
@@ -169,11 +278,10 @@ class UserService @Inject constructor(private val realm: Realm) {
             }
     }
 
-    fun fetchCheckupDetailByNumber(userId: String, checkupNumber: Int): UserCheckupDto? {
-        val userCheckup = realm.query<UserCheckup>("userId == $0 AND checkup == $1", userId, checkupNumber)
+    fun fetchCheckupDetailByNumber(userId: String, checkupNumber: Int, pregnantRecordId: String, pregnantTrimesterId: String): UserCheckupDto? {
+        val userCheckup = realm.query<UserCheckup>("userId == $0 AND checkup == $1 AND pregnantRecordId == $2 AND trimesterRecordId == $3", userId, checkupNumber, pregnantRecordId, pregnantTrimesterId)
             .find()
             .firstOrNull()
-
         return userCheckup?.toDTO()
     }
 
@@ -200,7 +308,7 @@ class UserService @Inject constructor(private val realm: Realm) {
         return realm.query<UserCheckup>(
             "userId == $0",
             userId
-        ).sort("dateOfCheckUp", Sort.DESCENDING)
+        ).sort("scheduleOfNextCheckUp", Sort.DESCENDING)
             .find()
             .firstOrNull()
             ?.run { toDTO() }
@@ -210,10 +318,17 @@ class UserService @Inject constructor(private val realm: Realm) {
         val currentDate: RealmInstant = RealmInstant.from(Instant.now().epochSecond, 0)
         val query = StringBuilder()
             .append("createdById == $0")
-            .append(" AND dateOfCheckUp > $1")
+            .append(" AND scheduleOfNextCheckUp > $1")
         return realm.query<UserCheckup>(query.toString(), adminId, currentDate)
-            .distinct("dateOfCheckUp")
-            .sort("dateOfCheckUp", Sort.ASCENDING)
+            .distinct("scheduleOfNextCheckUp")
+            .sort("scheduleOfNextCheckUp", Sort.ASCENDING)
+            .find()
+            .map { it.toDTO() }
+    }
+
+    fun getAllUserWithCheckups(userId: String): List<UserCheckupDto> {
+        val query = "userId == $0 AND checkup > 0"
+        return realm.query<UserCheckup>(query, userId)
             .find()
             .map { it.toDTO() }
     }
@@ -222,26 +337,26 @@ class UserService @Inject constructor(private val realm: Realm) {
         val currentDate: RealmInstant = RealmInstant.from(Instant.now().epochSecond, 0)
         val query = StringBuilder()
             .append("userId == $0")
-            .append(" AND dateOfCheckUp > $1")
+            .append(" AND scheduleOfNextCheckUp > $1")
         return realm.query<UserCheckup>(query.toString(), residenceId, currentDate)
-            .distinct("dateOfCheckUp")
-            .sort("dateOfCheckUp", Sort.ASCENDING)
+            .distinct("scheduleOfNextCheckUp")
+            .sort("scheduleOfNextCheckUp", Sort.ASCENDING)
             .find()
             .map { it.toDTO() }
     }
 
-    fun fetchAddressCheckupPercentage(): Map<String, Double> {
+    fun fetchAddressCheckupPercentage(isArchive: Boolean = false): Map<String, Double> {
         val addresses = realm.query<Address>().find()
         val addressPercentageMap = mutableMapOf<String, Double>()
         var completedAddressCount = 0
         addresses.forEach { address ->
-            val usersAtAddress = realm.query<User>( "address == $0 AND isResidence == true", address.name ).find()
+            val usersAtAddress = realm.query<User>( "address == $0 AND isResidence == true AND isArchive == $1", address.name, isArchive ).find()
             val usersWithFourCheckups = usersAtAddress.filter { user ->
                 val checkups = realm.query<UserCheckup>(
                     "userId == $0",
                     user._id.toHexString()
                 ).find()
-                checkups.size >= 4
+                checkups.size >= 3
             }
             val percentage = if (usersAtAddress.isNotEmpty()) {
                 (usersWithFourCheckups.size.toDouble() / usersAtAddress.size.toDouble()) * 100
@@ -261,23 +376,123 @@ class UserService @Inject constructor(private val realm: Realm) {
         return addressPercentageMap
     }
 
-    fun fetchAddressCompletionPercentages(): Map<String, Map<String, Double>> {
+    fun fetchAddressWithCompleteCheckup(isArchive: Boolean = false): Map<String, Map<String,Int>>{
         val addresses = realm.query<Address>().find()
         return addresses.associate { address ->
             val usersAtAddress = realm.query<User>(
-                "address == $0 AND isResidence == true", address.name
+                "address == $0 And isResidence == true And isArchive == $1", address.name, isArchive
             ).find()
             val (usersWithFourCheckups, usersWithoutFourCheckups) = usersAtAddress.partition { user ->
                 val checkups = realm.query<UserCheckup>("userId == $0", user._id.toHexString()).find()
-                checkups.size >= 4
+                checkups.size >= 3
             }
-            val totalUsers = usersAtAddress.size.toDouble()
-            val completedPercentage = if (totalUsers > 0) (usersWithFourCheckups.size / totalUsers) * 100 else 0.0
-            val incompletePercentage = if (totalUsers > 0) (usersWithoutFourCheckups.size / totalUsers) * 100 else 0.0
+            val totalUsers = usersAtAddress.size
+            val usersCompleteCheckup = if(totalUsers > 0) (usersWithFourCheckups.size) else 0
+            val usersNotCompleteCheckup = if(totalUsers > 0) (usersWithoutFourCheckups.size) else 0
             address.name to mapOf(
-                "Complete" to completedPercentage,
-                "Incomplete" to incompletePercentage
+                "Complete" to usersCompleteCheckup,
+                "Incomplete" to usersNotCompleteCheckup
             )
+        }
+    }
+
+    fun fetchUserConditionByUserId(userId: String): UserConditionDto? {
+        val result = realm.query<UserCondition>("userId == $0", userId)
+            .find()
+            .firstOrNull()
+        return result?.toDTO()
+    }
+
+    fun fetchUserConditionByRecord(userId: String): UserConditionDto? {
+        val result = realm.query<UserCondition>("userId == $0", userId)
+            .find()
+            .firstOrNull()
+        return result?.toDTO()
+    }
+
+    suspend fun upsertCondition(data: UserConditionDto): Result<UserConditionDto> {
+        return try {
+            realm.write {
+                val userCondition = copyToRealm(data.toEntity(), updatePolicy = UpdatePolicy.ALL)
+                Result.success(userCondition.toDTO())
+            }
+        } catch (error: Exception) {
+            Result.failure(error)
+        }
+    }
+
+    fun fetchUserImmunizationByUserId(userId: String, pregnantRecordId: String): UserImmunizationDto? {
+        val result = realm.query<UserImmunization>("userId == $0 And pregnantRecordId == $1", userId ,pregnantRecordId)
+            .find()
+            .firstOrNull()
+        return result?.toDTO()
+    }
+
+    suspend fun upsertImmunization(dates: UserImmunizationDto): Result<UserImmunizationDto> {
+        return try {
+            realm.write {
+                val userImmunization = copyToRealm(dates.toEntity(), updatePolicy = UpdatePolicy.ALL)
+                Result.success(userImmunization.toDTO())
+            }
+        } catch (error: Exception) {
+            Result.failure(error)
+        }
+    }
+
+    suspend fun upsertHealthRecord(records: UserBirthRecordDto): Result<UserBirthRecordDto> {
+        return try {
+            realm.write {
+                val userHealthRecord = copyToRealm(records.toEntity(), updatePolicy = UpdatePolicy.ALL)
+                Result.success(userHealthRecord.toDTO())
+            }
+        } catch (error: Exception) {
+            Result.failure(error)
+        }
+    }
+
+    fun fetchOnePregnancy(pregnancyRecordId: String): UserBirthRecordDto {
+        return realm.query<UserBirthRecord>("_id == $0", ObjectId(pregnancyRecordId))
+            .find()
+            .first()
+            .run {
+                toDTO()
+            }
+    }
+
+    fun fetchListHealthRecordUser(userId: String): List<UserBirthRecordDto> {
+        return realm.query<UserBirthRecord>("pregnancyUserId == $0", userId)
+            .sort("childOrder", Sort.DESCENDING)
+            .find()
+            .map { it.toDTO() }
+    }
+
+    fun fetchOneTrimester(trimesterUserId: String): UserTrimesterRecordDto {
+        return realm.query<UserTrimesterRecord>("_id == $0", ObjectId(trimesterUserId))
+            .find()
+            .first()
+            .run {
+                toDTO()
+            }
+    }
+
+    fun fetchListTrimesterRecordUser(pregnantTrimesterId: String, pregnantRecordId: String): List<UserTrimesterRecordDto> {
+        return realm.query<UserTrimesterRecord>(
+            "trimesterUserId == $0 AND pregnancyUserId == $1",
+            pregnantTrimesterId, pregnantRecordId
+        )
+            .sort("trimesterOrder", Sort.ASCENDING)
+            .find()
+            .map { it.toDTO() }
+    }
+
+    suspend fun upsertTrimesterRecord(trimesterRecord: UserTrimesterRecordDto): Result<UserTrimesterRecordDto> {
+        return try {
+            realm.write {
+                val userTrimesterRecord = copyToRealm(trimesterRecord.toEntity(), updatePolicy = UpdatePolicy.ALL)
+                Result.success(userTrimesterRecord.toDTO())
+            }
+        } catch (error: Exception) {
+            Result.failure(error)
         }
     }
 }

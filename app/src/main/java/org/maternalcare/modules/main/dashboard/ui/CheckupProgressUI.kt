@@ -32,7 +32,7 @@ import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 @Preview
 @Composable
 fun CheckupProgressUIPreview() {
-    CheckupProgressUI(rememberNavController(), true, userViewModel = hiltViewModel())
+    CheckupProgressUI(rememberNavController(), true, userViewModel = hiltViewModel(), isArchive = true)
 }
 
 @SuppressLint("DefaultLocale")
@@ -40,11 +40,12 @@ fun CheckupProgressUIPreview() {
 fun CheckupProgressUI(
     navController: NavController,
     isComplete: Boolean,
+    isArchive: Boolean,
     userViewModel: UserViewModel = hiltViewModel()
 ) {
-    val addressCheckupPercentages = userViewModel.getCompleteCheckupPercentages()
+    val addressCheckupPercentages = userViewModel.getCompleteCheckupPercentages(isArchive = isArchive)
     val overallCompletedPercentage = addressCheckupPercentages["Overall Completed Address Percentage"] ?: 0.0
-    val getAllListAddressCheckupPercentage = userViewModel.getAllListAddressCheckupPercentages()
+    val getAllListAddressCheckups = userViewModel.getAllListAddressCheckup()
 
     Column(
         modifier = Modifier
@@ -71,7 +72,8 @@ fun CheckupProgressUI(
                 navController = navController,
                 isShowPercent = true,
                 isComplete = isComplete,
-                addressPercentages = getAllListAddressCheckupPercentage,
+                addressFetchAll = getAllListAddressCheckups,
+                isArchive = isArchive,
                 isDashboard = true
             )
         }
@@ -86,7 +88,7 @@ fun AverageStatusContainer(completePercentage: String, incompletePercentage: Str
             containerColor = Color(0xFF6650a4),
             contentColor = Color.White
         ),
-        modifier = Modifier.size(width = 265.dp, height = 105.dp)
+        modifier = Modifier.size(width = 295.dp, height = 125.dp)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),

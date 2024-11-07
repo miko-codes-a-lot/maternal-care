@@ -115,7 +115,7 @@ fun ReminderCheckupUI (
 @Composable
 fun CheckUpValueContainer (userDto: UserDto, checkup: UserCheckupDto) {
 
-    val lmpString = checkup.lastMenstrualPeriod ?: ""
+    val lmpString = checkup.lastMenstrualPeriod
     val lmp = stringToInstant(lmpString)
     val aogWeeks = lmp?.let { calculateAgeOFGestation(it) } ?: 0L
 
@@ -125,16 +125,19 @@ fun CheckUpValueContainer (userDto: UserDto, checkup: UserCheckupDto) {
     val bmiCategory = determineBMICategory(bmi)
     val bloodPressureStatus = assessBloodPressure(checkup.bloodPressure)
 
-    val labelValueMap = mapOf(
+//    val labelValueMap = mapOf(
+    val labelValueMap = mutableMapOf(
         "Name" to userDto.firstName +" "+ userDto.middleName +" "+ userDto.lastName,
         "Blood Pressure" to bloodPressureStatus,
         "Age Of Gestation" to "$aogWeeks weeks",
         "Nutritional Status" to  "%s".format(bmiCategory),
         "Expected Due Date" to edd,
-        "Next Check-up" to formatDate(checkup.scheduleOfNextCheckUp),
 //        "Type  Of Vaccine" to checkup.typeOfVaccine
-        "Recommended Type Of Vaccine" to "Tetanus toxoid"
     )
+    if (checkup.checkup < 4) {
+        labelValueMap["Next Check-up"] = formatDate(checkup.scheduleOfNextCheckUp)
+    }
+
     Column(
         modifier = Modifier
             .padding(16.dp)

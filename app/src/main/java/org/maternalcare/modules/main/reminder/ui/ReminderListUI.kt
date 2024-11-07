@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,7 +53,7 @@ fun ReminderListUI(
 ) {
     Column(
         modifier = Modifier
-            .height(715.dp)
+            .fillMaxHeight()
             .background(Color.White)
             .fillMaxWidth(),
          horizontalAlignment = Alignment.CenterHorizontally
@@ -61,6 +62,7 @@ fun ReminderListUI(
         Column(
             modifier = Modifier
                 .padding(16.dp)
+                .fillMaxHeight()
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -120,7 +122,7 @@ fun ScheduleList (navController: NavController, currentUser: UserDto) {
 
 
     val uniqueCheckupDetails = reminders
-        .map { formatListDates(it.dateOfCheckUp) }
+        .map { formatListDates(it.scheduleOfNextCheckUp) }
         .toSet()
         .mapIndexed { index, date -> index + 1 to date }
 

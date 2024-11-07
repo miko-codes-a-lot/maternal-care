@@ -1,5 +1,8 @@
 package org.maternalcare.modules.main
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -16,14 +19,25 @@ import org.maternalcare.modules.main.residence.enum.CheckupStatus
 import org.maternalcare.modules.main.residence.ui.AddressesUI
 import org.maternalcare.modules.main.residence.ui.CheckupDetailsUI
 import org.maternalcare.modules.main.residence.ui.ChooseCheckupUI
+import org.maternalcare.modules.main.residence.ui.ConditionStatusUI
+import org.maternalcare.modules.main.residence.ui.CreateHealthRecordUI
 import org.maternalcare.modules.main.residence.ui.EditCheckupUI
+import org.maternalcare.modules.main.residence.ui.HealthRecordListUI
+import org.maternalcare.modules.main.residence.ui.ImmunizationRecordUI
 import org.maternalcare.modules.main.residence.ui.ResidencesPreviewUI
 import org.maternalcare.modules.main.residence.ui.ResidencesUI
+import org.maternalcare.modules.main.residence.ui.StatusPreviewUI
+import org.maternalcare.modules.main.residence.ui.TrimesterCheckUpListUI
+import org.maternalcare.modules.main.residence.ui.CreateTrimesterRecordUI
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.settings.ui.EditSettingsUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
 import org.maternalcare.modules.main.user.model.dto.AddressDto
+import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
+import org.maternalcare.modules.main.user.model.dto.UserConditionDto
+import org.maternalcare.modules.main.user.model.dto.UserImmunizationDto
+import org.maternalcare.modules.main.user.model.dto.UserTrimesterRecordDto
 import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.modules.main.user.ui.UserCreateUI
 import org.maternalcare.modules.main.user.ui.UserEditUI
@@ -65,12 +79,13 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                     isArchive = args.isArchive,
                     isCompleted = isCompleted,
                     dateOfCheckup = args.dateOfCheckUp,
-                    isDashboard = args.isDashboard
+                    isDashboard = args.isDashboard,
+                    status = args.status
                 )
             }
         }
         composable<MainNav.ResidencePreview> {
-            val args = it.toRoute<MainNav.ChooseCheckup>()
+            val args = it.toRoute<MainNav.ResidencePreview>()
             val userViewModel: UserViewModel = hiltViewModel()
             Guard(navController = navController) { currentUser ->
                 val userDto = userViewModel.fetchUser(args.userId)
@@ -83,22 +98,39 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
 
             Guard(navController = navController) { currentUser ->
                 val userDto = userViewModel.fetchUser(userId = args.userId)
-                ChooseCheckupUI(navController, currentUser, userDto)
+                val conditionStatus = userViewModel.fetchUserCondition(args.userId)
+                val pregnantRecordId = userViewModel.fetchPregnancyUser(args.pregnantRecordId)
+                val trimesterRecord = userViewModel.getTrimesterRecords(
+                    pregnantTrimesterId = args.userId,
+                    pregnantRecordId = args.pregnantRecordId
+                )
+                ChooseCheckupUI(
+                    navController = navController,
+                    currentUser = currentUser,
+                    userDto = userDto,
+                    conditionStatus = conditionStatus,
+                    pregnantRecordId = pregnantRecordId,
+                    trimesterRecord = trimesterRecord,
+                )
             }
         }
         composable<MainNav.CheckupDetails> {
             val args = it.toRoute<MainNav.CheckupDetails>()
             val userViewModel: UserViewModel = hiltViewModel()
             Guard(navController = navController) { currentUser ->
-                val checkupDto = userViewModel.fetchUserCheckupByNumber(args.userId, args.checkupNumber)
+                val checkupDto = userViewModel.fetchUserCheckupByNumber(args.userId, args.checkupNumber, args.pregnantRecordId, args.pregnantTrimesterId)
                 val userDto = userViewModel.fetchUser(userId = args.userId)
-                if (checkupDto != null || currentUser.isSuperAdmin) {
+                val pregnantRecordId = userViewModel.fetchPregnancyUser(args.pregnantRecordId)
+                val trimesterRecordId = userViewModel.fetchTrimester(args.pregnantTrimesterId)
+                if (checkupDto != null || currentUser.isSuperAdmin || currentUser.isResidence) {
                     CheckupDetailsUI(
                         navController,
                         currentUser,
                         checkupDto = checkupDto ?: UserCheckupDto(),
                         userDto,
-                        checkupNumber = args.checkupNumber
+                        checkupNumber = args.checkupNumber,
+                        pregnantRecordId = pregnantRecordId,
+                        trimesterRecordId = trimesterRecordId
                     )
                 } else {
                     EditCheckupUI(
@@ -106,7 +138,9 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                         checkupNumber = args.checkupNumber,
                         userDto = userDto,
                         currentUser = currentUser,
-                        checkupUser = checkupDto
+                        checkupUser = checkupDto,
+                        pregnantRecordId = pregnantRecordId,
+                        trimesterRecordId = trimesterRecordId
                     )
                 }
             }
@@ -118,21 +152,88 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             Guard(navController) { currentUser ->
                 val checkup = userViewModel.fetchUserCheckup(args.checkupId)
                 val userDto = userViewModel.fetchUser(args.userId)
+                val pregnancyDto = userViewModel.fetchPregnancyUser(args.pregnantRecordId)
+                val trimesterDto = userViewModel.fetchTrimester(args.pregnantTrimesterId)
                 EditCheckupUI(
                     navController,
                     checkupNumber = args.checkupNumber,
                     userDto = userDto,
                     checkupUser = checkup,
-                    currentUser = currentUser
+                    currentUser = currentUser,
+                    pregnantRecordId = pregnancyDto,
+                    trimesterRecordId = trimesterDto
                 )
+            }
+        }
+        composable<MainNav.ConditionStatus> {
+            val args = it.toRoute<MainNav.ConditionStatus>()
+            val userViewModel: UserViewModel = hiltViewModel()
+            val userConditionDto by remember { mutableStateOf<UserConditionDto?>(null) }
+            Guard(navController = navController) { currentUser ->
+                if(userConditionDto != null){
+                    val userDto = userViewModel.fetchUser(args.userId)
+                    ConditionStatusUI(
+                        navController = navController,
+                        userDto = userDto,
+                        currentUser = currentUser,
+                        userCondition = userConditionDto
+                    )
+                }else{
+                    val userDto = userViewModel.fetchUser(args.userId)
+                    val conditionDto = userViewModel.fetchUserCondition(args.userId)
+                    ConditionStatusUI(
+                        navController = navController,
+                        userDto = userDto,
+                        currentUser = currentUser,
+                        userCondition = conditionDto
+                    )
+                }
+            }
+        }
+        composable<MainNav.StatusPreview> {
+            val args = it.toRoute<MainNav.StatusPreview>()
+            val userViewModel: UserViewModel = hiltViewModel()
+            val conditionDto = userViewModel.fetchUserCondition(args.userId)
+            Guard(navController = navController) { currentUser ->
+                if (conditionDto != null) {
+                    StatusPreviewUI(
+                        userCondition = conditionDto,
+                    )
+                }
+            }
+        }
+        composable<MainNav.ImmunizationRecord> {
+            val args = it.toRoute<MainNav.ImmunizationRecord>()
+            val userViewModel: UserViewModel = hiltViewModel()
+            val immunizationDto = userViewModel.fetchUserImmunization(args.userId, args.pregnantRecordId)
+            val pregnancyDto = userViewModel.fetchPregnancyUser(args.pregnantRecordId)
+            Guard(navController = navController) { currentUser ->
+                if(immunizationDto != null){
+                    val userDto = userViewModel.fetchUser(args.userId)
+                    ImmunizationRecordUI(
+                        navController = navController,
+                        userDto = userDto,
+                        userImmunization = immunizationDto,
+                        currentUser = currentUser,
+                        pregnantRecord = pregnancyDto,
+                    )
+                }
+                else{
+                    val userDto = userViewModel.fetchUser(args.userId)
+                    ImmunizationRecordUI(
+                        navController = navController,
+                        userDto = userDto,
+                        userImmunization = UserImmunizationDto(),
+                        currentUser = currentUser,
+                        pregnantRecord = pregnancyDto,
+                    )
+                }
             }
         }
         composable<MainNav.Reminders> {
             Guard(navController = navController) { currentUser ->
                 if(currentUser.isAdmin){
                     ReminderListUI(navController, currentUser)
-                }else{
-//                    ReminderDates(onDismiss = { /*TODO*/ }, currentUser = , checkupDto = )
                 }
             }
         }
@@ -206,7 +307,71 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 CheckupProgressUI(
                     navController,
                     isComplete = args.isComplete,
+                    isArchive = args.isArchive,
                     userViewModel = userViewModel
+                )
+            }
+        }
+        composable<MainNav.HealthRecord> {
+            val args = it.toRoute<MainNav.HealthRecord>()
+            val userViewModel: UserViewModel = hiltViewModel()
+            Guard(navController = navController) { currentUser ->
+                val userDto = userViewModel.fetchUser(userId = args.userId)
+                val conditionStatus = userViewModel.fetchUserConditionRecord(args.userId)
+                val healthRecords = userViewModel.getHealthRecords(args.userId)
+                HealthRecordListUI(
+                    navController = navController,
+                    userDto = userDto,
+                    currentUser = currentUser,
+                    conditionStatus = conditionStatus,
+                    healthRecords = healthRecords
+                )
+            }
+        }
+        composable<MainNav.CreateRecord> {
+            val args = it.toRoute<MainNav.CreateRecord>()
+            val userViewModel: UserViewModel = hiltViewModel()
+            Guard(navController = navController) { currentUser ->
+                val userDto = userViewModel.fetchUser(args.userId)
+                CreateHealthRecordUI(
+                    userDto = userDto,
+                    navController = navController,
+                    pregnantRecord = UserBirthRecordDto()
+                )
+            }
+        }
+        composable<MainNav.CreateTrimester> {
+            val args = it.toRoute<MainNav.CreateTrimester>()
+            val userViewModel: UserViewModel = hiltViewModel()
+            Guard(navController = navController) { currentUser ->
+                val userDto = userViewModel.fetchUser(args.userId)
+                val pregnantRecordDto = userViewModel.fetchPregnancyUser(args.pregnantRecordId)
+                val pregnantTrimesterRecords = userViewModel.getTrimesterRecords(
+                    pregnantTrimesterId = args.userId,
+                    pregnantRecordId = args.pregnantRecordId
+                )
+
+                CreateTrimesterRecordUI(
+                    userDto = userDto,
+                    trimesterRecord = UserTrimesterRecordDto(),
+                    navController = navController,
+                    pregnantRecordDto = pregnantRecordDto,
+                    pregnantTrimesterRecords = pregnantTrimesterRecords
+                )
+            }
+        }
+        composable<MainNav.TrimesterCheckUpList> {
+            val args = it.toRoute<MainNav.TrimesterCheckUpList>()
+            val userViewModel: UserViewModel = hiltViewModel()
+            val userDto = userViewModel.fetchUser(userId = args.userId)
+            val pregnantRecordId = userViewModel.fetchPregnancyUser(args.pregnantRecordId)
+            val pregnantTrimesterId = userViewModel.fetchTrimester(args.trimesterId)
+            Guard(navController = navController) { currentUser ->
+                TrimesterCheckUpListUI(
+                    navController,
+                    userDto = userDto,
+                    pregnantRecordId = pregnantRecordId,
+                    pregnantTrimesterId = pregnantTrimesterId
                 )
             }
         }
