@@ -10,6 +10,7 @@ import org.maternalcare.modules.intro.login.ForgotPasswordUI
 import org.maternalcare.modules.intro.login.LoginUI
 import org.maternalcare.modules.intro.login.TokenVerificationUI
 import org.maternalcare.modules.intro.login.ResetPasswordUI
+import org.maternalcare.modules.intro.splash.MapUI
 import org.maternalcare.modules.intro.splash.SplashUI
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
@@ -18,6 +19,7 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
     navigation<IntroNav>(startDestination = IntroNav.Splash) {
         composable<IntroNav.Splash> {
             SplashUI(navController)
+//            MapUI()
         }
 
         composable<IntroNav.Login> {

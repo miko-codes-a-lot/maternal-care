@@ -1,15 +1,17 @@
 package org.maternalcare
 
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -26,21 +28,20 @@ import org.maternalcare.ui.theme.AppTheme
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val userState by viewModels<UserStateViewModel>()
-    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (!isGranted) {
+                Toast.makeText(this, "Permission not granted", Toast.LENGTH_LONG)
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        requestPermissionLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                Toast.makeText(this, "Storage permission granted", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show()
-            }
-        }
+        requestFineLocationPermission()
 
         setContent {
             val loginViewModel: LoginViewModel = hiltViewModel()
@@ -63,6 +64,18 @@ class MainActivity : ComponentActivity() {
             return MainNav
         }
         return IntroNav
+    }
+
+    private fun requestFineLocationPermission() = when {
+        ContextCompat.checkSelfPermission(
+            this,
+            ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED -> {
+
+        }
+        else -> {
+            requestPermissionLauncher.launch(ACCESS_FINE_LOCATION)
+        }
     }
 
     fun requestStoragePermission() {
