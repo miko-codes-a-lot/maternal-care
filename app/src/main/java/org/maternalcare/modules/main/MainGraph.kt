@@ -259,7 +259,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.Dashboard> {
             Guard(navController = navController) { currentUser ->
-                DashboardUI(navController)
+                DashboardUI(navController, currentUser, isArchive = false)
             }
         }
         composable<MainNav.User> {
