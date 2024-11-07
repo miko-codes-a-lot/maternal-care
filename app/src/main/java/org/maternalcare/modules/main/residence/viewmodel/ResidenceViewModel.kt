@@ -19,6 +19,15 @@ class ResidenceViewModel @Inject constructor(
         return addressService.fetch()
     }
 
+    fun fetchTotalUserCount(
+        userId: ObjectId? = null,
+        isSuperAdmin: Boolean = false,
+        isArchive: Boolean = false
+    ): Int {
+        val id = if (!isSuperAdmin) userId else null
+        return userService.fetchTotalCount(userId = id, isArchive = isArchive)
+    }
+
     fun fetchOneAddress(addressId: ObjectId): AddressDto {
         return addressService.fetchOne(addressId)
     }

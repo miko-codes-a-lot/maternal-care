@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -212,10 +213,10 @@ private fun RecordButton(text: String, onClick: () -> Unit){
     ) {
         Text(
             text = text,
-            fontSize = 17.sp,
+            fontSize = 18.sp,
             textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            fontFamily = FontFamily.Serif
+            fontFamily = FontFamily.Serif,
+            color = Color.White
         )
     }
 }
@@ -334,10 +335,25 @@ fun ConditionStatusButton(
         )
 
     ) {
-        Text(
-            text = "Condition Status", fontFamily = FontFamily.Serif,
-            fontSize = 17.sp
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = R.drawable.health),
+                contentDescription = "Health Icon",
+                tint = Color.White,
+                modifier = Modifier
+                    .size(23.dp)
+            )
+            Text(
+                text = "Condition Status",
+                fontFamily = FontFamily.Serif,
+                fontSize = 18.sp,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(end = 10.dp)
+                    .weight(1f)
+            )
+        }
     }
 }
 
@@ -363,12 +379,23 @@ fun PregnantConditionStatus(
         )
 
     ) {
-        Text(
-            text = "Pregnant Condition",
-            fontFamily = FontFamily.Serif,
-            fontSize = 17.sp,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.condition),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
+            Text(
+                text = "Pregnant Condition",
+                fontFamily = FontFamily.Serif,
+                fontSize = 17.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }

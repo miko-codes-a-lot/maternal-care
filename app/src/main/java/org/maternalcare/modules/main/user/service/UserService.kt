@@ -34,6 +34,17 @@ class UserService @Inject constructor(private val realm: Realm) {
         return user?.toDTO()
     }
 
+    fun fetchTotalCount(userId: ObjectId? = null, isArchive: Boolean = false): Int {
+        val query = StringBuilder()
+            .append("isArchive == $0")
+        if (userId != null) query.append(" AND createdById == $1")
+        return realm.query<User>(
+            query.toString(),
+            isArchive,
+            userId
+        ).find().size
+    }
+
     fun fetchEmailAndToken(email: String, token: String): UserDto? {
         val user = realm.query<User>("email == $0 AND resetPasswordToken == $1", email, token).find().firstOrNull()
         if (user != null) {

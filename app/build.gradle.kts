@@ -102,6 +102,7 @@ dependencies {
     implementation (libs.itextpdf)
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
+    implementation(libs.mpandroidchart)
 
 }
 
