@@ -40,7 +40,7 @@ fun TrimesterCheckUpListUI(
         Text(
             text = "Trimester No. ${pregnantTrimesterId.trimesterOrder}",
             fontWeight = FontWeight.Bold,
-            fontSize = 21.sp,
+            fontSize = 18.sp,
             fontFamily = FontFamily.Serif,
             color = Color(0xFF6650a4)
         )
