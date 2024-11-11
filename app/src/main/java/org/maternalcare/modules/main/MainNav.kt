@@ -84,4 +84,7 @@ object MainNav {
 
     @Serializable
     data class TrimesterCheckUpList(val userId: String, val pregnantRecordId: String, val trimesterId: String)
+
+    @Serializable
+    data class Map(var addressId: String)
 }
