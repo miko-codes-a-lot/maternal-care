@@ -1,5 +1,6 @@
 package org.maternalcare.modules.main.dashboard.ui
 
+import android.graphics.Typeface
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -67,6 +68,7 @@ fun ChartUI(
 ) {
     Column(
         modifier = Modifier
+            .padding(start = 16.dp, end = 16.dp)
             .fillMaxSize()
     ) {
         var expanded by remember { mutableStateOf(false) }
@@ -222,7 +224,7 @@ fun ChartUI(
                                             fontSize = 17.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = Color(0xFFFFFFFF),
-                                            fontFamily = FontFamily.SansSerif
+                                            fontFamily = FontFamily.Serif
                                         )
                                     }
                                 }
@@ -267,44 +269,18 @@ fun ChartUI(
 
 fun updatePieChartWithData(chart: PieChart, data: List<ChartData>) {
     val entries = data.map { PieEntry(it.value ?: 0f, it.browserName ?: "") }
-    Log.d("PieChartData", "Entries for Pie Chart: $entries")
+    val typeface = Typeface.create(Typeface.SERIF, Typeface.NORMAL)
 
     val dataSet = PieDataSet(entries, "").apply {
         colors = listOf(Color(0xFF6650a4).toArgb(), Color(0xFF41a3a4).toArgb())
         yValuePosition = PieDataSet.ValuePosition.INSIDE_SLICE
         xValuePosition = PieDataSet.ValuePosition.INSIDE_SLICE
         sliceSpace = 2f
-        valueTextSize = 18f
+        valueTextSize = 15f
         valueTextColor = Color.White.toArgb()
+        this.valueTypeface = typeface
     }
     chart.data = PieData(dataSet)
+    chart.notifyDataSetChanged()
     chart.invalidate()
 }
-
-//fun getPieChartData(selectedChartType: String): List<ChartData> {
-//
-//     return when (selectedChartType) {
-//        "Complete" -> {
-//            val complete = 58.68F
-//            val remaining = 100 - complete
-//            listOf(ChartData("Complete", complete), ChartData("Remaining", remaining))
-//        }
-//        "In-Complete" -> {
-//            val incomplete = 41.60F
-//            val remaining = 100 - incomplete
-//            listOf(ChartData("In-Complete", incomplete), ChartData("Remaining", remaining))
-//        }
-//        "Total Pregnant Records" -> listOf(ChartData("Pregnant", 100F))
-//        "Normal List" -> {
-//            val normal = 70F
-//            val remaining = 100 - normal
-//            listOf(ChartData("Normal", normal), ChartData("Remaining", remaining))
-//        }
-//        "Critical List" -> {
-//            val critical = 30F
-//            val remaining = 100 - critical
-//            listOf(ChartData("Critical", critical), ChartData("Remaining", remaining))
-//        }
-//        else -> listOf()
-//    }
-//}
