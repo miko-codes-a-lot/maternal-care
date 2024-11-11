@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ButtonDefaults
@@ -69,7 +68,7 @@ fun AddressesUI(
         ) {
             Text(
                 text = "Select Address",
-                fontFamily = FontFamily.Monospace,
+                fontFamily = FontFamily.Serif,
                 fontSize = 23.sp
             )
             Spacer(modifier = Modifier.height(20.dp))
@@ -123,6 +122,9 @@ private fun ListButton (
                 tint = Color.White,
                 modifier = Modifier
                     .size(23.dp)
+                    .clickable {
+                        navController.navigate(MainNav.Map(addressDto.id!!))
+                    }
             )
             Text(
                 text = addressDto.name,
