@@ -8,7 +8,9 @@ fun Address.toDto(): AddressDto {
     return AddressDto(
         id = _id.toHexString(),
         name = name,
-        code = code
+        code = code,
+        latitude = latitude,
+        longitude = longitude
     )
 }
 
@@ -18,5 +20,7 @@ fun AddressDto.toEntity(): Address {
         _id = userDto.id.toObjectId()
         name = userDto.name
         code = userDto.code
+        latitude = userDto.latitude
+        longitude = userDto.longitude
     }
 }
