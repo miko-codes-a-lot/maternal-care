@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.content.contentReceiver
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -128,7 +129,8 @@ fun ImageContainer(imageUri: Uri? = null) {
                 .size(53.dp)
                 .clip(CircleShape)
                 .background(Color(0xFF6650a4))
-                .border(3.dp, Color(0xFF6650a4), CircleShape)
+                .border(3.dp, Color(0xFF6650a4), CircleShape),
+            contentAlignment = Alignment.Center
         ) {
             if (imageUri != null) {
                 AsyncImage(
@@ -192,7 +194,7 @@ fun ListOfMessages(
             ){
                 Text(
                 text = "${userDto.firstName} ${userDto.lastName}",
-                fontSize = 18.sp,
+                fontSize = 17.sp,
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = if (isRead.value) FontWeight.Normal else FontWeight.Bold,
                 )
