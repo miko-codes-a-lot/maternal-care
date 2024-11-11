@@ -245,14 +245,14 @@ fun UserLog(
             },
             label = {
                 Text(text = loginLabel,
-                    fontFamily = FontFamily.SansSerif,
+                    fontFamily = FontFamily.Serif,
                     color = Color(0xFF6650a4)
                 )
             },
             textStyle = TextStyle(
                 color = Color(0xFF6650a4),
                 fontSize = 16.sp,
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = FontFamily.Serif,
             ),
             leadingIcon = {
                 if(loginLabel.contains("Email Account")){
