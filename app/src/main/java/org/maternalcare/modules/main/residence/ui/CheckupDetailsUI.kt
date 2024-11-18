@@ -146,8 +146,8 @@ fun CheckupDetailsUI(
             LazyColumn(
                 modifier = Modifier
                     .background(Color.White)
-//                    .height(305.dp)
                     .height(352 .dp)
+//                    .height(402.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
