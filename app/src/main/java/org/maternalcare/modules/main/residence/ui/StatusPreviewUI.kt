@@ -71,7 +71,7 @@ fun StatusPreviewUI (
     ) {
         Text(text = "Pregnant Status History",
             fontFamily = FontFamily.Serif,
-            fontSize = 24.sp,
+            fontSize = 23.sp,
             modifier = Modifier
                 .padding(bottom = 3.dp, top = 7.dp)
         )
@@ -123,7 +123,7 @@ fun TextStatusContainer(textLabel: String, textValue: String) {
                 text = textLabel,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.SansSerif,
-                fontSize = 18.sp,
+                fontSize = 17.sp,
                 modifier = Modifier
             )
             Spacer(modifier = Modifier.width(8.dp))
