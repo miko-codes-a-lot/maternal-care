@@ -10,12 +10,15 @@ import com.itextpdf.text.FontFactory
 import com.itextpdf.text.PageSize
 import com.itextpdf.text.Paragraph
 import com.itextpdf.text.Phrase
+import com.itextpdf.text.pdf.ColumnText
 import com.itextpdf.text.pdf.PdfPCell
 import com.itextpdf.text.pdf.PdfPTable
 import com.itextpdf.text.pdf.PdfWriter
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import java.io.File
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 fun exportToPDF(
     context: Context,
@@ -24,35 +27,58 @@ fun exportToPDF(
     onError: (Exception) -> Unit
 ) {
     val titleFont: Font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18f)
+    val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+
     try {
         val file = createFile(context)
-        val document = Document(PageSize.A4)
+        val document = Document(PageSize.A4.rotate())
         document.setMargins(24f, 24f, 32f, 32f)
-        val pdfWriter = PdfWriter.getInstance(document, FileOutputStream(file))
-        pdfWriter.setFullCompression()
+
+        val writer = PdfWriter.getInstance(document, FileOutputStream(file))
+        writer.setFullCompression()
         document.open()
+
         val titleParagraph = Paragraph("Residents Report", titleFont)
         titleParagraph.alignment = Element.ALIGN_CENTER
         document.add(titleParagraph)
         addLineSpace(document, 1)
-        val columnWidths = floatArrayOf(0.2f, 1f, 1f, 1f)
-        val table = createTable(4, columnWidths)
-        val headers = listOf("No", "First Name", "Middle Name", "Last Name")
+
+        val headers = listOf(
+            "No", "First Name", "Middle Name", "Last Name", "Address", "Date of Birth", "Mobile Number", "Email Address"
+        )
+
+        val columnWidths = floatArrayOf(0.3f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 1f)
+
+        val table = createTable(headers.size, columnWidths)
 
         headers.forEach {
-            val cell = createCell(it)
+            val cell = createCell(it, fixedHeight = 30f)
             table.addCell(cell)
         }
+
         data.forEachIndexed { index, user ->
-            table.addCell(createCell((index + 1).toString()))
-            table.addCell(createCell(user.firstName))
-            table.addCell(createCell(user.middleName ?: ""))
-            table.addCell(createCell(user.lastName))
+            table.addCell(createCell((index + 1).toString(), fixedHeight = 25f))
+            table.addCell(createCell(user.firstName, fixedHeight = 25f))
+            table.addCell(createCell(user.middleName ?: "", fixedHeight = 25f))
+            table.addCell(createCell(user.lastName, fixedHeight = 25f))
+            table.addCell(createCell(user.address ?: "", fixedHeight = 25f))
+            val formattedDate = try {
+                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(user.dateOfBirth)
+                    ?.let { dateFormatter.format(it) }
+            } catch (e: Exception) {
+                user.dateOfBirth
+            }
+            table.addCell(createCell(formattedDate ?: "", fixedHeight = 25f))
+            table.addCell(createCell(user.mobileNumber ?: "", fixedHeight = 25f))
+            table.addCell(createCell(user.email ?: "", fixedHeight = 25f))
         }
+
         document.add(table)
+        addPageNumbers(document, writer)
         document.close()
+
         try {
-            pdfWriter.close()
+            writer.close()
         } catch (ex: Exception) {
             onError(ex)
         } finally {
@@ -76,11 +102,12 @@ fun openFile(context: Context, file: File) {
     }
 }
 
-fun createCell(content: String): PdfPCell {
+fun createCell(content: String, fixedHeight: Float = 20f): PdfPCell {
     val phrase = Phrase(content)
     return PdfPCell(phrase).apply {
         horizontalAlignment = PdfPCell.ALIGN_CENTER
         verticalAlignment = PdfPCell.ALIGN_MIDDLE
+        this.fixedHeight = fixedHeight
     }
 }
 
@@ -108,4 +135,17 @@ fun createFile(context: Context): File {
         file.delete()
     }
     return file
+}
+
+fun addPageNumbers(document: Document, writer: PdfWriter) {
+    val totalPages = writer.pageNumber
+    for (i in 1..totalPages) {
+        val cb = writer.directContentUnder
+        val pageSize = document.pageSize
+        ColumnText.showTextAligned(
+            cb, Element.ALIGN_CENTER,
+            Phrase("Page $i of $totalPages", FontFactory.getFont(FontFactory.HELVETICA, 10f)),
+            (pageSize.left + pageSize.right) / 2, pageSize.bottom + 20, 0f
+        )
+    }
 }
