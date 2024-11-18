@@ -55,6 +55,7 @@ fun UserPreviewUI(
             "Address" to (user.address ?: ""),
             "Mobile Number" to (user.mobileNumber ?: ""),
             "Date Of Birth" to dateFormatContainer(user.dateOfBirth),
+            "Date Created" to dateFormatContainer(user.createdAt ?: ""),
             "User Type" to (if (user.isSuperAdmin) "SuperAdmin" else if (user.isAdmin) "Admin" else "Residence"),
             "Active" to (if (user.isActive) "Yes" else "No")
         ).associate { (label, value) -> label to mutableStateOf(value) }
