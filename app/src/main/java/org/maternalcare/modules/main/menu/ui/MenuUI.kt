@@ -295,9 +295,9 @@ fun TextContainer(text: String) {
                 text = text,
                 textAlign = TextAlign.Center,
                 color =Color(0xFF6650a4),
-                fontSize = 19.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                fontFamily = (FontFamily.SansSerif),
+                fontFamily = (FontFamily.Serif),
                 modifier = Modifier.padding(bottom = 10.dp)
             )
         }else{
