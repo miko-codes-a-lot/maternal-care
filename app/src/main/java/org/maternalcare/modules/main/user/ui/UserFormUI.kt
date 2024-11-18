@@ -73,6 +73,7 @@ import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.shared.ext.hashPassword
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
@@ -99,7 +100,7 @@ fun UserForm(
     includePassword: Boolean = true,
     addressDto: AddressDto?
 ) {
-    val listOfLabel = mutableListOf("First Name", "Middle Name", "Last Name", "Email", "Address", "Mobile Number", "Date Of Birth")
+    val listOfLabel = mutableListOf("First Name", "Middle Name", "Last Name", "Email", "Address", "Mobile Number", "Date Of Birth", "Date Created")
     if (includePassword) listOfLabel.add("Password")
 
     var radioError by remember { mutableStateOf(false) }
@@ -115,6 +116,7 @@ fun UserForm(
                     "Address" -> userDto?.address?.trim() ?: addressDto?.name ?: ""
                     "Mobile Number" -> userDto?.mobileNumber?.trim() ?: ""
                     "Date Of Birth" -> userDto?.dateOfBirth ?: ""
+                    "Date Created" -> userDto?.createdAt ?: ""
                     "Password" -> userDto?.password ?: ""
                     else -> ""
                 }
@@ -459,6 +461,22 @@ fun ContainerLabelValue(
             errors[dateOfBirthKey]?.value = if (hasError) "This field is required" else ""
         },
         errorMessage = errors[dateOfBirthKey]?.value ?: ""
+    )
+
+    val dateCreatedKey = "Date Created"
+    val dateCreated = statesValue[dateCreatedKey]
+    DatePickerField(
+        label = dateCreatedKey,
+        dateValue = dateCreated?.value ?: "",
+        onDateChange = { newValue ->
+            dateCreated?.value = newValue
+            errors[dateCreatedKey]?.value = if (newValue.isEmpty()) "This field is required" else ""
+        },
+        isError = errors[dateCreatedKey]?.value?.isNotEmpty() == true,
+        onErrorChange = { hasError ->
+            errors[dateCreatedKey]?.value = if (hasError) "This field is required" else ""
+        },
+        errorMessage = errors[dateCreatedKey]?.value ?: ""
     )
 
     if (includePassword) {
@@ -870,6 +888,7 @@ fun ButtonSubmitData(
                     address = statesValue["Address"]?.value ?: "",
                     mobileNumber = statesValue["Mobile Number"]?.value ?: "",
                     dateOfBirth = statesValue["Date Of Birth"]?.value ?: "",
+                    createdAt = statesValue["Date Created"]?.value ?: "",
                     password = statesValue["Password"]?.value ?: targetUserDto?.password ?: "",
                     isSuperAdmin = selectedOption == "Admin",
                     isAdmin = selectedOption == "BHW",
@@ -975,6 +994,14 @@ fun validateForm(
             "Date Of Birth" -> {
                 if (state.value.isEmpty()) {
                     errors[label]?.value = "Date of birth is required"
+                    hasError = true
+                } else {
+                    errors[label]?.value = ""
+                }
+            }
+            "Date Created" -> {
+                if (state.value.isEmpty()) {
+                    errors[label]?.value = "Date Created is required"
                     hasError = true
                 } else {
                     errors[label]?.value = ""
