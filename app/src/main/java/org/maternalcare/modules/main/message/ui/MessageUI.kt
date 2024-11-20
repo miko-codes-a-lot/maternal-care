@@ -205,14 +205,15 @@ fun MessageInputField(onSend: (message: String) -> Unit) {
         TextField(
             value = messageText.value,
             onValueChange = { messageText.value = it },
-            placeholder = { Text("Type your message...")},
+            placeholder = { Text("Type your message...",color = Color.Black)},
             modifier = Modifier
-                .weight(1f)
                 .padding(8.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor = Color.White,
                 focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black
+                unfocusedTextColor = Color.Black,
+                focusedBorderColor = Color(0xFF6650a4),
+                unfocusedBorderColor = Color(0xFF6650a4)
             )
         )
         Icon(
