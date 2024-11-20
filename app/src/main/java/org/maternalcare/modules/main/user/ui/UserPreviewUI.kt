@@ -70,7 +70,7 @@ fun UserPreviewUI(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = title,
-            fontFamily = FontFamily.Serif,
+            fontFamily = FontFamily.SansSerif,
             fontSize = 24.sp,
             color = Color.Black,
             modifier = Modifier
@@ -87,7 +87,8 @@ fun UserPreviewUI(
             Text(
                 text = "cancel",
                 modifier = Modifier,
-                fontSize = 15.sp
+                fontSize = 15.sp,
+                fontFamily = FontFamily.SansSerif
             )
         }
     }
@@ -194,6 +195,6 @@ fun ButtonPreview(
 
         )
     ) {
-        Text(text = "Confirm", fontSize = 17.sp)
+        Text(text = "Confirm", fontSize = 17.sp, fontFamily = FontFamily.SansSerif,)
     }
 }

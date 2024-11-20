@@ -70,7 +70,7 @@ fun StatusPreviewUI (
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Pregnant Status History",
-            fontFamily = FontFamily.Serif,
+            fontFamily = FontFamily.SansSerif,
             fontSize = 23.sp,
             modifier = Modifier
                 .padding(bottom = 3.dp, top = 7.dp)

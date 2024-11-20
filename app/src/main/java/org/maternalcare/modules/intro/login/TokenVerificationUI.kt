@@ -58,12 +58,12 @@ fun TokenVerificationUI(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Enter the token sent to your email", fontSize = 17.sp)
+        Text("Enter the token sent to your email", fontSize = 17.sp, fontFamily = FontFamily.SansSerif)
         Spacer(modifier = Modifier.height(10.dp))
         OutlinedTextField(
             value = token,
             onValueChange = { token = it },
-            label = { Text("Token", color = Color.Black, fontSize = 15.sp) },
+            label = { Text("Token", color = Color.Black, fontSize = 15.sp, fontFamily = FontFamily.SansSerif) },
             modifier = Modifier
                 .fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
@@ -105,7 +105,7 @@ fun TokenVerificationUI(
 
         message?.let {
             Spacer(modifier = Modifier.height(10.dp))
-            Text(it, color = Color.Red, fontSize = 15.sp)
+            Text(it, color = Color.Red, fontSize = 15.sp, fontFamily = FontFamily.SansSerif)
         }
     }
 }

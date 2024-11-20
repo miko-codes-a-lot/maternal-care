@@ -546,7 +546,7 @@ fun ContainerLabelValue(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = 8.dp, top = 3.dp)
                 )
-              
+                Spacer(modifier = Modifier.weight(0.4f))
                 Row(
                     Modifier
                         .selectable(

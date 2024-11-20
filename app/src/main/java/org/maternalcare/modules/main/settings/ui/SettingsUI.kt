@@ -118,7 +118,7 @@ fun SettingsUI(navController: NavController,
                         text = "Logout",
                         fontSize = 17.sp,
                         color = Color(0xFF6650a4),
-                        fontFamily = FontFamily.Serif
+                        fontFamily = FontFamily.SansSerif
                     )
                 }
             }
@@ -190,7 +190,7 @@ fun UserDetails(navController: NavController, currentUser: UserDto) {
                 Text(
                     text = fullName,
                     fontSize = 17.sp,
-                    fontFamily = FontFamily.Serif,
+                    fontFamily = FontFamily.SansSerif,
                     color = Color(0xFF6650a4),
                     modifier = Modifier.padding(horizontal = 3.dp)
                 )
@@ -257,7 +257,7 @@ fun SettingButton(text: String, onClick: () -> Unit) {
         Row(
             modifier = Modifier
         ){
-            Text(text = text, fontSize = 16.sp, fontFamily = FontFamily.Serif)
+            Text(text = text, fontSize = 16.sp, fontFamily = FontFamily.SansSerif)
             Spacer(modifier = Modifier.weight(0.1f))
             Icon(painter = painterResource(id = R.drawable.editicon)
                 ,contentDescription = null,

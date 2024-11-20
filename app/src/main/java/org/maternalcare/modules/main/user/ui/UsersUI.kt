@@ -155,7 +155,7 @@ fun UsersSearchIcon(
             cursorColor = Color.Black
         ),
         placeholder = {
-            Text(text = "Search...", color = Color.Black)
+            Text(text = "Search...", color = Color.Black,  fontFamily = FontFamily.SansSerif)
         }
     )
 }
