@@ -58,13 +58,13 @@ fun ResetPasswordUI(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Reset Your Password", fontSize = 18.sp)
+        Text("Reset Your Password", fontSize = 18.sp, fontFamily = FontFamily.SansSerif)
         Spacer(modifier = Modifier.height(14.dp))
 
         OutlinedTextField(
             value = newPassword,
             onValueChange = { newPassword = it },
-            label = { Text("New Password", color = Color.Black, fontSize = 15.sp) },
+            label = { Text("New Password", color = Color.Black, fontSize = 15.sp, fontFamily = FontFamily.SansSerif) },
             visualTransformation = if (isNewPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth(),
@@ -90,7 +90,7 @@ fun ResetPasswordUI(
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password", color = Color.Black, fontSize = 15.sp) },
+            label = { Text("Confirm Password", color = Color.Black, fontSize = 15.sp, fontFamily = FontFamily.SansSerif) },
             visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth(),
@@ -127,18 +127,6 @@ fun ResetPasswordUI(
                 } else {
                     message = "Passwords do not match"
                 }
-
-//                if (newPassword == confirmPassword) {
-//                    viewModel.resetPassword(email, token, newPassword) { success, errorMessage ->
-//                        if (success) {
-//                            navController.navigate(IntroNav.Login)
-//                        } else {
-//                            message = errorMessage
-//                        }
-//                    }
-//                } else {
-//                    message = "Passwords do not match"
-//                }
             },
             modifier = Modifier
                 .fillMaxWidth()

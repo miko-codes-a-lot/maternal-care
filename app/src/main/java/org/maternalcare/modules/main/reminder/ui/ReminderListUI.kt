@@ -68,7 +68,7 @@ fun ReminderListUI(
         ) {
             Text(
                 text = "Prenatal Check-Up Scheduled",
-                fontFamily = FontFamily.Monospace,
+                fontFamily = FontFamily.SansSerif,
                 fontSize = 21.sp,
                 textAlign = TextAlign.Center
             )
@@ -106,7 +106,7 @@ private fun RemindersButton (data: UserCheckupDto, onClick: () -> Unit, navContr
             fontSize = 17.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            fontFamily = FontFamily.Serif,
+            fontFamily = FontFamily.SansSerif,
         )
     }
 }

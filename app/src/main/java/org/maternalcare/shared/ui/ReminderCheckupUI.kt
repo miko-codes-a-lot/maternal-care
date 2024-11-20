@@ -104,6 +104,7 @@ fun ReminderCheckupUI (
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
+                            fontFamily = FontFamily.SansSerif
                         )
                     }
                 }

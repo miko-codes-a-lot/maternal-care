@@ -113,6 +113,7 @@ fun ReminderDates (
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
+                            fontFamily = FontFamily.SansSerif
                         )
                     }
                 }
