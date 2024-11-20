@@ -189,7 +189,7 @@ fun ChartUI(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF6650a4),
-                            fontFamily = FontFamily.Serif,
+                            fontFamily = FontFamily.SansSerif,
                             modifier = Modifier.weight(1f)
                         )
                         Icon(
@@ -224,7 +224,7 @@ fun ChartUI(
                                             fontSize = 17.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = Color(0xFFFFFFFF),
-                                            fontFamily = FontFamily.Serif
+                                            fontFamily = FontFamily.SansSerif
                                         )
                                     }
                                 }

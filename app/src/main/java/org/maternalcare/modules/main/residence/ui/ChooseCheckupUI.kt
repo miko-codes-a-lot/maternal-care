@@ -166,7 +166,7 @@ fun ImmunizationRecordButton(
             )
             Text(
                 text = "Immunization Record",
-                fontFamily = FontFamily.Serif,
+                fontFamily = FontFamily.SansSerif,
                 fontSize = 18.sp,
                 color = Color.White,
                 modifier = Modifier
@@ -190,7 +190,7 @@ fun ButtonContainer(text: String, onClick: () -> Unit) {
             .width(280.dp)
     ) {
         Text(
-            text = text, fontFamily = FontFamily.Serif,
+            text = text, fontFamily = FontFamily.SansSerif,
             fontSize = 20.sp
         )
     }
@@ -248,7 +248,7 @@ private fun TrimesterRecordButton(text: String, onClick: () -> Unit){
             text = text,
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
-            fontFamily = FontFamily.Serif
+            fontFamily = FontFamily.SansSerif
         )
     }
 }
