@@ -98,7 +98,7 @@ fun LoginUI(
 
         Text(text = "Login to your account",
             fontSize = 23.sp,
-            fontFamily = FontFamily.Serif,
+            fontFamily = FontFamily.SansSerif,
             color = Color.Black
         )
 
@@ -121,7 +121,7 @@ fun LoginUI(
             Text(
                 text = "Forgot password ?",
                 fontSize = 15.sp,
-                fontFamily = FontFamily.Serif,
+                fontFamily = FontFamily.SansSerif,
                 color = Color.Red
             )
         }
@@ -208,7 +208,7 @@ fun ButtonLogin(
                 Text(
                     text = "Login",
                     fontSize = 14.sp,
-                    fontFamily = FontFamily.Serif,
+                    fontFamily = FontFamily.SansSerif,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -245,14 +245,14 @@ fun UserLog(
             },
             label = {
                 Text(text = loginLabel,
-                    fontFamily = FontFamily.Serif,
+                    fontFamily = FontFamily.SansSerif,
                     color = Color(0xFF6650a4)
                 )
             },
             textStyle = TextStyle(
                 color = Color(0xFF6650a4),
                 fontSize = 16.sp,
-                fontFamily = FontFamily.Serif,
+                fontFamily = FontFamily.SansSerif,
             ),
             leadingIcon = {
                 if(loginLabel.contains("Email Account")){

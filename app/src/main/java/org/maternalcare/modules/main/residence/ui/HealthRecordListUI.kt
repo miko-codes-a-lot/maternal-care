@@ -215,7 +215,7 @@ private fun RecordButton(text: String, onClick: () -> Unit){
             text = text,
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
-            fontFamily = FontFamily.Serif,
+            fontFamily = FontFamily.SansSerif,
             color = Color.White
         )
     }
@@ -345,7 +345,7 @@ fun ConditionStatusButton(
             )
             Text(
                 text = "Condition Status",
-                fontFamily = FontFamily.Serif,
+                fontFamily = FontFamily.SansSerif,
                 fontSize = 18.sp,
                 color = Color.White,
                 textAlign = TextAlign.Center,
@@ -390,7 +390,7 @@ fun PregnantConditionStatus(
             )
             Text(
                 text = "Pregnant Condition",
-                fontFamily = FontFamily.Serif,
+                fontFamily = FontFamily.SansSerif,
                 fontSize = 17.sp,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,

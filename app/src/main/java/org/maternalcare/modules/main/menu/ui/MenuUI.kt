@@ -121,8 +121,8 @@ fun UserPosition(userDto: UserDto) {
         userDetails.forEach { userPosition ->
             Text(
                 text = userPosition,
-                fontSize = 24.sp,
-                fontFamily = FontFamily.Serif
+                fontSize = 26.sp,
+                fontFamily = FontFamily.SansSerif
             )
         }
     }
@@ -273,7 +273,7 @@ private fun MenuButton(text: String, onClick: () -> Unit, iconResId: Int) {
                 fontSize = 17.sp,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Serif,
+                fontFamily = FontFamily.SansSerif,
                 modifier = Modifier
                     .padding(end = 18.dp)
                     .weight(1f)
@@ -297,7 +297,7 @@ fun TextContainer(text: String) {
                 color =Color(0xFF6650a4),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                fontFamily = (FontFamily.Serif),
+                fontFamily = (FontFamily.SansSerif),
                 modifier = Modifier.padding(bottom = 10.dp)
             )
         }else{

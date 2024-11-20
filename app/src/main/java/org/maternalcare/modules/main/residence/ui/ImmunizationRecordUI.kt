@@ -369,48 +369,9 @@ fun ButtonSaveRecord(
             contentColor = Color.White
         )
     ) {
-        Text(text = "Confirm", fontSize = 17.sp)
+        Text(text = "Confirm", fontSize = 17.sp, fontFamily = FontFamily.SansSerif)
     }
 }
-//
-//@Composable
-//fun DateCreatedValue(
-//    createdAtState: MutableState<String?>,
-//    isEditable: Boolean
-//) {
-//    Row(
-//        modifier = Modifier
-//            .padding(top = 10.dp)
-//            .fillMaxWidth(),
-//        verticalAlignment = Alignment.CenterVertically,
-//        horizontalArrangement = Arrangement.SpaceBetween
-//    ) {
-//        Text(
-//            text = "Date Created:",
-//            fontWeight = FontWeight.Bold,
-//            fontSize = 16.sp,
-//            color = Color.Black,
-//            fontFamily = FontFamily.SansSerif,
-//            modifier = Modifier.padding(start = 20.dp)
-//        )
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.Center,
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            DatePickerBox(
-//                dateValue = resolveDateValue(createdAtState.value, isSuperAdmin = false, isResidence = false),
-//                onDateChange = { newDate -> createdAtState.value = newDate },
-//                isEditable = isEditable
-//            )
-//        }
-//    }
-//    HorizontalDivider(
-//        modifier = Modifier.fillMaxWidth(),
-//        thickness = 1.dp,
-//        color = Color.Black
-//    )
-//}
 
 @Composable
 fun DateCreatedValue(

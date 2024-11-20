@@ -84,7 +84,7 @@ fun MessageListUI(navController: NavController, currentUser: UserDto) {
         ) {
             Text(
                 text = "Inbox",
-                fontFamily = FontFamily.Serif,
+                fontFamily = FontFamily.SansSerif,
                 fontSize = 23.sp
             )
             Spacer(modifier = Modifier.height(20.dp))

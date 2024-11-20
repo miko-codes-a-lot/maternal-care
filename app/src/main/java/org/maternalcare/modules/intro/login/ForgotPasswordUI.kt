@@ -48,13 +48,13 @@ fun ForgotPasswordUI(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Enter your email to reset password", fontSize = 17.sp)
+        Text("Enter your email to reset password", fontSize = 17.sp, fontFamily = FontFamily.SansSerif)
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email", color = Color.Black, fontSize = 15.sp) },
+            label = { Text("Email", color = Color.Black, fontSize = 15.sp, fontFamily = FontFamily.SansSerif) },
             modifier = Modifier
                 .fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
