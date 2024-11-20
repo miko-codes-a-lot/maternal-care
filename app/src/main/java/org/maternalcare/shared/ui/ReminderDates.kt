@@ -106,7 +106,7 @@ fun ReminderDates (
                             contentColor = Color.White
                         ),
                         modifier = Modifier
-                            .height(32.dp)
+                            .height(35.dp)
                     ) {
                         Text(
                             text = "Close",
