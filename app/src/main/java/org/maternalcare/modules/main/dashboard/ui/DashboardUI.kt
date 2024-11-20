@@ -48,7 +48,7 @@ fun DashboardUI(navController: NavController, userDto: UserDto, isArchive: Boole
             Text(
                 text = "Dashboard",
                 fontSize = 24.sp,
-                fontFamily = FontFamily.Serif
+                fontFamily = FontFamily.SansSerif
             )
             Spacer(modifier = Modifier.height(15.dp))
             Box(
@@ -140,7 +140,7 @@ private fun DashboardButton(text: String,iconResId: Int? = null, onClick: () -> 
                 fontSize = 17.sp,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Serif,
+                fontFamily = FontFamily.SansSerif,
                 modifier = Modifier
                     .padding(end = 18.dp)
                     .weight(1f)

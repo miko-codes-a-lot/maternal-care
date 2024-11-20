@@ -129,7 +129,7 @@ fun FullNameEdit(currentDto: UserDto) {
                             label = {
                                 Text(
                                     text = label,
-                                    fontFamily = FontFamily.Serif,
+                                    fontFamily = FontFamily.SansSerif,
                                     color = if (isFieldError) Color.Red else Color(0xFF6650a4),
                                     fontSize = 15.sp
                                 )
@@ -140,8 +140,8 @@ fun FullNameEdit(currentDto: UserDto) {
                             },
                             textStyle = TextStyle(
                                 color = Color(0xFF6650a4),
-                                fontSize = 16.sp,
-                                fontFamily = FontFamily.Serif
+                                fontSize = 15.sp,
+                                fontFamily = FontFamily.SansSerif
                             ),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Color(0xFF6650a4),
@@ -164,14 +164,14 @@ fun FullNameEdit(currentDto: UserDto) {
                             Text(
                                 text = "Full Name : ",
                                 fontSize = 16.sp,
-                                fontFamily = FontFamily.Serif,
+                                fontFamily = FontFamily.SansSerif,
                                 color = Color(0xFF6650a4)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = currentDto.firstName +" "+ currentDto.middleName +" "+ currentDto.lastName,
                                 fontSize = 16.sp,
-                                fontFamily = FontFamily.Serif,
+                                fontFamily = FontFamily.SansSerif,
                                 color = Color(0xFF6650a4)
                             )
                         }
@@ -229,7 +229,7 @@ fun FullNameEdit(currentDto: UserDto) {
                 Text(
                     text = if (!editFullNameMode) "Change" else "Save",
                     fontSize = 16.sp,
-                    fontFamily = FontFamily.Serif
+                    fontFamily = FontFamily.SansSerif
                 )
             }
         }
@@ -263,15 +263,15 @@ fun EmailEdit(currentDto: UserDto) {
                         emailError = if (newValue.isEmpty()) "Email cannot be empty" else null
                     },
                     label = { Text(text = "Email",
-                        fontFamily = FontFamily.Serif,
+                        fontFamily = FontFamily.SansSerif,
                         color = if (emailError != null) Color.Red else Color(0xFF6650a4),
-                        fontSize = 16.sp)
+                        fontSize = 15.sp)
                     },
                     isError = emailError != null,
                     textStyle = TextStyle(
                         color = Color(0xFF6650a4),
                         fontSize = 16.sp,
-                        fontFamily = FontFamily.Serif,
+                        fontFamily = FontFamily.SansSerif,
                     ),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF6650a4),
@@ -296,14 +296,14 @@ fun EmailEdit(currentDto: UserDto) {
                     )
                     {
                         Text(text = "Email :", fontSize = 16.sp,
-                            fontFamily = FontFamily.Serif,
+                            fontFamily = FontFamily.SansSerif,
                             color = (Color(0xFF6650a4))
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = currentDto.email ?: "No email",
                             fontSize = 16.sp,
-                            fontFamily = FontFamily.Serif,
+                            fontFamily = FontFamily.SansSerif,
                             color = Color(0xFF6650a4)
                         )
                     }
@@ -349,7 +349,7 @@ fun EmailEdit(currentDto: UserDto) {
             ) {
                 Text(
                     text = if (!editEmailMode) "Change" else "Save",
-                    fontSize = 16.sp, fontFamily = FontFamily.Serif
+                    fontSize = 16.sp, fontFamily = FontFamily.SansSerif
                 )
             }
         }
@@ -389,15 +389,15 @@ fun PhoneNumberEdit(currentDto: UserDto) {
                         }
                     },
                     label = { Text(text = "Mobile Number",
-                        fontFamily = FontFamily.Serif,
+                        fontFamily = FontFamily.SansSerif,
                         color = if (phoneNumberError != null) Color.Red else Color(0xFF6650a4),
-                        fontSize = 16.sp)
+                        fontSize = 15.sp)
                     },
                     isError = phoneNumberError != null,
                     textStyle = TextStyle(
                         color = Color(0xFF6650a4),
                         fontSize = 16.sp,
-                        fontFamily = FontFamily.Serif,
+                        fontFamily = FontFamily.SansSerif,
                     ),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF6650a4),
@@ -423,14 +423,14 @@ fun PhoneNumberEdit(currentDto: UserDto) {
                     {
                         Text(text = "Mobile Number :",
                             fontSize = 15.sp,
-                            fontFamily = FontFamily.Serif,
+                            fontFamily = FontFamily.SansSerif,
                             color = (Color(0xFF6650a4))
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = currentDto.mobileNumber ?: "No Mobile Number",
                             fontSize = 16.sp,
-                            fontFamily = FontFamily.Serif,
+                            fontFamily = FontFamily.SansSerif,
                             color = Color(0xFF6650a4)
                         )
                     }
@@ -476,7 +476,7 @@ fun PhoneNumberEdit(currentDto: UserDto) {
             ) {
                 Text(
                     text = if (!editMobileNumberMode) "Change" else "Save",
-                    fontSize = 16.sp, fontFamily = FontFamily.Serif
+                    fontSize = 16.sp, fontFamily = FontFamily.SansSerif
                 )
             }
         }
@@ -519,7 +519,7 @@ fun PasswordEdit(navController: NavController, currentDto: UserDto) {
                     Text(
                         text = label,
                         color = Color(0xFF6650a4),
-                        fontFamily = FontFamily.Serif,
+                        fontFamily = FontFamily.SansSerif,
                         fontSize = 16.sp)
                 },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -542,7 +542,7 @@ fun PasswordEdit(navController: NavController, currentDto: UserDto) {
                 textStyle = TextStyle(
                     color = Color(0xFF6650a4),
                     fontSize = 16.sp,
-                    fontFamily = FontFamily.Serif,
+                    fontFamily = FontFamily.SansSerif,
                 ),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color(0xFF6650a4),
@@ -609,7 +609,7 @@ fun PasswordEdit(navController: NavController, currentDto: UserDto) {
             Text(
                 text = "Save",
                 fontSize = 16.sp,
-                fontFamily = FontFamily.Serif
+                fontFamily = FontFamily.SansSerif
             )
         }
     }

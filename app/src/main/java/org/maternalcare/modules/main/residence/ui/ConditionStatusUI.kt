@@ -304,6 +304,7 @@ fun TextFieldStatusContainer(label: String, value: String, onValueChange: (Strin
             text = label,
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
+            fontFamily = FontFamily.SansSerif,
             modifier =  Modifier
                 .padding(top = 5.dp)
         )
@@ -470,7 +471,7 @@ fun ButtonSaveStatus(
             contentColor = Color.White
         )
     ) {
-        Text(text = "Confirm", fontSize = 17.sp)
+        Text(text = "Confirm", fontSize = 17.sp, fontFamily = FontFamily.SansSerif)
     }
 }
 
