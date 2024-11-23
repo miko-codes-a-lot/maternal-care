@@ -20,13 +20,24 @@ import org.maternalcare.modules.main.user.model.entity.UserImmunization
 import org.maternalcare.modules.main.user.model.entity.UserTrimesterRecord
 import org.maternalcare.modules.main.user.model.mapper.toDTO
 import org.maternalcare.modules.main.user.model.mapper.toEntity
+import org.maternalcare.shared.ext.calculateAgeOfGestation
+import org.maternalcare.shared.ext.determineBMICategory
+import org.maternalcare.shared.ext.expectedDueDate
 import org.maternalcare.shared.ext.hashPassword
-import org.mongodb.kbson.BsonObjectId.Companion.invoke
 import org.mongodb.kbson.ObjectId
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import javax.inject.Inject
+
+data class UserReportInc(val user: User, val checkup: UserCheckup?)
+data class UserReport(val user: UserDto, val checkupReport: UserCheckupReport, val immunization: UserImmunizationDto?)
+data class UserCheckupReport(
+    val checkup: UserCheckupDto,
+    val nutritionalStatus: String,
+    val ageOfGestation: String,
+    val expectedDueDate: String,
+)
 
 class UserService @Inject constructor(private val realm: Realm) {
     fun fetchByEmail(email: String): UserDto? {
@@ -65,6 +76,64 @@ class UserService @Inject constructor(private val realm: Realm) {
                 false
             }
         }
+    }
+
+    fun fetchResidencesWithDetails(addressName: String?): List<UserReport> {
+
+        val query = StringBuilder()
+            .append("isResidence == true")
+            .append(" AND isArchive == false")
+            .append(" AND address == $0")
+
+        val users = realm.query<User>(query.toString(), addressName)
+            .sort("address", Sort.DESCENDING)
+            .find()
+
+        return users
+            .map { user ->
+                val checkupQuery = StringBuilder()
+                    .append("isArchive == false")
+                    .append(" AND userId == $0")
+
+                val userCheckup = realm.query<UserCheckup>(checkupQuery.toString(), user._id.toHexString())
+                    .sort("createdAt", Sort.DESCENDING)
+                    .find()
+                    .firstOrNull()
+
+                UserReportInc(user, userCheckup)
+            }
+            .filter { it.checkup != null }
+
+            .map { report ->
+                val user = report.user
+                val checkup = report.checkup!!
+
+                val immunizationQuery = StringBuilder()
+                    .append("userId == $0")
+                    .append(" AND pregnantRecordId == $1")
+
+                val immunization = realm.query<UserImmunization>(
+                    immunizationQuery.toString(),
+                    user._id.toHexString(),
+                    checkup.pregnantRecordId
+                )
+                    .find()
+                    .firstOrNull()
+
+                val checkupDto = checkup.toDTO()
+
+
+                UserReport(
+                    user.toDTO(),
+                    UserCheckupReport(
+                        checkupDto,
+                        checkupDto.determineBMICategory(),
+                        "${checkupDto.calculateAgeOfGestation()} week(s)",
+                        checkupDto.expectedDueDate(),
+                    ),
+                    immunization?.toDTO(),
+                )
+            }
     }
 
     fun fetch(
