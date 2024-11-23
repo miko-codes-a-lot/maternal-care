@@ -1,3 +1,5 @@
+package org.maternalcare.modules.main.residence.ui
+
 import android.content.Context
 import android.content.Intent
 import android.os.Environment
@@ -14,7 +16,8 @@ import com.itextpdf.text.pdf.ColumnText
 import com.itextpdf.text.pdf.PdfPCell
 import com.itextpdf.text.pdf.PdfPTable
 import com.itextpdf.text.pdf.PdfWriter
-import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.modules.main.user.service.UserReport
+import org.maternalcare.shared.ext.expectedDueDate
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -22,7 +25,7 @@ import java.util.Locale
 
 fun exportToPDF(
     context: Context,
-    data: List<UserDto>,
+    data: List<UserReport>,
     onFinish: (file: File) -> Unit,
     onError: (Exception) -> Unit
 ) {
@@ -44,33 +47,82 @@ fun exportToPDF(
         addLineSpace(document, 1)
 
         val headers = listOf(
-            "No", "First Name", "Middle Name", "Last Name", "Address", "Date of Birth", "Mobile Number", "Email Address"
+            "No",
+            "First Name",
+            "Middle Name",
+            "Last Name",
+            "Date of Birth",
+            "Mobile Number",
+            "Address",
+            "BP (MMHG)",
+            "Height (cm)",
+            "Weight (kg)",
+            "Gravida Para",
+            "Last Menstrual Period",
+            "Nutritional Status",
+            "Age Of Gestation",
+            "Expected Due Date"
         )
 
-        val columnWidths = floatArrayOf(0.3f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 1f)
+        val columnWidths = floatArrayOf(
+            0.3f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+        )
 
         val table = createTable(headers.size, columnWidths)
 
         headers.forEach {
-            val cell = createCell(it, fixedHeight = 30f)
+            val cell = createCell(it, fixedHeight = 40f)
             table.addCell(cell)
         }
 
-        data.forEachIndexed { index, user ->
-            table.addCell(createCell((index + 1).toString(), fixedHeight = 25f))
-            table.addCell(createCell(user.firstName, fixedHeight = 25f))
-            table.addCell(createCell(user.middleName ?: "", fixedHeight = 25f))
-            table.addCell(createCell(user.lastName, fixedHeight = 25f))
-            table.addCell(createCell(user.address ?: "", fixedHeight = 25f))
-            val formattedDate = try {
-                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(user.dateOfBirth)
-                    ?.let { dateFormatter.format(it) }
+        fun formatDate(date: String?): String? {
+            return try {
+                date?.let {
+                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(it)
+                        ?.let { parsedDate -> dateFormatter.format(parsedDate) }
+                }
             } catch (e: Exception) {
-                user.dateOfBirth
+                date
             }
-            table.addCell(createCell(formattedDate ?: "", fixedHeight = 25f))
-            table.addCell(createCell(user.mobileNumber ?: "", fixedHeight = 25f))
-            table.addCell(createCell(user.email ?: "", fixedHeight = 25f))
+        }
+
+        data.forEachIndexed { index, report ->
+            val user = report.user
+            val checkupReport = report.checkupReport
+            val checkup = checkupReport.checkup
+            val formattedDate = formatDate(user.dateOfBirth)
+            val formattedLastMenstrualPeriod = formatDate(checkup.lastMenstrualPeriod)
+            val formattedExpectedDueDate = formatDate(checkup.expectedDueDate())
+
+            table.addCell(createCell((index + 1).toString(), fixedHeight = 35f))
+            table.addCell(createCell(user.firstName, fixedHeight = 35f))
+            table.addCell(createCell(user.middleName ?: "", fixedHeight = 35f))
+            table.addCell(createCell(user.lastName, fixedHeight = 35f))
+            table.addCell(createCell(formattedDate ?: "", fixedHeight = 35f))
+            table.addCell(createCell(user.mobileNumber ?: "", fixedHeight = 35f))
+            table.addCell(createCell(user.address ?: "", fixedHeight = 35f))
+            table.addCell(createCell(checkup.bloodPressure.toString(), fixedHeight = 35f))
+            table.addCell(createCell(checkup.height.toString(), fixedHeight = 35f))
+            table.addCell(createCell(checkup.weight.toString(), fixedHeight = 35f))
+            table.addCell(createCell(checkup.gravidaPara, fixedHeight = 35f))
+            table.addCell(createCell(formattedLastMenstrualPeriod ?: "", fixedHeight = 35f))
+            table.addCell(createCell(checkupReport.nutritionalStatus, fixedHeight = 35f))
+            table.addCell(createCell(checkupReport.ageOfGestation, fixedHeight = 35f))
+            table.addCell(createCell(formattedExpectedDueDate ?: "", fixedHeight = 35f))
         }
 
         document.add(table)
