@@ -5,7 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.realm.kotlin.notifications.ResultsChange
 import kotlinx.coroutines.flow.Flow
 import org.maternalcare.modules.main.message.model.dto.MessageDto
-import org.maternalcare.modules.main.message.model.entity.Message
+import org.maternalcare.modules.main.message.model.entity.MessageDeprecate
 import org.maternalcare.modules.main.message.service.MessageService
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.service.UserService
@@ -22,7 +22,7 @@ class MessageViewModel @Inject constructor(
         return userService.fetch(isResidence = true, userId = userId.toObjectId())
     }
 
-    fun fetchMessagesAsync(senderId: ObjectId, receiverId: ObjectId): Flow<ResultsChange<Message>> {
+    fun fetchMessagesAsync(senderId: ObjectId, receiverId: ObjectId): Flow<ResultsChange<MessageDeprecate>> {
         return messageService.fetchAsFlow(senderId, receiverId)
 
     }

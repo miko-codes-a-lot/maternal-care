@@ -44,7 +44,7 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import org.maternalcare.R
 import org.maternalcare.modules.main.message.model.dto.MessageDto
-import org.maternalcare.modules.main.message.model.entity.Message
+import org.maternalcare.modules.main.message.model.entity.MessageDeprecate
 import org.maternalcare.modules.main.message.viewmodel.MessageViewModel
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.shared.ext.toObjectId
@@ -83,7 +83,7 @@ fun MessageUI(navController: NavController, currentUser: UserDto, userDto: UserD
 fun MessageContainer(currentUser: UserDto, userDto: UserDto) {
     val messageViewModel: MessageViewModel = hiltViewModel()
     val coroutineScope = rememberCoroutineScope()
-    val messages = remember { mutableStateListOf<Message>() }
+    val messages = remember { mutableStateListOf<MessageDeprecate>() }
 
     LaunchedEffect("Message") {
         launch {
@@ -136,7 +136,7 @@ fun MessageContainer(currentUser: UserDto, userDto: UserDto) {
 }
 
 @Composable
-fun MessageView(message: Message, currentUser: UserDto, userDto: UserDto) {
+fun MessageView(message: MessageDeprecate, currentUser: UserDto, userDto: UserDto) {
     val isReceiver = message.senderId?.toHexString() == currentUser.id
 
     val (containerColor, contentColor) =
