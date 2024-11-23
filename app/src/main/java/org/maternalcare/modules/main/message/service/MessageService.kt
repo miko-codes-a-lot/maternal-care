@@ -46,7 +46,7 @@ class MessageService @Inject constructor(private val realm: Realm) {
     }
 
     fun fetchLatestMessage(senderId: ObjectId, receiverId: ObjectId): Flow<MessageDto?> {
-        val query = realm.query<Message>(
+        val query = realm.query<MessageDeprecate>(
             "senderId == $0 AND receiverId == $1 OR senderId == $1 AND receiverId == $0",
             senderId, receiverId
         ).sort("date", Sort.DESCENDING)
@@ -59,7 +59,7 @@ class MessageService @Inject constructor(private val realm: Realm) {
     suspend fun updateMessageReadStatus(messageDto: MessageDto) {
         realm.write {
             val messageId = ObjectId(messageDto.id ?: throw IllegalArgumentException("Invalid message ID"))
-            val message = query<Message>("_id == $0", messageId).first().find()
+            val message = query<MessageDeprecate>("_id == $0", messageId).first().find()
             if (message != null) {
                 message.isRead = true
                 copyToRealm(message, updatePolicy = UpdatePolicy.ALL)
