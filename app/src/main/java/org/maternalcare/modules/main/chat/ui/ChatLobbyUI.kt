@@ -51,7 +51,8 @@ fun ChatLobbyUIPreview() {
                     lastMessage = "Hello, I need some help please!",
                     isRead = false,
                     updatedAt = Clock.System.now()
-                )
+                ),
+                Clock.System.now()
             ),
             UserChatDto(
                 UserDto(
@@ -67,7 +68,8 @@ fun ChatLobbyUIPreview() {
                     lastMessage = "Please call me back, I need urgent care, I think my water broke, I'm panicking",
                     isRead = true,
                     updatedAt = Clock.System.now()
-                )
+                ),
+                Clock.System.now()
             ),
         )
     )
