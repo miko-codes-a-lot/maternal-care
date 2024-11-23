@@ -87,7 +87,7 @@ fun ResidencesPreviewUI(
         ) {
             Text(
                 text = "Profile",
-                fontFamily = FontFamily.Serif,
+                fontFamily = FontFamily.SansSerif,
                 fontSize = 25.sp,
                 modifier = Modifier
                     .padding(bottom = 3.dp, top = 7.dp)

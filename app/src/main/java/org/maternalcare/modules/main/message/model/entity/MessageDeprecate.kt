@@ -16,4 +16,6 @@ class MessageDeprecate: RealmObject {
     var content: String? = ""
 
     var date: RealmInstant? = RealmInstant.now()
+
+    var isRead: Boolean = false
 }

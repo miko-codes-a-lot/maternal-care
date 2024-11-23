@@ -13,7 +13,8 @@ fun MessageDeprecate.toDTO(): MessageDto {
         senderId = senderId?.toHexString(),
         receiverId = receiverId?.toHexString(),
         content = content,
-        date = date?.toInstantStringNullable()
+        date = date?.toInstantStringNullable(),
+        isRead = isRead
     )
 }
 
@@ -25,6 +26,7 @@ fun MessageDto.toEntity(): MessageDeprecate {
         receiverId = messageDto.receiverId.toObjectId()
         content = messageDto.content
         date = messageDto.date?.toRealmInstant() ?: RealmInstant.now()
+        isRead = messageDto.isRead
     }
 }
 

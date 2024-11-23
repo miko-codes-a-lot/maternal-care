@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -59,10 +61,17 @@ class LoginViewModel @Inject constructor(
         return null
     }
 
+    private fun clearUserSession() {
+        sharedPreferences.edit().clear().apply()
+    }
+
     fun logout(navController: NavController) {
-        sharedPreferences.edit().remove("logged_in_user_id").apply()
-        navController.navigate(IntroNav) {
-            popUpTo(0)
+        val userId = getLoggedInUserId() 
+        if (userId != null) {
+            clearUserSession()
+            navController.navigate(IntroNav) {
+                popUpTo(0) { inclusive = true }
+            }
         }
     }
 

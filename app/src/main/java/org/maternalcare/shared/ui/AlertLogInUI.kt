@@ -98,12 +98,12 @@ fun AlertLogInUI(
                             contentColor = Color.White
                         ),
                         modifier = Modifier
-                            .height(32.dp)
+                            .height(35.dp)
                     ) {
                         Text(
                             text = "Close",
                             fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily.SansSerif,
                             textAlign = TextAlign.Center,
                         )
                     }

@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.modules.main.residence.ui.ListAddress
+import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 
 @Preview
@@ -114,7 +115,7 @@ fun AverageStats(label: String, value: String) {
             modifier = Modifier.padding(10.dp),
             fontSize = 19.sp,
             textAlign = TextAlign.Center,
-            fontFamily = FontFamily.Monospace,
+            fontFamily = FontFamily.SansSerif,
         )
 
         Spacer(modifier = Modifier.width(50.dp))
@@ -124,7 +125,7 @@ fun AverageStats(label: String, value: String) {
             modifier = Modifier.padding(10.dp),
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
-            fontFamily = FontFamily.Monospace,
+            fontFamily = FontFamily.SansSerif,
         )
     }
 }

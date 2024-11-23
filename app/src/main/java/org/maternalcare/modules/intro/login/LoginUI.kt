@@ -98,7 +98,7 @@ fun LoginUI(
 
         Text(text = "Login to your account",
             fontSize = 23.sp,
-            fontFamily = FontFamily.Serif,
+            fontFamily = FontFamily.SansSerif,
             color = Color.Black
         )
 
@@ -121,7 +121,7 @@ fun LoginUI(
             Text(
                 text = "Forgot password ?",
                 fontSize = 15.sp,
-                fontFamily = FontFamily.Serif,
+                fontFamily = FontFamily.SansSerif,
                 color = Color.Red
             )
         }
@@ -208,7 +208,7 @@ fun ButtonLogin(
                 Text(
                     text = "Login",
                     fontSize = 14.sp,
-                    fontFamily = FontFamily.Serif,
+                    fontFamily = FontFamily.SansSerif,
                     fontWeight = FontWeight.Bold
                 )
             }

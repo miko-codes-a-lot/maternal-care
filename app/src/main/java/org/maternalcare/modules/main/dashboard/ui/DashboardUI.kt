@@ -1,16 +1,19 @@
 package org.maternalcare.modules.main.dashboard.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,9 +30,10 @@ import androidx.navigation.NavController
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
+import org.maternalcare.modules.main.user.model.dto.UserDto
 
 @Composable
-fun DashboardUI(navController: NavController) {
+fun DashboardUI(navController: NavController, userDto: UserDto, isArchive: Boolean = false) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
@@ -41,54 +45,65 @@ fun DashboardUI(navController: NavController) {
              verticalArrangement = Arrangement.Center,
              horizontalAlignment = Alignment.CenterHorizontally
         ) {
-             Image(painter = painterResource(id = R.drawable.care),
-                   contentDescription = "Logo Image",
-                   modifier = Modifier.size(140.dp)
-             )
-             Spacer(modifier = Modifier.height(15.dp))
-             Text(
-                 text = "Dashboard",
-                 fontSize = 25.sp,
-                 fontFamily = FontFamily.Serif
-             )
-             Spacer(modifier = Modifier.height(15.dp))
-
-             DashboardMenu(navController)
+            Text(
+                text = "Dashboard",
+                fontSize = 24.sp,
+                fontFamily = FontFamily.SansSerif
+            )
+            Spacer(modifier = Modifier.height(15.dp))
+            Box(
+                modifier = Modifier
+                    .size(400.dp)
+            ) {
+                ChartUI(
+                    userDto = userDto,
+                    addressDto = null,
+                    isArchive = isArchive
+                )
+            }
+            DashboardMenu(navController)
         }
     }
 }
 
 @Composable
 private fun DashboardMenu (navController: NavController) {
-    Column {
-        //Total Pregnant
-        Spacer(modifier = Modifier.height(10.dp))
-        DashboardButton(text = "Total Pregnant Records") {
-            navController.navigate(MainNav.Residences(status = CheckupStatus.PREGNANT.name, isArchive = false, isDashboard = true))
+    LazyColumn(
+        modifier = Modifier
+            .height(300.dp)
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(15.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        item {
+            DashboardButton(text = "  Pregnant Records", iconResId = R.drawable.pregnant_list) {
+                navController.navigate(MainNav.Residences(status = CheckupStatus.PREGNANT.name, isArchive = false, isDashboard = true))
+            }
         }
 
-        //Normal
-        Spacer(modifier = Modifier.height(15.dp))
-        DashboardButton(text = "Normal List") {
-            navController.navigate(MainNav.Residences(status = CheckupStatus.NORMAL.name, isArchive = false,isDashboard = true))
+        item {
+            DashboardButton(text = "Normal List", iconResId = R.drawable.normal_safety) {
+                navController.navigate(MainNav.Residences(status = CheckupStatus.NORMAL.name, isArchive = false, isDashboard = true))
+            }
         }
 
-        //Critical
-        Spacer(modifier = Modifier.height(15.dp))
-        DashboardButton(text = "Critical List") {
-            navController.navigate(MainNav.Residences(status = CheckupStatus.CRITICAL.name, isArchive = false,isDashboard = true))
+        item {
+            DashboardButton(text = "Critical List", iconResId = R.drawable.critical_healing) {
+                navController.navigate(MainNav.Residences(status = CheckupStatus.CRITICAL.name, isArchive = false, isDashboard = true))
+            }
         }
 
-        //Complete
-        Spacer(modifier = Modifier.height(15.dp))
-        DashboardButton(text = "Complete",iconResId = R.drawable.check) {
-            navController.navigate(MainNav.MonitoringCheckup(isComplete = true, dashboard = true, isArchive = false))
+        item {
+            DashboardButton(
+                text = "Complete", iconResId = R.drawable.check) {
+                navController.navigate(MainNav.MonitoringCheckup(isComplete = true, dashboard = true, isArchive = false))
+            }
         }
 
-        // Incomplete
-        Spacer(modifier = Modifier.height(15.dp))
-        DashboardButton(text = "Incomplete",iconResId = R.drawable.clear) {
-            navController.navigate(MainNav.MonitoringCheckup(isComplete = false, dashboard = false, isArchive = false))
+        item {
+            DashboardButton(text = "Incomplete", iconResId = R.drawable.clear) {
+                navController.navigate(MainNav.MonitoringCheckup(isComplete = false, dashboard = false, isArchive = false))
+            }
         }
     }
 }
@@ -109,22 +124,27 @@ private fun DashboardButton(text: String,iconResId: Int? = null, onClick: () -> 
             pressedElevation = 8.dp
         )
     ) {
-        
-        Text(
-            text = text,
-            fontSize = 17.sp,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            fontFamily = FontFamily.Serif
-        )
-        Spacer(modifier = Modifier.width(10.dp))
-        iconResId?.let {
-           Image(
-               painter = painterResource(id = it),
-               contentDescription = null,
-               modifier = Modifier.size(32.dp),
-               colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White)
-           )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            iconResId?.let {
+                Icon(
+                    painter = painterResource(id = it),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            Text(
+                text = text,
+                fontSize = 17.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.SansSerif,
+                modifier = Modifier
+                    .padding(end = 18.dp)
+                    .weight(1f)
+            )
         }
     }
 }

@@ -83,6 +83,7 @@ fun CheckupPreview(
                     text = "Checkup Preview",
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
+                    fontFamily = FontFamily.SansSerif,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp, top = 16.dp),

@@ -123,7 +123,7 @@ fun CreateHealthRecordUI(
                     pregnancyOrder = newNumber
                 }
             },
-            label = { Text("Pregnancy Order", color = Color.Black, fontSize = 15.sp) },
+            label = { Text("Pregnancy Order", color = Color.Black, fontSize = 15.sp, fontFamily = FontFamily.SansSerif) },
             modifier = Modifier
                 .fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(

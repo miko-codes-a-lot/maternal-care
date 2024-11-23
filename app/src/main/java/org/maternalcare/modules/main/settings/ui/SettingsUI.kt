@@ -135,7 +135,7 @@ fun SettingsUI(navController: NavController,
 fun Profile(
         navController: NavController,
         currentUser: UserDto,
-        userService: UserService
+        userService: UserService,
 ){
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -168,7 +168,7 @@ fun Profile(
 
         Spacer(modifier = Modifier.padding(vertical = 5.dp))
 
-        Setting(navController)
+        Setting(navController, userDto = currentUser)
     }
 }
 
@@ -221,12 +221,12 @@ fun UserDetails(navController: NavController, currentUser: UserDto) {
 }
 
 @Composable
-fun Setting(navController: NavController){
+fun Setting(navController: NavController, userDto: UserDto){
     val settingsMenu = listOf(
-        SettingItem(text = "Email"){
+        SettingItem(text = "${userDto.email}"){
             navController.navigate("${MainNav.EditSettings}/email")
         },
-        SettingItem(text = "Mobile Number"){
+        SettingItem(text = "${userDto.mobileNumber}"){
             navController.navigate("${MainNav.EditSettings}/mobileNumber")
         },
         SettingItem(text = "Password"){

@@ -96,7 +96,7 @@ fun EditCheckupUI(
 ) {
     val listOfLabel = listOf(
         "Blood Pressure (MM HG)", "Height (CM)", "Weight (KG)",
-        "Gravida Para (GP)",
+        "Gravida Para (GP)", "Date Created",
         "Date of Check-up", "Last Menstrual Period", "Next Check-up"
     )
     val statesValue = remember {
@@ -107,6 +107,7 @@ fun EditCheckupUI(
                     "Height (CM)" -> checkupUser?.height?.toString() ?: "0.0"
                     "Weight (KG)" -> checkupUser?.weight?.toString() ?: "0.0"
                     "Gravida Para (GP)" -> checkupUser?.gravidaPara ?: ""
+                    "Date Created" -> checkupUser?.createdAt ?: ""
                     "Date of Check-up" -> checkupUser?.dateOfCheckUp ?: ""
                     "Last Menstrual Period" -> checkupUser?.lastMenstrualPeriod ?: ""
                     "Next Check-up" -> checkupUser?.scheduleOfNextCheckUp ?: ""
@@ -165,7 +166,8 @@ fun TextFieldEditCheckUp(
 ) {
     if (textFieldLabel == "Last Menstrual Period" ||
         textFieldLabel == "Date of Check-up" ||
-        textFieldLabel == "Next Check-up"
+        textFieldLabel == "Next Check-up" ||
+        textFieldLabel == "Date Created"
     ) {
         EditDatePickerField(
             label = textFieldLabel,
@@ -272,6 +274,7 @@ fun ButtonSaveEdit(
                     weight = statesValue["Weight (KG)"]?.value?.toDoubleOrNull() ?: 0.0,
                     gravidaPara = statesValue["Gravida Para (GP)"]?.value ?: "",
                     checkup = checkupNumber,
+                    createdAt = statesValue["Date Created"]?.value ?: "",
                     lastMenstrualPeriod = statesValue["Last Menstrual Period"]?.value ?: "",
                     dateOfCheckUp = statesValue["Date of Check-up"]?.value ?: "",
                     scheduleOfNextCheckUp = statesValue["Next Check-up"]?.value ?: "",

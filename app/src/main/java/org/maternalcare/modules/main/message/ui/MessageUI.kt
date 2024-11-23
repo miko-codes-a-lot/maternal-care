@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -172,13 +173,15 @@ fun MessageView(message: MessageDeprecate, currentUser: UserDto, userDto: UserDt
                 Text(
                     text = message.content ?: "",
                     maxLines = Int.MAX_VALUE,
-                    overflow = TextOverflow.Visible
+                    overflow = TextOverflow.Visible,
+                    fontFamily = FontFamily.SansSerif,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "",
                     fontSize = MaterialTheme.typography.bodySmall.fontSize,
                     textAlign = TextAlign.End,
+                    fontFamily = FontFamily.SansSerif,
                     modifier = Modifier
                         .fillMaxWidth()
                         .alpha(0.38f)
@@ -202,14 +205,15 @@ fun MessageInputField(onSend: (message: String) -> Unit) {
         TextField(
             value = messageText.value,
             onValueChange = { messageText.value = it },
-            placeholder = { Text("Type your message...")},
+            placeholder = { Text("Type your message...",color = Color.Black)},
             modifier = Modifier
-                .weight(1f)
                 .padding(8.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor = Color.White,
                 focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black
+                unfocusedTextColor = Color.Black,
+                focusedBorderColor = Color(0xFF6650a4),
+                unfocusedBorderColor = Color(0xFF6650a4)
             )
         )
         Icon(

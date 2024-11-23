@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -120,8 +121,8 @@ fun UserPosition(userDto: UserDto) {
         userDetails.forEach { userPosition ->
             Text(
                 text = userPosition,
-                fontSize = 24.sp,
-                fontFamily = FontFamily.Serif
+                fontSize = 26.sp,
+                fontFamily = FontFamily.SansSerif
             )
         }
     }
@@ -150,8 +151,11 @@ private fun Menu(navController: NavController, userDto: UserDto) {
             items(menuItems) { menuItem ->
                 Spacer(modifier = Modifier.padding(top = 4.dp))
 
-                MenuButton(text = menuItem.text, onClick = menuItem.action)
-
+                MenuButton(
+                    text = menuItem.text,
+                    onClick = menuItem.action,
+                    iconResId = menuItem.iconResId
+                )
                 Spacer(modifier = Modifier.padding(bottom = 10.dp))
             }
         }
@@ -161,59 +165,87 @@ private fun Menu(navController: NavController, userDto: UserDto) {
 fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem> {
     return when {
         userDto.isSuperAdmin -> listOf(
-            MenuItem(text = "Pregnant Users") {
-                navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
-            },
-            MenuItem(text = "Dashboard") {
-                navController.navigate(MainNav.Dashboard)
-            },
-            MenuItem(text = "Manage User") {
-                navController.navigate(MainNav.User)
-            },
-            MenuItem(text = "Backup Storage") {
-                navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name, isArchive = true))
-            },
-            MenuItem(text = "Settings") {
-                navController.navigate(MainNav.Settings)
-            }
+            MenuItem(
+                text = "Pregnant Users",
+                action = { navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name)) },
+                iconResId = R.drawable.pregnant
+            ),
+            MenuItem(
+                text = "Dashboard",
+                action = { navController.navigate(MainNav.Dashboard) },
+                iconResId = R.drawable.chart
+            ),
+            MenuItem(
+                text = "Manage User",
+                action = { navController.navigate(MainNav.User) },
+                iconResId = R.drawable.manage_user
+            ),
+            MenuItem(
+                text = "Backup Storage",
+                action = {  navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name, isArchive = true)) },
+                iconResId = R.drawable.backup
+            ),
+            MenuItem(
+                text = "Settings",
+                action = { navController.navigate(MainNav.Settings) },
+                iconResId = R.drawable.settings
+            )
         )
         userDto.isAdmin -> listOf(
-            MenuItem(text = "Pregnant Users") {
-                navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name))
-            },
-            MenuItem(text = "Messages") {
-                navController.navigate(MainNav.MessagesList)
-            },
-            MenuItem(text = "Reminders") {
-                navController.navigate(MainNav.ReminderLists)
-            },
-            MenuItem(text = "Backup Storage") {
-                navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name, isArchive = true))
-            },
-            MenuItem(text = "Settings") {
-                navController.navigate(MainNav.Settings)
-            }
+            MenuItem(
+                text = "Pregnant Users",
+                action = { navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name)) },
+                iconResId = R.drawable.pregnant
+            ),
+            MenuItem(
+                text = "Messages",
+                action = { navController.navigate(MainNav.MessagesList) },
+                iconResId = R.drawable.message
+            ),
+            MenuItem(
+                text = "Reminders",
+                action = { navController.navigate(MainNav.ReminderLists) },
+                iconResId = R.drawable.reminder
+            ),
+            MenuItem(
+                text = "Backup Storage",
+                action = {  navController.navigate(MainNav.Addresses(CheckupStatus.ALL.name, isArchive = true)) },
+                iconResId = R.drawable.backup
+                ),
+            MenuItem(
+                text = "Settings",
+                action = { navController.navigate(MainNav.Settings) },
+                iconResId = R.drawable.settings
+            )
         )
         userDto.isResidence -> listOf(
-            MenuItem(text = "Profile") {
-                navController.navigate(MainNav.HealthRecord(userId = userDto.id!!))
-            },
-            MenuItem(text = "Messages") {
-                navController.navigate(MainNav.Messages(userId = userDto.createdById!!))
-            },
-            MenuItem(text = "Reminders") {
-                navController.navigate(MainNav.ReminderLists)
-            },
-            MenuItem(text = "Settings") {
-                navController.navigate(MainNav.Settings)
-            }
+            MenuItem(
+                text = "Profile",
+                action = { navController.navigate(MainNav.HealthRecord(userId = userDto.id!!)) },
+                iconResId = R.drawable.pregnant
+            ),
+            MenuItem(
+                text = "Messages",
+                action = { navController.navigate(MainNav.Messages(userId = userDto.createdById!!)) },
+                iconResId = R.drawable.message
+            ),
+            MenuItem(
+                text = "Reminders",
+                action = { navController.navigate(MainNav.ReminderLists) },
+                iconResId = R.drawable.reminder
+            ),
+            MenuItem(
+                text = "Settings",
+                action = { navController.navigate(MainNav.Settings) },
+                iconResId = R.drawable.settings
+            )
         )
         else -> listOf()
     }
 }
 
 @Composable
-private fun MenuButton(text: String, onClick: () -> Unit) {
+private fun MenuButton(text: String, onClick: () -> Unit, iconResId: Int) {
     ElevatedButton(onClick = onClick,
         colors = ButtonDefaults.elevatedButtonColors(
             containerColor =  Color(0xFF6650a4),
@@ -227,13 +259,26 @@ private fun MenuButton(text: String, onClick: () -> Unit) {
             pressedElevation = 8.dp
         )
     ) {
-        Text(
-            text = text,
-            fontSize = 17.sp,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            fontFamily = FontFamily.Serif
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                painter = painterResource(id = iconResId),
+                contentDescription = "$text Icon",
+                modifier = Modifier.size(24.dp)
+            )
+            Text(
+                text = text,
+                fontSize = 17.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.SansSerif,
+                modifier = Modifier
+                    .padding(end = 18.dp)
+                    .weight(1f)
+            )
+        }
     }
 }
 
@@ -250,7 +295,7 @@ fun TextContainer(text: String) {
                 text = text,
                 textAlign = TextAlign.Center,
                 color =Color(0xFF6650a4),
-                fontSize = 19.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = (FontFamily.SansSerif),
                 modifier = Modifier.padding(bottom = 10.dp)

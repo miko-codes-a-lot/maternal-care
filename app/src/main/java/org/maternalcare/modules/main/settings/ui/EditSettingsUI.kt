@@ -61,9 +61,9 @@ fun EditSettingsUI(navController: NavController, settingType: String, currentDto
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (settingType) {
-                "fullName" -> FullNameEdit(navController, currentDto)
-                "email" -> EmailEdit(navController, currentDto)
-                "mobileNumber" -> PhoneNumberEdit(navController, currentDto)
+                "fullName" -> FullNameEdit(currentDto)
+                "email" -> EmailEdit(currentDto)
+                "mobileNumber" -> PhoneNumberEdit(currentDto)
                 "password" -> PasswordEdit(navController, currentDto)
                 else -> Text(text = "Invalid setting type")
             }
@@ -71,7 +71,7 @@ fun EditSettingsUI(navController: NavController, settingType: String, currentDto
     }
 }
 @Composable
-fun FullNameEdit(navController: NavController, currentDto: UserDto) {
+fun FullNameEdit(currentDto: UserDto) {
     val viewModel: UserViewModel = hiltViewModel()
     val coroutineScope = rememberCoroutineScope()
 
@@ -86,9 +86,9 @@ fun FullNameEdit(navController: NavController, currentDto: UserDto) {
 
     val fieldStates = remember {
         mutableMapOf(
-            "First Name" to mutableStateOf(currentDto.firstName ?: ""),
+            "First Name" to mutableStateOf(currentDto.firstName),
             "Middle Name" to mutableStateOf(currentDto.middleName ?: ""),
-            "Last Name" to mutableStateOf(currentDto.lastName ?: "")
+            "Last Name" to mutableStateOf(currentDto.lastName)
         )
     }
 
@@ -131,7 +131,7 @@ fun FullNameEdit(navController: NavController, currentDto: UserDto) {
                                     text = label,
                                     fontFamily = FontFamily.SansSerif,
                                     color = if (isFieldError) Color.Red else Color(0xFF6650a4),
-                                    fontSize = 14.sp
+                                    fontSize = 15.sp
                                 )
                             },
                             isError = isFieldError,
@@ -140,7 +140,7 @@ fun FullNameEdit(navController: NavController, currentDto: UserDto) {
                             },
                             textStyle = TextStyle(
                                 color = Color(0xFF6650a4),
-                                fontSize = 14.sp,
+                                fontSize = 15.sp,
                                 fontFamily = FontFamily.SansSerif
                             ),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -156,21 +156,21 @@ fun FullNameEdit(navController: NavController, currentDto: UserDto) {
                 Box(
                     modifier = Modifier
                         .width(280.dp)
-                        .border(1.dp, color = Color(0xFF6650a4), shape = RoundedCornerShape(5.dp))
+                        .border(2.dp, color = Color(0xFF6650a4), shape = RoundedCornerShape(5.dp))
                         .padding(8.dp)
                 ) {
                     Column {
                         Row(modifier = Modifier.padding(10.dp)) {
                             Text(
                                 text = "Full Name : ",
-                                fontSize = 15.sp,
+                                fontSize = 16.sp,
                                 fontFamily = FontFamily.SansSerif,
                                 color = Color(0xFF6650a4)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = currentDto.firstName +" "+ currentDto.middleName +" "+ currentDto.lastName,
-                                fontSize = 15.sp,
+                                fontSize = 16.sp,
                                 fontFamily = FontFamily.SansSerif,
                                 color = Color(0xFF6650a4)
                             )
@@ -228,8 +228,8 @@ fun FullNameEdit(navController: NavController, currentDto: UserDto) {
             ) {
                 Text(
                     text = if (!editFullNameMode) "Change" else "Save",
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily.Serif
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily.SansSerif
                 )
             }
         }
@@ -237,7 +237,7 @@ fun FullNameEdit(navController: NavController, currentDto: UserDto) {
 }
 
 @Composable
-fun EmailEdit(navController: NavController, currentDto: UserDto) {
+fun EmailEdit(currentDto: UserDto) {
     val viewModel: UserViewModel = hiltViewModel()
     val coroutineScope = rememberCoroutineScope()
 
@@ -265,12 +265,12 @@ fun EmailEdit(navController: NavController, currentDto: UserDto) {
                     label = { Text(text = "Email",
                         fontFamily = FontFamily.SansSerif,
                         color = if (emailError != null) Color.Red else Color(0xFF6650a4),
-                        fontSize = 14.sp)
+                        fontSize = 15.sp)
                     },
                     isError = emailError != null,
                     textStyle = TextStyle(
                         color = Color(0xFF6650a4),
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         fontFamily = FontFamily.SansSerif,
                     ),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -284,7 +284,7 @@ fun EmailEdit(navController: NavController, currentDto: UserDto) {
                     modifier = Modifier
                         .width(280.dp)
                         .border(
-                            1.dp,
+                            2.dp,
                             color = Color(0xFF6650a4),
                             shape = RoundedCornerShape(5.dp)
                         )
@@ -295,15 +295,14 @@ fun EmailEdit(navController: NavController, currentDto: UserDto) {
                             .padding(10.dp)
                     )
                     {
-                        Text(text = "Email :", fontSize = 15
-                            .sp,
+                        Text(text = "Email :", fontSize = 16.sp,
                             fontFamily = FontFamily.SansSerif,
                             color = (Color(0xFF6650a4))
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = currentDto.email ?: "No email",
-                            fontSize = 15.sp,
+                            fontSize = 16.sp,
                             fontFamily = FontFamily.SansSerif,
                             color = Color(0xFF6650a4)
                         )
@@ -350,7 +349,7 @@ fun EmailEdit(navController: NavController, currentDto: UserDto) {
             ) {
                 Text(
                     text = if (!editEmailMode) "Change" else "Save",
-                    fontSize = 14.sp, fontFamily = FontFamily.Serif
+                    fontSize = 16.sp, fontFamily = FontFamily.SansSerif
                 )
             }
         }
@@ -358,7 +357,7 @@ fun EmailEdit(navController: NavController, currentDto: UserDto) {
 }
 
 @Composable
-fun PhoneNumberEdit(navController: NavController, currentDto: UserDto) {
+fun PhoneNumberEdit(currentDto: UserDto) {
     val viewModel: UserViewModel = hiltViewModel()
     val coroutineScope = rememberCoroutineScope()
 
@@ -392,12 +391,12 @@ fun PhoneNumberEdit(navController: NavController, currentDto: UserDto) {
                     label = { Text(text = "Mobile Number",
                         fontFamily = FontFamily.SansSerif,
                         color = if (phoneNumberError != null) Color.Red else Color(0xFF6650a4),
-                        fontSize = 14.sp)
+                        fontSize = 15.sp)
                     },
                     isError = phoneNumberError != null,
                     textStyle = TextStyle(
                         color = Color(0xFF6650a4),
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         fontFamily = FontFamily.SansSerif,
                     ),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -411,7 +410,7 @@ fun PhoneNumberEdit(navController: NavController, currentDto: UserDto) {
                     modifier = Modifier
                         .width(280.dp)
                         .border(
-                            1.dp,
+                            2.dp,
                             color = Color(0xFF6650a4),
                             shape = RoundedCornerShape(5.dp)
                         )
@@ -422,15 +421,15 @@ fun PhoneNumberEdit(navController: NavController, currentDto: UserDto) {
                             .padding(10.dp)
                     )
                     {
-                        Text(text = "Mobile Number :", fontSize = 15
-                            .sp,
+                        Text(text = "Mobile Number :",
+                            fontSize = 15.sp,
                             fontFamily = FontFamily.SansSerif,
                             color = (Color(0xFF6650a4))
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = currentDto.mobileNumber ?: "No Mobile Number",
-                            fontSize = 15.sp,
+                            fontSize = 16.sp,
                             fontFamily = FontFamily.SansSerif,
                             color = Color(0xFF6650a4)
                         )
@@ -477,7 +476,7 @@ fun PhoneNumberEdit(navController: NavController, currentDto: UserDto) {
             ) {
                 Text(
                     text = if (!editMobileNumberMode) "Change" else "Save",
-                    fontSize = 14.sp, fontFamily = FontFamily.Serif
+                    fontSize = 16.sp, fontFamily = FontFamily.SansSerif
                 )
             }
         }
@@ -521,8 +520,8 @@ fun PasswordEdit(navController: NavController, currentDto: UserDto) {
                         text = label,
                         color = Color(0xFF6650a4),
                         fontFamily = FontFamily.SansSerif,
-                        fontSize = 14.sp)
-                        },
+                        fontSize = 16.sp)
+                },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = {
@@ -542,7 +541,7 @@ fun PasswordEdit(navController: NavController, currentDto: UserDto) {
                 },
                 textStyle = TextStyle(
                     color = Color(0xFF6650a4),
-                    fontSize = 14.sp,
+                    fontSize = 16.sp,
                     fontFamily = FontFamily.SansSerif,
                 ),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -609,8 +608,8 @@ fun PasswordEdit(navController: NavController, currentDto: UserDto) {
         ) {
             Text(
                 text = "Save",
-                fontSize = 15.sp,
-                fontFamily = FontFamily.Serif
+                fontSize = 16.sp,
+                fontFamily = FontFamily.SansSerif
             )
         }
     }

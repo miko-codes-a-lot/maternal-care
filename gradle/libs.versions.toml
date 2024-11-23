@@ -9,6 +9,10 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.4"
 activityCompose = "1.9.1"
 composeBom = "2024.04.01"
+mpandroidchart = "v3.1.0"
+mapsCompose = "6.1.0"
+playServicesMaps = "19.0.0"
+secretsGradlePlugin = "2.0.1"
 uiTextGoogleFonts = "1.6.8"
 navigationRuntimeKtx = "2.7.7"
 navigationCompose = "2.8.0-alpha08"
@@ -50,11 +54,15 @@ android-hilt-compiler = { group = "com.google.dagger", name = "hilt-android-comp
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines-android" }
+mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
+maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
+play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 realm-kotlin-base = { group = "io.realm.kotlin", name = "library-base", version.ref = "realm-kotlin" }
 realm-kotlin-sync = { group = "io.realm.kotlin", name = "library-sync", version.ref = "realm-kotlin" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 places = { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
+secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

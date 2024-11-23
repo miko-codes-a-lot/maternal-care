@@ -28,6 +28,18 @@ class MessageViewModel @Inject constructor(
     }
 
     suspend fun sendMessage(messageDto: MessageDto): Result<MessageDto> {
+        messageDto.isRead = false
         return messageService.send(messageDto)
+    }
+
+    fun fetchLatestMessageFlow(senderId: ObjectId, receiverId: ObjectId): Flow<MessageDto?> {
+        return messageService.fetchLatestMessage(senderId, receiverId)
+    }
+
+    suspend fun markMessageAsRead(messageDto: MessageDto) {
+        if (!messageDto.isRead) {
+            messageDto.isRead = true
+            messageService.updateMessageReadStatus(messageDto)
+        }
     }
 }

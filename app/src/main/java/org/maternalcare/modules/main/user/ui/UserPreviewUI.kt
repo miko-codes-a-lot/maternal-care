@@ -55,6 +55,7 @@ fun UserPreviewUI(
             "Address" to (user.address ?: ""),
             "Mobile Number" to (user.mobileNumber ?: ""),
             "Date Of Birth" to dateFormatContainer(user.dateOfBirth),
+            "Date Created" to dateFormatContainer(user.createdAt ?: ""),
             "User Type" to (if (user.isSuperAdmin) "SuperAdmin" else if (user.isAdmin) "Admin" else "Residence"),
             "Active" to (if (user.isActive) "Yes" else "No")
         ).associate { (label, value) -> label to mutableStateOf(value) }
@@ -69,7 +70,7 @@ fun UserPreviewUI(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = title,
-            fontFamily = FontFamily.Serif,
+            fontFamily = FontFamily.SansSerif,
             fontSize = 24.sp,
             color = Color.Black,
             modifier = Modifier
@@ -86,7 +87,8 @@ fun UserPreviewUI(
             Text(
                 text = "cancel",
                 modifier = Modifier,
-                fontSize = 15.sp
+                fontSize = 15.sp,
+                fontFamily = FontFamily.SansSerif
             )
         }
     }
@@ -193,6 +195,6 @@ fun ButtonPreview(
 
         )
     ) {
-        Text(text = "Confirm", fontSize = 17.sp)
+        Text(text = "Confirm", fontSize = 17.sp, fontFamily = FontFamily.SansSerif,)
     }
 }

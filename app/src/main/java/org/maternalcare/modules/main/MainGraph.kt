@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import org.maternalcare.modules.intro.splash.MapUI
 import org.maternalcare.modules.main.dashboard.ui.CheckupProgressUI
 import org.maternalcare.modules.main.dashboard.ui.DashboardUI
 import org.maternalcare.modules.main.menu.ui.MenuUI
@@ -259,7 +260,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.Dashboard> {
             Guard(navController = navController) { currentUser ->
-                DashboardUI(navController)
+                DashboardUI(navController, currentUser, isArchive = false)
             }
         }
         composable<MainNav.User> {
@@ -373,6 +374,14 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                     pregnantRecordId = pregnantRecordId,
                     pregnantTrimesterId = pregnantTrimesterId
                 )
+            }
+        }
+        composable<MainNav.Map> {
+            val args = it.toRoute<MainNav.Map>()
+            val residenceViewModel: ResidenceViewModel = hiltViewModel()
+            val addressDto = residenceViewModel.fetchOneAddress(args.addressId.toObjectId())
+            Guard(navController = navController) { currentUser ->
+                MapUI(addressDto = addressDto)
             }
         }
     }

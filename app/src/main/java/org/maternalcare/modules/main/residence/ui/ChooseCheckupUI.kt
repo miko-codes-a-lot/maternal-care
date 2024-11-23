@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,12 +31,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserConditionDto
@@ -153,10 +156,24 @@ fun ImmunizationRecordButton(
             .height(63.dp)
             .width(280.dp)
     ) {
-        Text(
-            text = "Immunization Record", fontFamily = FontFamily.Serif,
-            fontSize = 20.sp
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = R.drawable.record),
+                contentDescription = "Record Icon",
+                tint = Color.White,
+                modifier = Modifier
+                    .size(23.dp)
+            )
+            Text(
+                text = "Immunization Record",
+                fontFamily = FontFamily.SansSerif,
+                fontSize = 18.sp,
+                color = Color.White,
+                modifier = Modifier
+                    .padding(start = 15.dp)
+                        .weight(1f)
+            )
+        }
     }
 }
 
@@ -173,7 +190,7 @@ fun ButtonContainer(text: String, onClick: () -> Unit) {
             .width(280.dp)
     ) {
         Text(
-            text = text, fontFamily = FontFamily.Serif,
+            text = text, fontFamily = FontFamily.SansSerif,
             fontSize = 20.sp
         )
     }
@@ -229,10 +246,9 @@ private fun TrimesterRecordButton(text: String, onClick: () -> Unit){
     ) {
         Text(
             text = text,
-            fontSize = 17.sp,
+            fontSize = 18.sp,
             textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            fontFamily = FontFamily.Serif
+            fontFamily = FontFamily.SansSerif
         )
     }
 }

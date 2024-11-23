@@ -14,10 +14,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -28,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
@@ -56,6 +61,7 @@ fun ImmunizationRecordUI(
     pregnantRecord: UserBirthRecordDto,
 ) {
     val isAdminShow = currentUser.isAdmin
+    val dateCreated = remember { mutableStateOf(userImmunization.createdAt ?: "") }
     val conditionStates = remember {
         mapOf(
             "1st Dose" to Pair(
@@ -151,9 +157,15 @@ fun ImmunizationRecordUI(
                 isEditable = isAdminShow,
                 currentUser = currentUser
             )
-            Spacer(modifier = Modifier.height(20.dp))
+//            Spacer(modifier = Modifier.height(20.dp))
 
             if (isAdminShow) {
+                DateCreatedValue(
+                    label = "Date Created",
+                    dateValue = dateCreated.value,
+                    onDateChange = { newDate -> dateCreated.value = newDate }
+                )
+                Spacer(modifier = Modifier.height(25.dp))
                 ButtonSaveRecord(
                     userId = userDto.id!!,
                     navController = navController,
@@ -161,6 +173,7 @@ fun ImmunizationRecordUI(
                     userImmunization = userImmunization,
                     currentUser = currentUser,
                     pregnantRecordId = pregnantRecord.id!!,
+                    createdAtState = dateCreated
                 )
             }
         }
@@ -307,6 +320,7 @@ fun ButtonSaveRecord(
     conditionStates: Map<String, Pair<MutableState<String?>, MutableState<String?>>>,
     userImmunization: UserImmunizationDto,
     pregnantRecordId: String,
+    createdAtState: MutableState<String>
 ) {
     val userViewModel: UserViewModel = hiltViewModel()
     val context = LocalContext.current
@@ -327,7 +341,8 @@ fun ButtonSaveRecord(
                 fourthDoseReturn = conditionStates["4th Dose"]?.second?.value,
                 fifthDoseGiven = conditionStates["5th Dose"]?.first?.value,
                 fifthDoseReturn = conditionStates["5th Dose"]?.second?.value,
-                createdById = currentUser.id ?: userImmunization.createdById
+                createdById = currentUser.id ?: userImmunization.createdById,
+                createdAt = createdAtState.value
             )
             scope.launch {
                 try {
@@ -354,6 +369,111 @@ fun ButtonSaveRecord(
             contentColor = Color.White
         )
     ) {
-        Text(text = "Confirm", fontSize = 17.sp)
+        Text(text = "Confirm", fontSize = 17.sp, fontFamily = FontFamily.SansSerif)
     }
+}
+
+@Composable
+fun DateCreatedValue(
+    label: String,
+    dateValue: String,
+    onDateChange: (String) -> Unit
+) {
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    val datePickerDialog = remember {
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                calendar.set(year, month, dayOfMonth)
+                val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+                isoFormat.timeZone = TimeZone.getTimeZone("UTC")
+                val dateISO = isoFormat.format(calendar.time)
+                onDateChange(dateISO)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+    }
+
+    val displayFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    val displayDate = try {
+        val dateISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateValue)
+        dateISO?.let { displayFormat.format(it) } ?: throw Exception("ISO Parse failed")
+    } catch (isoException: Exception) {
+        try {
+            val dateSimple = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateValue)
+            dateSimple?.let { displayFormat.format(it) } ?: "Select Date"
+        } catch (e: Exception) {
+            "Select Date"
+        }
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp)
+            .clickable {
+                datePickerDialog.show()
+            }
+    ){
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = label,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.SansSerif,
+                fontSize = 17.sp,
+                modifier = Modifier.padding(start = 20.dp)
+            )
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Icon(
+                painter = painterResource(id = R.drawable.calendar_icon),
+                contentDescription = "Calendar Icon",
+                modifier = Modifier.size(24.dp)
+            )
+
+            Text(" : ", fontWeight = FontWeight.Bold)
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Surface(
+                modifier = Modifier
+                    .clickable {
+                        datePickerDialog.show()
+                    }
+                    .padding(4.dp)
+                    .background(Color.Transparent),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(202.dp)
+                        .height(40.dp)
+                        .background(Color.White)
+                ){
+                    Text(
+                        text = displayDate,
+                        fontFamily = FontFamily.SansSerif,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .padding(start = 20.dp)
+                            .align(Alignment.CenterStart),
+                        fontSize = 17.sp,
+                        color = Color.Black
+                    )
+                }
+            }
+        }
+    }
+    HorizontalDivider(
+        modifier = Modifier.fillMaxWidth(),
+        thickness = 1.dp,
+        color = Color.Black
+    )
 }

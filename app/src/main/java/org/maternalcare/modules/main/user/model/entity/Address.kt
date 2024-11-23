@@ -10,4 +10,6 @@ class Address : RealmObject {
     var _id: ObjectId = BsonObjectId()
     var name: String = ""
     var code: String = ""
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
 }

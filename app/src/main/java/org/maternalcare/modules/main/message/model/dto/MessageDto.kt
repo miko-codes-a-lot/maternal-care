@@ -6,4 +6,5 @@ data class MessageDto(
     var receiverId: String? = null,
     var content: String? = "",
     var date: String? = null,
+    var isRead: Boolean = false,
 )
