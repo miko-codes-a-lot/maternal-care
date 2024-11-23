@@ -52,7 +52,23 @@ fun ChatLobbyUIPreview() {
                     isRead = false,
                     updatedAt = Clock.System.now()
                 )
-            )
+            ),
+            UserChatDto(
+                UserDto(
+                    id = "12",
+                    firstName = "Darwin",
+                    middleName = "Pena",
+                    lastName = "Chu"
+                ),
+                ChatDto(
+                    id = "",
+                    user1Id = "",
+                    user2Id = "",
+                    lastMessage = "Please call me back, I need urgent care, I think my water broke, I'm panicking",
+                    isRead = true,
+                    updatedAt = Clock.System.now()
+                )
+            ),
         )
     )
 }
@@ -96,7 +112,7 @@ fun ChatCard(userChat: UserChatDto) {
             // User Name and Last Message
             Column {
                 Text(
-                    text = "${user.firstName} ${user.lastName}",
+                    text = "${user.firstName} ${user.middleName} ${user.lastName}",
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -104,7 +120,8 @@ fun ChatCard(userChat: UserChatDto) {
                 Text(
                     text = chat.lastMessage,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray,
+                    fontWeight = if (chat.isRead) FontWeight.Normal else FontWeight.Bold,
+                    color = if (chat.isRead) Color.Gray else Color.Black,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
