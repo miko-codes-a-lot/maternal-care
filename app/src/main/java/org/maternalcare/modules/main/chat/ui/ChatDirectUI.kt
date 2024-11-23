@@ -20,7 +20,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,7 +38,7 @@ import org.maternalcare.modules.main.chat.model.dto.MessageDto
 
 @Preview(showSystemUi = true)
 @Composable
-fun ChatScreenPreview() {
+fun ChatDirectPreview() {
     val currentUserId = "user1"
     val messages = listOf(
         MessageDto(
@@ -60,7 +59,7 @@ fun ChatScreenPreview() {
         )
     )
 
-    ChatScreenUI(
+    ChatDirectUI(
         messages = messages,
         currentUserId = currentUserId,
         onSendMessage = { /* Handle send message */ }
@@ -69,7 +68,7 @@ fun ChatScreenPreview() {
 
 
 @Composable
-fun ChatScreenUI(
+fun ChatDirectUI(
     messages: List<MessageDto>,
     currentUserId: String,
     onSendMessage: suspend (String) -> Unit
@@ -111,6 +110,8 @@ fun ChatScreenUI(
             Button(
                 enabled = !isSendingMessage.value,
                 onClick = {
+                    if (isSendingMessage.value) return@Button
+
                     isSendingMessage.value = true
                     if (messageContent.text.isNotBlank()) {
                         scope.launch {

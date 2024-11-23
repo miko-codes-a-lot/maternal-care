@@ -1,7 +1,6 @@
 package org.maternalcare.modules.main
 
 import android.util.Log
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,12 +12,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import kotlinx.datetime.Clock
 import org.maternalcare.modules.intro.splash.MapUI
-import org.maternalcare.modules.main.chat.model.dto.MessageDto
 import org.maternalcare.modules.main.chat.model.viewmodel.ChatViewModel
+import org.maternalcare.modules.main.chat.ui.ChatDirectUI
 import org.maternalcare.modules.main.chat.ui.ChatLobbyUI
-import org.maternalcare.modules.main.chat.ui.ChatScreenUI
 import org.maternalcare.modules.main.dashboard.ui.CheckupProgressUI
 import org.maternalcare.modules.main.dashboard.ui.DashboardUI
 import org.maternalcare.modules.main.message.ui.MessageListUI
@@ -63,7 +60,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 // ViewModel of Chat
                 val chatViewModel: ChatViewModel = hiltViewModel()
 
-                // List of pregnant residence that you can chat
+//                // List of pregnant residence that you can chat
                 val usersChat by chatViewModel.fetchUsers(currentUser.id.toObjectId()).collectAsStateWithLifecycle(
                     initialValue = listOf()
                 )
@@ -110,7 +107,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
 //                } else {
 //                    emptyList()
 //                }
-//                ChatScreenUI(
+//                ChatDirectUI(
 //                    messages = messages, // messages should be passed here
 //                    currentUserId = currentUser.id!!,
 //                    onSendMessage = { message ->
