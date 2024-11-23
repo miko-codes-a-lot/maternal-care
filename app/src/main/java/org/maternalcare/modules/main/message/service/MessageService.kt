@@ -10,24 +10,24 @@ import kotlinx.coroutines.flow.map
 import org.maternalcare.modules.main.message.mapper.toDTO
 import org.maternalcare.modules.main.message.mapper.toEntity
 import org.maternalcare.modules.main.message.model.dto.MessageDto
-import org.maternalcare.modules.main.message.model.entity.Message
+import org.maternalcare.modules.main.message.model.entity.MessageDeprecate
 import org.mongodb.kbson.ObjectId
 import javax.inject.Inject
 
 class MessageService @Inject constructor(private val realm: Realm) {
     fun fetch(senderId: ObjectId, receiverId: ObjectId): List<MessageDto> {
-        return realm.query<Message>("senderId == $0 AND receiverId == $1", senderId, receiverId)
+        return realm.query<MessageDeprecate>("senderId == $0 AND receiverId == $1", senderId, receiverId)
             .find()
             .map { message -> message.toDTO() }
     }
 
-    fun fetchAsFlow(senderId: ObjectId, receiverId: ObjectId): Flow<ResultsChange<Message>> {
+    fun fetchAsFlow(senderId: ObjectId, receiverId: ObjectId): Flow<ResultsChange<MessageDeprecate>> {
         val query = StringBuilder()
             .append("senderId == $0 AND receiverId == $1")
             .append(" OR ")
             .append("senderId == $2 AND receiverId == $3")
             .toString()
-        return realm.query<Message>(query, senderId, receiverId, receiverId, senderId)
+        return realm.query<MessageDeprecate>(query, senderId, receiverId, receiverId, senderId)
             .sort("_id", Sort.DESCENDING)
             .find()
             .asFlow()
@@ -46,7 +46,7 @@ class MessageService @Inject constructor(private val realm: Realm) {
     }
 
     fun fetchLatestMessage(senderId: ObjectId, receiverId: ObjectId): Flow<MessageDto?> {
-        val query = realm.query<Message>(
+        val query = realm.query<MessageDeprecate>(
             "senderId == $0 AND receiverId == $1 OR senderId == $1 AND receiverId == $0",
             senderId, receiverId
         ).sort("date", Sort.DESCENDING)
@@ -59,7 +59,7 @@ class MessageService @Inject constructor(private val realm: Realm) {
     suspend fun updateMessageReadStatus(messageDto: MessageDto) {
         realm.write {
             val messageId = ObjectId(messageDto.id ?: throw IllegalArgumentException("Invalid message ID"))
-            val message = query<Message>("_id == $0", messageId).first().find()
+            val message = query<MessageDeprecate>("_id == $0", messageId).first().find()
             if (message != null) {
                 message.isRead = true
                 copyToRealm(message, updatePolicy = UpdatePolicy.ALL)
