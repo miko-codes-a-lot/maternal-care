@@ -2,7 +2,6 @@ package org.maternalcare.modules.main.residence.ui
 
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -56,17 +55,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import exportToPDF
 import kotlinx.coroutines.delay
-import openFile
 import org.maternalcare.MainActivity
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.user.model.dto.AddressDto
-import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.modules.main.user.service.UserReport
+import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 import org.maternalcare.shared.ext.toObjectId
 
 
@@ -94,6 +92,7 @@ fun ResidencesUI(
     status: String,
 ) {
     val residenceViewModel: ResidenceViewModel = hiltViewModel()
+    val userViewModel: UserViewModel = hiltViewModel()
     var debouncedQuery by remember { mutableStateOf("") }
     var searchQuery by remember { mutableStateOf("") }
     LaunchedEffect(searchQuery) {
@@ -155,6 +154,7 @@ fun ResidencesUI(
     } else {
         0
     }
+    val fetchResidencesReportDetails = userViewModel.fetchResidencesReportDetails(addressName = addressDto?.name!!)
     val isShowFloatingIcon = rememberSaveable { mutableStateOf( !isArchive)}
     val context = LocalContext.current
     Column(
@@ -171,7 +171,7 @@ fun ResidencesUI(
                         navController,
                         addressDto,
                         currentUser,
-                        filteredResidences = filteredResidences,
+                        filteredResidences = fetchResidencesReportDetails,
                         onExportToPDF = { data ->
                             exportToPDF(
                                 context = context,
@@ -369,8 +369,8 @@ fun FloatingIcon(
     navController: NavController,
     addressDto: AddressDto,
     currentUser: UserDto,
-    filteredResidences: List<UserDto>,
-    onExportToPDF: (List<UserDto>) -> Unit
+    filteredResidences: List<UserReport>,
+    onExportToPDF: (List<UserReport>) -> Unit
 ) {
     val context = LocalContext.current
     val activity = context as? MainActivity
