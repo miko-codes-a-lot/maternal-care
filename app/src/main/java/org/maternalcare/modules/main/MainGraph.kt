@@ -1,18 +1,26 @@
 package org.maternalcare.modules.main
 
+import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import kotlinx.datetime.Clock
 import org.maternalcare.modules.intro.splash.MapUI
+import org.maternalcare.modules.main.chat.model.dto.MessageDto
+import org.maternalcare.modules.main.chat.model.viewmodel.ChatViewModel
+import org.maternalcare.modules.main.chat.ui.ChatLobbyUI
+import org.maternalcare.modules.main.chat.ui.ChatScreenUI
 import org.maternalcare.modules.main.dashboard.ui.CheckupProgressUI
 import org.maternalcare.modules.main.dashboard.ui.DashboardUI
-import org.maternalcare.modules.main.menu.ui.MenuUI
 import org.maternalcare.modules.main.message.ui.MessageListUI
 import org.maternalcare.modules.main.message.ui.MessageUI
 import org.maternalcare.modules.main.reminder.ui.ReminderListUI
@@ -22,6 +30,7 @@ import org.maternalcare.modules.main.residence.ui.CheckupDetailsUI
 import org.maternalcare.modules.main.residence.ui.ChooseCheckupUI
 import org.maternalcare.modules.main.residence.ui.ConditionStatusUI
 import org.maternalcare.modules.main.residence.ui.CreateHealthRecordUI
+import org.maternalcare.modules.main.residence.ui.CreateTrimesterRecordUI
 import org.maternalcare.modules.main.residence.ui.EditCheckupUI
 import org.maternalcare.modules.main.residence.ui.HealthRecordListUI
 import org.maternalcare.modules.main.residence.ui.ImmunizationRecordUI
@@ -29,7 +38,6 @@ import org.maternalcare.modules.main.residence.ui.ResidencesPreviewUI
 import org.maternalcare.modules.main.residence.ui.ResidencesUI
 import org.maternalcare.modules.main.residence.ui.StatusPreviewUI
 import org.maternalcare.modules.main.residence.ui.TrimesterCheckUpListUI
-import org.maternalcare.modules.main.residence.ui.CreateTrimesterRecordUI
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.settings.ui.EditSettingsUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
@@ -37,6 +45,7 @@ import org.maternalcare.modules.main.user.model.dto.AddressDto
 import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserConditionDto
+import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.model.dto.UserImmunizationDto
 import org.maternalcare.modules.main.user.model.dto.UserTrimesterRecordDto
 import org.maternalcare.modules.main.user.service.UserService
@@ -51,7 +60,70 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
     navigation<MainNav>(startDestination = MainNav.Menu) {
         composable<MainNav.Menu> {
             Guard(navController = navController) { currentUser ->
-                MenuUI(navController, currentUser)
+                // ViewModel of Chat
+                val chatViewModel: ChatViewModel = hiltViewModel()
+
+                // List of pregnant residence that you can chat
+                val usersChat by chatViewModel.fetchUsers(currentUser.id.toObjectId()).collectAsStateWithLifecycle(
+                    initialValue = listOf()
+                )
+                ChatLobbyUI(data = usersChat)
+                // end of List of pregnant residence
+
+
+                // Direct chat with selected Residence
+//                val receiver = UserDto(
+//                    id = "6720cf971f6d872303c33c6c",
+//                    address = "San Carlos",
+//                    createdAt = "2024-10-29T12:05:43.049Z",
+//                    createdById = "671f5fbc32b6660e5fd58057",
+//                    dateOfBirth = "1999-10-29T12:05:02.697Z",
+//                    email = "angel@gmail.com",
+//                    firstName = "Angel",
+//                    isActive = true,
+//                    isAdmin = false,
+//                    isArchive = false,
+//                    isCompleted = true,
+//                    isResidence = true,
+//                    isSuperAdmin = false,
+//                    isVerified = false,
+//                    lastName = "Vecino",
+//                    lastUpdatedAt = "2024-10-29T12:05:43.049Z",
+//                    lastUpdatedById = "671f5fbc32b6660e5fd58057",
+//                    middleName = "M",
+//                    mobileNumber = "09898767876",
+//                )
+//
+//                val isChatReady = remember { mutableStateOf(false) }
+//
+//                LaunchedEffect(key1 = "message") {
+//                    Log.d("micool", "I have to run this before I run the code below...")
+//                    chatViewModel.findOneChatOrCreate(currentUser, receiver)
+//                    isChatReady.value = true
+//                }
+//
+//                val messages = if (isChatReady.value) {
+//                    chatViewModel.fetchDirectMessages(currentUser, receiver)
+//                        .collectAsStateWithLifecycle(
+//                            initialValue = emptyList()
+//                        ).value
+//                } else {
+//                    emptyList()
+//                }
+//                ChatScreenUI(
+//                    messages = messages, // messages should be passed here
+//                    currentUserId = currentUser.id!!,
+//                    onSendMessage = { message ->
+//                        chatViewModel.sendMessage(currentUser, receiver, message)
+//                    }
+//                )
+
+                // End of Direct chat with selected Residence
+
+
+                // @TODO: Reymond - comment this out once you have integrated the code above to their
+                //                  appropriate navigation routing
+//                MenuUI(navController, currentUser)
             }
         }
         composable<MainNav.Addresses> {
