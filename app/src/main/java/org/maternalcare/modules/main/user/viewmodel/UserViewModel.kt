@@ -3,9 +3,6 @@ package org.maternalcare.modules.main.user.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
@@ -13,6 +10,7 @@ import org.maternalcare.modules.main.user.model.dto.UserConditionDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.model.dto.UserImmunizationDto
 import org.maternalcare.modules.main.user.model.dto.UserTrimesterRecordDto
+import org.maternalcare.modules.main.user.service.UserReport
 import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.shared.ext.toObjectId
 import javax.inject.Inject
@@ -118,5 +116,9 @@ class UserViewModel @Inject constructor(
 
     suspend fun upsertTrimesterRecord(trimesterRecordDto: UserTrimesterRecordDto): Result<UserTrimesterRecordDto> {
         return this.userService.upsertTrimesterRecord(trimesterRecordDto)
+    }
+
+    fun fetchResidencesReportDetails(addressName: String): List<UserReport>{
+        return userService.fetchResidencesWithDetails(addressName);
     }
 }
