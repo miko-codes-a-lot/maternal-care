@@ -29,13 +29,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
+import org.maternalcare.shared.ext.assessBloodPressure
+import org.maternalcare.shared.ext.calculateAgeOfGestation
+import org.maternalcare.shared.ext.determineBMICategory
+import org.maternalcare.shared.ext.expectedDueDate
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
-import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 @Preview(showSystemUi = true)
@@ -115,25 +113,15 @@ fun ReminderCheckupUI (
 
 @Composable
 fun CheckUpValueContainer (userDto: UserDto, checkup: UserCheckupDto) {
+    val bmiCategory = checkup.determineBMICategory()
+    val bloodPressureStatus = checkup.assessBloodPressure()
 
-    val lmpString = checkup.lastMenstrualPeriod
-    val lmp = stringToInstant(lmpString)
-    val aogWeeks = lmp?.let { calculateAgeOFGestation(it) } ?: 0L
-
-    val edd = lmp?.let { calculateExpectedDueDate(it) } ?: "Unknown"
-
-    val bmi = calculateBMI(checkup.weight, checkup.height)
-    val bmiCategory = determineBMICategory(bmi)
-    val bloodPressureStatus = assessBloodPressure(checkup.bloodPressure)
-
-//    val labelValueMap = mapOf(
     val labelValueMap = mutableMapOf(
         "Name" to userDto.firstName +" "+ userDto.middleName +" "+ userDto.lastName,
         "Blood Pressure" to bloodPressureStatus,
-        "Age Of Gestation" to "$aogWeeks weeks",
+        "Age Of Gestation" to "${checkup.calculateAgeOfGestation()} weeks",
         "Nutritional Status" to  "%s".format(bmiCategory),
-        "Expected Due Date" to edd,
-//        "Type  Of Vaccine" to checkup.typeOfVaccine
+        "Expected Due Date" to checkup.expectedDueDate(),
     )
     if (checkup.checkup < 4) {
         labelValueMap["Next Check-up"] = formatDate(checkup.scheduleOfNextCheckUp)
@@ -158,48 +146,6 @@ fun CheckUpValueContainer (userDto: UserDto, checkup: UserCheckupDto) {
         }
     }
 }
-
-fun calculateExpectedDueDate(lastMenstrualPeriod: Instant): String {
-    val lmpDate = lastMenstrualPeriod.atZone(ZoneId.systemDefault()).toLocalDate()
-    val edd = lmpDate.plusDays(280)
-
-    val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
-    return edd.format(formatter)
-}
-
-fun calculateAgeOFGestation(lastMenstrualPeriod: Instant): Long {
-    val lmpDate = lastMenstrualPeriod.atZone(ZoneId.systemDefault()).toLocalDate()
-    val currentDate = LocalDate.now()
-    val daysBetween = ChronoUnit.DAYS.between(lmpDate, currentDate)
-    return if (daysBetween >= 0) (daysBetween / 7) else 0L
-}
-
-fun stringToInstant(dateString: String): Instant? {
-    return try {
-        Instant.parse(dateString)
-    } catch (e: DateTimeParseException) {
-        null
-    }
-}
-
-fun calculateBMI(weight: Double, height: Double): Double {
-    return if (height > 0) weight / (height * height) else 0.0
-}
-
-fun determineBMICategory(bmi: Double): String = when {
-    bmi < 18.5 -> "Underweight"
-    bmi < 24.99 -> "Normal"
-    bmi < 29.9 -> "Overweight"
-    else -> "Obesity"
-}
-
-fun assessBloodPressure(bloodPressure: Double): String = when {
-    bloodPressure < 120 -> "Normal"
-    bloodPressure in 120.0..129.9 -> "Elevated"
-    bloodPressure >= 130 -> "High"
-    else -> "Unknown"
-}
-
 
 fun formatDate(dateString: String?): String {
     if (dateString.isNullOrBlank()) {
