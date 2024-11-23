@@ -11,6 +11,8 @@ import io.realm.kotlin.mongodb.Credentials
 import io.realm.kotlin.mongodb.sync.SyncConfiguration
 import kotlinx.coroutines.runBlocking
 import org.maternalcare.BuildConfig
+import org.maternalcare.modules.main.chat.model.entity.Chat
+import org.maternalcare.modules.main.chat.model.entity.Message
 import org.maternalcare.modules.main.user.model.entity.Address
 import org.maternalcare.modules.main.user.model.entity.User
 import org.maternalcare.modules.main.user.model.entity.UserBirthRecord
@@ -35,6 +37,8 @@ object AppModule {
                 User::class,
                 UserCheckup::class,
                 Address::class,
+                Chat::class,
+                Message::class,
                 UserCondition::class,
                 UserImmunization::class,
                 UserBirthRecord:: class,
@@ -58,6 +62,14 @@ object AppModule {
                     add(
                         realm.query<Address>("_id <> $0", null),
                         name = "Addresses"
+                    )
+                    add(
+                        realm.query<Chat>("_id <> $0", null),
+                        name = "Chats"
+                    )
+                    add(
+                        realm.query<Message>("_id <> $0", null),
+                        name = "Messages"
                     )
                     add(
                         realm.query<UserCondition>("_id <> $0", null),
