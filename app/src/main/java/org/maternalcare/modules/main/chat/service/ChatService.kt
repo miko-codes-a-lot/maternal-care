@@ -7,6 +7,7 @@ import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.Sort
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Clock
 import org.maternalcare.modules.main.chat.mapper.toDTO
 import org.maternalcare.modules.main.chat.mapper.toDto
 import org.maternalcare.modules.main.chat.mapper.toEntity
@@ -14,6 +15,7 @@ import org.maternalcare.modules.main.chat.model.dto.ChatDto
 import org.maternalcare.modules.main.chat.model.dto.MessageDto
 import org.maternalcare.modules.main.chat.model.dto.UserChatDto
 import org.maternalcare.modules.main.chat.model.entity.Chat
+import org.maternalcare.modules.main.chat.model.entity.Message
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.model.entity.User
 import org.maternalcare.modules.main.user.model.mapper.toDTO
@@ -24,7 +26,7 @@ import java.security.MessageDigest
 import javax.inject.Inject
 
 class ChatService @Inject constructor(private val realm: Realm) {
-    private fun generateId(input: String): ObjectId {
+    private fun generateChatId(input: String): ObjectId {
         // Create an MD5 hash of the input string
         val md = MessageDigest.getInstance("MD5")
         val fullHash = md.digest(input.toByteArray())
@@ -39,6 +41,48 @@ class ChatService @Inject constructor(private val realm: Realm) {
         return ObjectId(hexString)
     }
 
+    suspend fun findOneChatOrCreate(sender: UserDto, receiver: UserDto): Result<ChatDto> {
+        val senderId = sender.id.toObjectId()
+        val receiverId = receiver.id.toObjectId()
+
+        val chatId = generateChatId("${senderId.toHexString()}${receiverId.toHexString()}")
+
+        val chat = realm.query<Chat>("_id == $0", chatId)
+            .find()
+            .firstOrNull()
+        if (chat == null) {
+            return realm.write {
+                val chatDto = ChatDto(
+                    id = chatId.toHexString(),
+                    user1Id = (if (sender.isAdmin) senderId else receiverId).toHexString(),
+                    user2Id = (if (sender.isResidence) receiverId else senderId).toHexString(),
+                    lastMessage = "",
+                    isRead = false,
+                    updatedAt = Clock.System.now()
+                )
+                val newChat = copyToRealm(chatDto.toEntity(), updatePolicy = UpdatePolicy.ALL)
+                Result.success(newChat.toDTO())
+            }
+        }
+
+        return Result.success(chat.toDTO())
+    }
+
+    fun fetchDirectMessages(sender: UserDto, receiver: UserDto): Flow<List<MessageDto>> {
+        val senderId = sender.id.toObjectId()
+        val receiverId = receiver.id.toObjectId()
+
+        val chatId = generateChatId("${senderId.toHexString()}${receiverId.toHexString()}")
+
+        return realm.query<Message>("chatId == $0", chatId)
+            .sort("createdAt", Sort.DESCENDING)
+            .find()
+            .asFlow()
+            .map { resultsChange ->
+                resultsChange.list.map { it.toDto() }
+            }
+    }
+
     fun fetchUsers(userId: ObjectId): Flow<List<UserChatDto>> {
         return realm.query<User>("createdById == $0", userId)
             .sort("firstName", Sort.DESCENDING)
@@ -46,7 +90,7 @@ class ChatService @Inject constructor(private val realm: Realm) {
             .asFlow()
             .map { resultsChange ->
                 resultsChange.list.map { user ->
-                    val chatId = generateId("${userId.toHexString()}${user._id.toHexString()}")
+                    val chatId = generateChatId("${userId.toHexString()}${user._id.toHexString()}")
                     val chat = realm.query<Chat>(
                         "_id == $0",
                         chatId
@@ -82,16 +126,25 @@ class ChatService @Inject constructor(private val realm: Realm) {
     /**
      * @param sender - if sender is residence then chat becomes isRead = false
      */
-    suspend fun message(sender: UserDto, messageDto: MessageDto): Result<MessageDto> {
+    suspend fun message(sender: UserDto, receiver: UserDto, content: String): Result<MessageDto> {
         return try {
+            val messageDto = MessageDto(
+                id = null,
+                chatId = generateChatId("${sender.id}${receiver.id}").toHexString(),
+                senderId = sender.id!!,
+                receiverId = receiver.id!!,
+                content = content,
+                createdAt = Clock.System.now()
+            )
             val chatDto = findOneChat(messageDto.chatId.toObjectId())
 
             realm.write {
                 val message = copyToRealm(messageDto.toEntity(), updatePolicy = UpdatePolicy.ALL)
-                if (sender.isResidence) {
-                    val chat = chatDto.toEntity().apply { isRead = false }
-                    copyToRealm(chat, updatePolicy = UpdatePolicy.ALL)
+                val chat = chatDto.toEntity().apply {
+                    lastMessage = content
                 }
+                chat.isRead = sender.isAdmin
+                copyToRealm(chat, updatePolicy = UpdatePolicy.ALL)
                 Result.success(message.toDto())
             }
         } catch (error: Exception) {
