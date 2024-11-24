@@ -59,22 +59,29 @@ class ChatService @Inject constructor(private val realm: Realm) {
         val chat = realm.query<Chat>("_id == $0", chatId)
             .find()
             .firstOrNull()
+
+        val chatDto = ChatDto(
+            id = chat?._id?.toHexString() ?: chatId.toHexString(),
+            user1Id = adminId!!,
+            user2Id = userId!!,
+            lastMessage = chat?.lastMessage ?: "",
+            isRead = sender.isAdmin,
+            updatedAt = Clock.System.now()
+        )
         if (chat == null) {
             return realm.write {
-                val chatDto = ChatDto(
-                    id = chatId.toHexString(),
-                    user1Id = adminId!!,
-                    user2Id = userId!!,
-                    lastMessage = "",
-                    isRead = false,
-                    updatedAt = Clock.System.now()
-                )
                 val newChat = copyToRealm(chatDto.toEntity(), updatePolicy = UpdatePolicy.ALL)
                 Result.success(newChat.toDTO())
             }
+        } else if (sender.isAdmin) {
+            return realm.write {
+                val updatedChat = copyToRealm(chatDto.toEntity(), updatePolicy = UpdatePolicy.ALL)
+                Log.d("micool", "chat: ${updatedChat.isRead}")
+                Result.success(updatedChat.toDTO())
+            }
         }
 
-        return Result.success(chat.toDTO())
+        return Result.success(chatDto)
     }
 
     fun fetchDirectMessages(sender: UserDto, receiver: UserDto): Flow<List<MessageDto>> {
@@ -104,10 +111,6 @@ class ChatService @Inject constructor(private val realm: Realm) {
                         "_id == $0",
                         chatId
                     ).find().firstOrNull()
-
-                    if (user.firstName == "Angel") {
-                        Log.d("micool", "${userId.toHexString()} : ${user._id.toHexString()} : ${chatId.toHexString()}")
-                    }
 
                     UserChatDto(
                         user.toDTO(),
