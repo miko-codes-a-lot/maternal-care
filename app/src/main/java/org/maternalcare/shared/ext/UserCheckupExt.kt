@@ -39,6 +39,6 @@ fun UserCheckupDto.expectedDueDate(): String {
     val lmpDate = lastMenstrualPeriod.toInstant()!!.atZone(ZoneId.systemDefault()).toLocalDate()
     val edd = lmpDate.plusDays(280)
 
-    val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     return edd.format(formatter)
 }

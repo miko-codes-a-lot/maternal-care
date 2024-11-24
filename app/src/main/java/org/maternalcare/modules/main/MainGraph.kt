@@ -1,15 +1,21 @@
 package org.maternalcare.modules.main
 
+import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import org.maternalcare.modules.intro.splash.MapUI
+import org.maternalcare.modules.main.chat.model.viewmodel.ChatViewModel
+import org.maternalcare.modules.main.chat.ui.ChatDirectUI
+import org.maternalcare.modules.main.chat.ui.ChatLobbyUI
 import org.maternalcare.modules.main.dashboard.ui.CheckupProgressUI
 import org.maternalcare.modules.main.dashboard.ui.DashboardUI
 import org.maternalcare.modules.main.menu.ui.MenuUI
@@ -22,6 +28,7 @@ import org.maternalcare.modules.main.residence.ui.CheckupDetailsUI
 import org.maternalcare.modules.main.residence.ui.ChooseCheckupUI
 import org.maternalcare.modules.main.residence.ui.ConditionStatusUI
 import org.maternalcare.modules.main.residence.ui.CreateHealthRecordUI
+import org.maternalcare.modules.main.residence.ui.CreateTrimesterRecordUI
 import org.maternalcare.modules.main.residence.ui.EditCheckupUI
 import org.maternalcare.modules.main.residence.ui.HealthRecordListUI
 import org.maternalcare.modules.main.residence.ui.ImmunizationRecordUI
@@ -29,7 +36,6 @@ import org.maternalcare.modules.main.residence.ui.ResidencesPreviewUI
 import org.maternalcare.modules.main.residence.ui.ResidencesUI
 import org.maternalcare.modules.main.residence.ui.StatusPreviewUI
 import org.maternalcare.modules.main.residence.ui.TrimesterCheckUpListUI
-import org.maternalcare.modules.main.residence.ui.CreateTrimesterRecordUI
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.settings.ui.EditSettingsUI
 import org.maternalcare.modules.main.settings.ui.SettingsUI
@@ -52,6 +58,51 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         composable<MainNav.Menu> {
             Guard(navController = navController) { currentUser ->
                 MenuUI(navController, currentUser)
+            }
+        }
+        composable<MainNav.ChatDirect> {
+            val args = it.toRoute<MainNav.ChatDirect>()
+            Guard(navController = navController) { currentUser ->
+                val chatViewModel: ChatViewModel = hiltViewModel()
+                val isChatReady = remember { mutableStateOf(false) }
+                val userViewModel: UserViewModel = hiltViewModel()
+
+                val receiver = userViewModel.fetchUser(args.userId)
+
+                LaunchedEffect(key1 = "message") {
+                    Log.d("ChatDirect", "Creating or fetching chat...")
+
+                    Log.d("micool", "I have to run this before I run the code below...")
+                    chatViewModel.findOneChatOrCreate(currentUser, receiver).also {
+                        Log.d("ChatDirect", "Creating or fetching chat...")
+                    }
+                    isChatReady.value = true
+                }
+
+                val messages = if (isChatReady.value) {
+                    chatViewModel.fetchDirectMessages(currentUser, receiver)
+                        .collectAsStateWithLifecycle(
+                            initialValue = emptyList()
+                        ).value
+                } else {
+                    emptyList()
+                }
+                ChatDirectUI(
+                    messages = messages,
+                    currentUserId = currentUser.id!!,
+                    onSendMessage = { message ->
+                        chatViewModel.sendMessage(currentUser, receiver, message)
+                    }
+                )
+            }
+        }
+        composable<MainNav.ChatLobby> {
+            Guard(navController = navController) { currentUser ->
+                val chatViewModel: ChatViewModel = hiltViewModel()
+                val usersChat by chatViewModel.fetchUsers(currentUser.id.toObjectId()).collectAsStateWithLifecycle(
+                    initialValue = listOf()
+                )
+                ChatLobbyUI(navController = navController, data = usersChat)
             }
         }
         composable<MainNav.Addresses> {

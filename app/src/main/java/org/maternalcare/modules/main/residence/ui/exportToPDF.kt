@@ -75,7 +75,7 @@ fun exportToPDF(
             0.5f,
             0.5f,
             0.5f,
-            0.5f,
+            0.3f,
             0.5f,
             0.5f,
             0.5f,
@@ -89,7 +89,23 @@ fun exportToPDF(
             table.addCell(cell)
         }
 
-        fun formatDate(date: String?): String? {
+        fun formatDate(date: String?, inputFormat: String = "yyyy-MM-dd", outputFormat: String = "dd-MM-yyyy"): String? {
+            return try {
+                date?.let {
+                    val inputFormatter = SimpleDateFormat(inputFormat, Locale.getDefault())
+                    val parsedDate = inputFormatter.parse(it)
+
+                    parsedDate?.let { dateObject ->
+                        val outputFormatter = SimpleDateFormat(outputFormat, Locale.getDefault())
+                        outputFormatter.format(dateObject)
+                    }
+                }
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        fun formatExpectedDueDate(date: String?): String? {
             return try {
                 date?.let {
                     SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(it)
@@ -106,7 +122,7 @@ fun exportToPDF(
             val checkup = checkupReport.checkup
             val formattedDate = formatDate(user.dateOfBirth)
             val formattedLastMenstrualPeriod = formatDate(checkup.lastMenstrualPeriod)
-            val formattedExpectedDueDate = formatDate(checkup.expectedDueDate())
+            val formattedExpectedDueDate = formatExpectedDueDate(checkup.expectedDueDate())
 
             table.addCell(createCell((index + 1).toString(), fixedHeight = 35f))
             table.addCell(createCell(user.firstName, fixedHeight = 35f))

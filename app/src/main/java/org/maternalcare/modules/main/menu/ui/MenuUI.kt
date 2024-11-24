@@ -199,7 +199,7 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
             ),
             MenuItem(
                 text = "Messages",
-                action = { navController.navigate(MainNav.MessagesList) },
+                action = { navController.navigate(MainNav.ChatLobby) },
                 iconResId = R.drawable.message
             ),
             MenuItem(
@@ -226,7 +226,7 @@ fun getMenuItems(userDto: UserDto, navController: NavController): List<MenuItem>
             ),
             MenuItem(
                 text = "Messages",
-                action = { navController.navigate(MainNav.Messages(userId = userDto.createdById!!)) },
+                action = { navController.navigate(MainNav.ChatDirect(userId = userDto.createdById!!)) },
                 iconResId = R.drawable.message
             ),
             MenuItem(

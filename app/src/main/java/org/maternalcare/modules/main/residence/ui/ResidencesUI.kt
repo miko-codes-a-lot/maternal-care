@@ -1,8 +1,8 @@
 package org.maternalcare.modules.main.residence.ui
 
-import android.net.Uri
 import android.os.Build
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,6 +29,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -44,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -54,16 +56,18 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import org.maternalcare.MainActivity
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
+import org.maternalcare.modules.main.chat.ui.PlaceholderImage
+import org.maternalcare.modules.main.chat.ui.decodeBase64ToBitmap
 import org.maternalcare.modules.main.residence.enum.CheckupStatus
 import org.maternalcare.modules.main.residence.viewmodel.ResidenceViewModel
 import org.maternalcare.modules.main.user.model.dto.AddressDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.service.UserReport
+import org.maternalcare.modules.main.user.ui.resizeBitmap
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 import org.maternalcare.shared.ext.toObjectId
 
@@ -246,35 +250,40 @@ fun ResidencesUI(
 }
 
 @Composable
-fun UsersImageContainer(imageUri: Uri? = null) {
+fun UsersImageContainer(imageBase64: String? = null) {
     Box(
         Modifier
-            .height(45.dp)
+            .height(55.dp)
     ){
        Box(
            modifier = Modifier
-               .size(40.dp)
+               .size(51.dp)
                .clip(CircleShape)
                .background(Color(0xFF6650a4))
-               .border(3.dp, Color(0xFF6650a4), CircleShape),
+               .border(1.dp, Color(0xFF6650a4), CircleShape),
            contentAlignment = Alignment.Center
        ) {
-           if (imageUri != null) {
-               AsyncImage(
-                   model = imageUri,
-                   contentDescription = null,
-                   contentScale = ContentScale.Crop,
-                   modifier = Modifier
-                       .size(35.dp)
-                       .clip(CircleShape)
-               )
+           if (imageBase64 != null && imageBase64.isNotBlank()) {
+               val resizedBitmap = remember(imageBase64) {
+                   decodeBase64ToBitmap(imageBase64)?.let { bitmap ->
+                       resizeBitmap(bitmap, maxWidth = 500, maxHeight = 500)
+                   }
+               }
+
+               if (resizedBitmap != null) {
+                   Image(
+                       bitmap = resizedBitmap.asImageBitmap(),
+                       contentDescription = null,
+                       contentScale = ContentScale.Crop,
+                       modifier = Modifier
+                           .size(51.dp)
+                           .clip(CircleShape)
+                   )
+               } else {
+                   PlaceholderImage()
+               }
            } else {
-               Icon(
-                   painter = painterResource(id = R.drawable.person),
-                   contentDescription = "Default placeholder",
-                   modifier = Modifier.size(30.dp),
-                   tint = Color.White
-               )
+               PlaceholderImage()
            }
        }
     }
@@ -289,7 +298,8 @@ fun SingleItemCard(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(58.dp),
+            .padding(top = 5.dp, bottom = 5.dp)
+            .height(60.dp),
         verticalArrangement = Arrangement.Center
     ) {
         Row(
@@ -299,19 +309,21 @@ fun SingleItemCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(modifier = Modifier.width(10.dp))
-            UsersImageContainer()
+            UsersImageContainer(userDto.imageBase64)
             Text(
                 text = "${userDto.firstName} ${userDto.middleName} ${userDto.lastName}",
-                fontSize = 18.sp,
+                fontSize = 17.sp,
                 fontFamily = FontFamily.SansSerif,
                 modifier = Modifier
-                    .padding(start = 8.dp)
+                    .padding(start = 8.dp, bottom = 4.dp)
                     .weight(1f),
                 color = Color.Black
             )
         }
         HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .fillMaxWidth(),
             thickness = 1.dp,
             color = Color(0xFF6650a4)
         )
