@@ -18,6 +18,7 @@ import org.maternalcare.modules.main.chat.ui.ChatDirectUI
 import org.maternalcare.modules.main.chat.ui.ChatLobbyUI
 import org.maternalcare.modules.main.dashboard.ui.CheckupProgressUI
 import org.maternalcare.modules.main.dashboard.ui.DashboardUI
+import org.maternalcare.modules.main.menu.ui.MenuUI
 import org.maternalcare.modules.main.message.ui.MessageListUI
 import org.maternalcare.modules.main.message.ui.MessageUI
 import org.maternalcare.modules.main.reminder.ui.ReminderListUI
@@ -42,7 +43,6 @@ import org.maternalcare.modules.main.user.model.dto.AddressDto
 import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserConditionDto
-import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.model.dto.UserImmunizationDto
 import org.maternalcare.modules.main.user.model.dto.UserTrimesterRecordDto
 import org.maternalcare.modules.main.user.service.UserService
@@ -57,70 +57,52 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
     navigation<MainNav>(startDestination = MainNav.Menu) {
         composable<MainNav.Menu> {
             Guard(navController = navController) { currentUser ->
-                // ViewModel of Chat
+                MenuUI(navController, currentUser)
+            }
+        }
+        composable<MainNav.ChatDirect> {
+            val args = it.toRoute<MainNav.ChatDirect>()
+            Guard(navController = navController) { currentUser ->
                 val chatViewModel: ChatViewModel = hiltViewModel()
+                val isChatReady = remember { mutableStateOf(false) }
+                val userViewModel: UserViewModel = hiltViewModel()
 
-//                // List of pregnant residence that you can chat
+                val receiver = userViewModel.fetchUser(args.userId)
+
+                LaunchedEffect(key1 = "message") {
+                    Log.d("ChatDirect", "Creating or fetching chat...")
+
+                    Log.d("micool", "I have to run this before I run the code below...")
+                    chatViewModel.findOneChatOrCreate(currentUser, receiver).also {
+                        Log.d("ChatDirect", "Creating or fetching chat...")
+                    }
+                    isChatReady.value = true
+                }
+
+                val messages = if (isChatReady.value) {
+                    chatViewModel.fetchDirectMessages(currentUser, receiver)
+                        .collectAsStateWithLifecycle(
+                            initialValue = emptyList()
+                        ).value
+                } else {
+                    emptyList()
+                }
+                ChatDirectUI(
+                    messages = messages,
+                    currentUserId = currentUser.id!!,
+                    onSendMessage = { message ->
+                        chatViewModel.sendMessage(currentUser, receiver, message)
+                    }
+                )
+            }
+        }
+        composable<MainNav.ChatLobby> {
+            Guard(navController = navController) { currentUser ->
+                val chatViewModel: ChatViewModel = hiltViewModel()
                 val usersChat by chatViewModel.fetchUsers(currentUser.id.toObjectId()).collectAsStateWithLifecycle(
                     initialValue = listOf()
                 )
-                ChatLobbyUI(data = usersChat)
-                // end of List of pregnant residence
-
-
-                // Direct chat with selected Residence
-//                val receiver = UserDto(
-//                    id = "6720cf971f6d872303c33c6c",
-//                    address = "San Carlos",
-//                    createdAt = "2024-10-29T12:05:43.049Z",
-//                    createdById = "671f5fbc32b6660e5fd58057",
-//                    dateOfBirth = "1999-10-29T12:05:02.697Z",
-//                    email = "angel@gmail.com",
-//                    firstName = "Angel",
-//                    isActive = true,
-//                    isAdmin = false,
-//                    isArchive = false,
-//                    isCompleted = true,
-//                    isResidence = true,
-//                    isSuperAdmin = false,
-//                    isVerified = false,
-//                    lastName = "Vecino",
-//                    lastUpdatedAt = "2024-10-29T12:05:43.049Z",
-//                    lastUpdatedById = "671f5fbc32b6660e5fd58057",
-//                    middleName = "M",
-//                    mobileNumber = "09898767876",
-//                )
-//
-//                val isChatReady = remember { mutableStateOf(false) }
-//
-//                LaunchedEffect(key1 = "message") {
-//                    Log.d("micool", "I have to run this before I run the code below...")
-//                    chatViewModel.findOneChatOrCreate(currentUser, receiver)
-//                    isChatReady.value = true
-//                }
-//
-//                val messages = if (isChatReady.value) {
-//                    chatViewModel.fetchDirectMessages(currentUser, receiver)
-//                        .collectAsStateWithLifecycle(
-//                            initialValue = emptyList()
-//                        ).value
-//                } else {
-//                    emptyList()
-//                }
-//                ChatDirectUI(
-//                    messages = messages, // messages should be passed here
-//                    currentUserId = currentUser.id!!,
-//                    onSendMessage = { message ->
-//                        chatViewModel.sendMessage(currentUser, receiver, message)
-//                    }
-//                )
-
-                // End of Direct chat with selected Residence
-
-
-                // @TODO: Reymond - comment this out once you have integrated the code above to their
-                //                  appropriate navigation routing
-//                MenuUI(navController, currentUser)
+                ChatLobbyUI(navController = navController, data = usersChat)
             }
         }
         composable<MainNav.Addresses> {
