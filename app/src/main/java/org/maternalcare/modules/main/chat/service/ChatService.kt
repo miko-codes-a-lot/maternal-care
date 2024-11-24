@@ -5,6 +5,7 @@ import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.Sort
+import io.realm.kotlin.types.RealmInstant
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
@@ -41,11 +42,19 @@ class ChatService @Inject constructor(private val realm: Realm) {
         return ObjectId(hexString)
     }
 
-    suspend fun findOneChatOrCreate(sender: UserDto, receiver: UserDto): Result<ChatDto> {
-        val senderId = sender.id.toObjectId()
-        val receiverId = receiver.id.toObjectId()
+    private fun getAdminId(senderDto: UserDto, receiver: UserDto): String? {
+        return if (senderDto.isAdmin) senderDto.id else receiver.id
+    }
 
-        val chatId = generateChatId("${senderId.toHexString()}${receiverId.toHexString()}")
+    private fun getUserId(senderDto: UserDto, receiverDto: UserDto): String? {
+        return if (receiverDto.isResidence) receiverDto.id else senderDto.id
+    }
+
+    suspend fun findOneChatOrCreate(sender: UserDto, receiver: UserDto): Result<ChatDto> {
+        val adminId = getAdminId(sender, receiver)
+        val userId = getUserId(sender, receiver)
+
+        val chatId = generateChatId("$adminId$userId")
 
         val chat = realm.query<Chat>("_id == $0", chatId)
             .find()
@@ -54,8 +63,8 @@ class ChatService @Inject constructor(private val realm: Realm) {
             return realm.write {
                 val chatDto = ChatDto(
                     id = chatId.toHexString(),
-                    user1Id = (if (sender.isAdmin) senderId else receiverId).toHexString(),
-                    user2Id = (if (sender.isResidence) receiverId else senderId).toHexString(),
+                    user1Id = adminId!!,
+                    user2Id = userId!!,
                     lastMessage = "",
                     isRead = false,
                     updatedAt = Clock.System.now()
@@ -69,10 +78,10 @@ class ChatService @Inject constructor(private val realm: Realm) {
     }
 
     fun fetchDirectMessages(sender: UserDto, receiver: UserDto): Flow<List<MessageDto>> {
-        val senderId = sender.id.toObjectId()
-        val receiverId = receiver.id.toObjectId()
+        val adminId = getAdminId(sender, receiver)
+        val userId = getUserId(sender, receiver)
 
-        val chatId = generateChatId("${senderId.toHexString()}${receiverId.toHexString()}")
+        val chatId = generateChatId("$adminId$userId")
 
         return realm.query<Message>("chatId == $0", chatId)
             .sort("createdAt", Sort.DESCENDING)
@@ -127,10 +136,13 @@ class ChatService @Inject constructor(private val realm: Realm) {
      * @param sender - if sender is residence then chat becomes isRead = false
      */
     suspend fun message(sender: UserDto, receiver: UserDto, content: String): Result<MessageDto> {
+        val adminId = getAdminId(sender, receiver)
+        val userId = getUserId(sender, receiver)
+
         return try {
             val messageDto = MessageDto(
                 id = null,
-                chatId = generateChatId("${sender.id}${receiver.id}").toHexString(),
+                chatId = generateChatId("$adminId$userId").toHexString(),
                 senderId = sender.id!!,
                 receiverId = receiver.id!!,
                 content = content,
@@ -142,6 +154,7 @@ class ChatService @Inject constructor(private val realm: Realm) {
                 val message = copyToRealm(messageDto.toEntity(), updatePolicy = UpdatePolicy.ALL)
                 val chat = chatDto.toEntity().apply {
                     lastMessage = content
+                    updatedAt = RealmInstant.now()
                 }
                 chat.isRead = sender.isAdmin
                 copyToRealm(chat, updatePolicy = UpdatePolicy.ALL)
