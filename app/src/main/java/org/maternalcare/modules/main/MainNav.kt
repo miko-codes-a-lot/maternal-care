@@ -87,4 +87,10 @@ object MainNav {
 
     @Serializable
     data class Map(var addressId: String)
+
+    @Serializable
+    object ChatLobby
+
+    @Serializable
+    data class ChatDirect(val userId: String)
 }
