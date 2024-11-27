@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import org.maternalcare.R
 import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.model.dto.UserBirthRecordDto
@@ -246,7 +248,7 @@ fun ProfileUsers (
                         painter = painterResource(id = R.drawable.person),
                         contentDescription = "Default placeholder",
                         modifier = Modifier
-                            .size(78.dp),
+                            .size(80.dp),
                         tint = Color.White
                     )
                 }
@@ -263,7 +265,7 @@ fun ProfileUsers (
                         painter = painterResource(id = R.drawable.person),
                         contentDescription = "Default placeholder",
                         modifier = Modifier
-                            .size(78.dp),
+                            .size(80.dp),
                         tint = Color.White
                     )
                 }
@@ -281,7 +283,7 @@ fun ProfileUsers (
                     painter = painterResource(id = R.drawable.person),
                     contentDescription = "Default placeholder",
                     modifier = Modifier
-                        .size(78.dp),
+                        .size(80.dp),
                     tint = Color.White
                 )
             }
