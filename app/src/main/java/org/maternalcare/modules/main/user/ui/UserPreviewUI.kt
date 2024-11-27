@@ -128,7 +128,7 @@ fun TextContainer(textLabel: String, textValue: String) {
                 modifier = Modifier
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(" : ",fontWeight = FontWeight.Bold, color = Color.Black)
+            Text(" : ",fontWeight = FontWeight.Bold, color = Color.Black, fontFamily = FontFamily.SansSerif)
             Spacer(modifier = Modifier.width(8.dp))
             Box(
                 modifier = Modifier

@@ -71,7 +71,7 @@ fun StatusPreviewUI (
     ) {
         Text(text = "Pregnant Status History",
             fontFamily = FontFamily.SansSerif,
-            fontSize = 23.sp,
+            fontSize = 22.sp,
             modifier = Modifier
                 .padding(bottom = 3.dp, top = 7.dp)
         )

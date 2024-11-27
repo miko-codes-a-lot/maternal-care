@@ -371,7 +371,12 @@ fun SearchIcon(
             cursorColor = Color.Black
         ),
         placeholder = {
-            Text(text = "Search...", color = Color.Black)
+            Text(
+                text = "Search...",
+                color = Color.Black,
+                fontFamily = FontFamily.SansSerif,
+                fontSize = 16.sp
+            )
         }
     )
 }

@@ -153,7 +153,7 @@ fun UserForm(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = title,
-            fontFamily = FontFamily.Serif,
+            fontFamily = FontFamily.SansSerif,
             fontSize = 24.sp,
             modifier = Modifier
                 .offset(y = (-6).dp)
@@ -212,7 +212,8 @@ fun UserForm(
             TextButton(onClick = { navController.navigate(MainNav.User) }) {
                 Text(text = "Cancel",
                     modifier = Modifier,
-                    fontSize = 17.sp
+                    fontSize = 17.sp,
+                    fontFamily = FontFamily.SansSerif
                 )
             }
         }
@@ -347,7 +348,8 @@ fun ContainerLabelValue(
                             Text(
                                 text = errors["Address"]?.value ?: "",
                                 color = Color.Red,
-                                fontSize = 12.sp
+                                fontSize = 12.sp,
+                                fontFamily = FontFamily.SansSerif
                             )
                         }else{
                             Text(text = "Select Address",
@@ -544,6 +546,7 @@ fun ContainerLabelValue(
                     text = "Admin",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.SansSerif,
                     modifier = Modifier.padding(start = 8.dp, top = 3.dp)
                 )
                 Spacer(modifier = Modifier.weight(0.4f))
@@ -569,6 +572,7 @@ fun ContainerLabelValue(
                         text = "BHW",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.SansSerif,
                         modifier = Modifier.padding(start = 8.dp, top = 3.dp)
                     )
                 }
@@ -598,6 +602,7 @@ fun ContainerLabelValue(
                     text = "Residence",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.SansSerif,
                     modifier = Modifier.padding(start = 8.dp, top = 3.dp)
                 )
             }
@@ -672,6 +677,7 @@ fun TextFieldContainer(
                         Text(
                             text = errorMessage,
                             color = Color.Red,
+                            fontFamily = FontFamily.SansSerif,
                             fontSize = 12.sp,
                             modifier = Modifier.offset(y = (-3).dp)
                         )
@@ -838,7 +844,8 @@ fun DatePickerField(
                             text = errorMessage,
                             color = Color.Red,
                             modifier = Modifier.padding(top = 4.dp),
-                            fontSize = 12.sp
+                            fontSize = 12.sp,
+                            fontFamily = FontFamily.SansSerif
                         )
                     }else {
                         Text(
@@ -915,7 +922,7 @@ fun ButtonSubmitData(
             contentColor = Color(0xFFFFFFFF)
         ),
     ) {
-        Text("Submit", fontSize = 18.sp)
+        Text("Submit", fontSize = 18.sp, fontFamily = FontFamily.SansSerif)
     }
 }
 
