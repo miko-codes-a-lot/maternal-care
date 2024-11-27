@@ -301,7 +301,12 @@ fun SearchAddressIcon(
             cursorColor = Color.Black
         ),
         placeholder = {
-            Text(text = "Search address...", color = Color.Black)
+            Text(
+                text = "Search address...",
+                color = Color.Black,
+                fontFamily = FontFamily.SansSerif,
+                fontSize = 16.sp
+            )
         }
     )
 }

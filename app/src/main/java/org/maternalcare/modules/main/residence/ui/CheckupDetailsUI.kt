@@ -212,7 +212,7 @@ private fun CheckupDetailsList(
                         fontFamily = FontFamily.SansSerif,
                         modifier = Modifier
                             .padding(start = 5.dp),
-                        fontSize = 18.sp
+                        fontSize = 17.sp
                     )
                 }
             }

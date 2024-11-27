@@ -199,7 +199,7 @@ fun TextFieldEditCheckUp(
                         onValueChange(numericInput)
                     },
                     placeholder = {
-                        Text("Enter value", color = Color.Black)
+                        Text("Enter value", color = Color.Black, fontFamily = FontFamily.SansSerif)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -254,7 +254,7 @@ fun ButtonSaveEdit(
             contentColor = Color.White
         )
     ) {
-        Text(text = "Confirm", fontSize = 17.sp)
+        Text(text = "Confirm", fontSize = 17.sp, fontFamily = FontFamily.SansSerif)
     }
 
     if (showPreview) {
@@ -304,7 +304,6 @@ fun ButtonSaveEdit(
             }
         )
     }
-
 }
 
 @Composable

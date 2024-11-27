@@ -136,7 +136,7 @@ fun FullNameEdit(currentDto: UserDto) {
                             },
                             isError = isFieldError,
                             supportingText = {
-                                errorText?.let { Text(it, color = Color.Red) }
+                                errorText?.let { Text(it, color = Color.Red, fontFamily = FontFamily.SansSerif) }
                             },
                             textStyle = TextStyle(
                                 color = Color(0xFF6650a4),
@@ -262,11 +262,12 @@ fun EmailEdit(currentDto: UserDto) {
                         editEmail = newValue
                         emailError = if (newValue.isEmpty()) "Email cannot be empty" else null
                     },
-                    label = { Text(text = "Email",
+                    label = { Text(
+                        text = "Email",
                         fontFamily = FontFamily.SansSerif,
                         color = if (emailError != null) Color.Red else Color(0xFF6650a4),
-                        fontSize = 15.sp)
-                    },
+                        fontSize = 15.sp
+                    )},
                     isError = emailError != null,
                     textStyle = TextStyle(
                         color = Color(0xFF6650a4),

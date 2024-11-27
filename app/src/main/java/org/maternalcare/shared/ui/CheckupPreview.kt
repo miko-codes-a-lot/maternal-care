@@ -172,7 +172,8 @@ fun PreviewItem(label: String, value: String) {
                 Text(
                     text = value,
                     fontSize = 16.sp,
-                    color = Color.Black
+                    color = Color.Black,
+                    fontFamily = FontFamily.SansSerif
                 )
                 HorizontalDivider(
                     modifier = Modifier.fillMaxWidth(),

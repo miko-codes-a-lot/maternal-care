@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import org.maternalcare.R
@@ -124,7 +125,13 @@ fun ChatDirectUI(
             TextField(
                 value = messageContent,
                 onValueChange = { messageContent = it },
-                placeholder = { Text("Type your message...",color = Color.Black)},
+                placeholder = {
+                    Text("Type your message...",
+                        color = Color.Black,
+                        fontFamily = FontFamily.SansSerif,
+                        fontSize = 16.sp
+                    )
+                },
                 modifier = Modifier
                     .weight(0.7f)
                     .padding(end = 2.dp)

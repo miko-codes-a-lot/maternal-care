@@ -104,7 +104,12 @@ fun CreateHealthRecordUI(
                     childNumber = newNumber
                 }
             },
-            label = { Text("Which child is this? / Pang-ilang anak?", color = Color.Black, fontSize = 15.sp) },
+            label = {
+                Text("Which child is this? / Pang-ilang anak?",
+                    color = Color.Black,
+                    fontSize = 15.sp,
+                    fontFamily = FontFamily.SansSerif
+                ) },
             modifier = Modifier
                 .fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(

@@ -139,7 +139,7 @@ fun TextFieldContain(
                 text = textLabel,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.SansSerif,
-                fontSize = 18.sp,
+                fontSize = 17.sp,
                 modifier = Modifier
             )
             Spacer(modifier = Modifier.width(8.dp))

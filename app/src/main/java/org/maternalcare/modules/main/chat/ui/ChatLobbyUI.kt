@@ -314,7 +314,12 @@ fun SearchMessageIcon(
             cursorColor = Color.Black
         ),
         placeholder = {
-            Text(text = "Search message...", color = Color.Black)
+            Text(
+                text = "Search message...",
+                color = Color.Black,
+                fontFamily = FontFamily.SansSerif,
+                fontSize = 16.sp
+            )
         }
     )
 }
