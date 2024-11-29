@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -42,6 +43,7 @@ import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.maternalcare.R
+import org.maternalcare.modules.main.MainNav
 import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 import java.io.File
@@ -118,12 +120,13 @@ fun UserImageUI(
                     contentScale = ContentScale.Crop
                 )
             } else {
-                Icon(
-                    painter = painterResource(id = R.drawable.person),
-                    contentDescription = "Default placeholder",
+                Image(
+                    painter = rememberAsyncImagePainter(model = "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg"),
+                    contentDescription = "User's avatar",
                     modifier = Modifier
-                        .size(98.dp),
-                    tint = Color.White
+                        .size(140.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF6650a4)),
                 )
             }
         }
