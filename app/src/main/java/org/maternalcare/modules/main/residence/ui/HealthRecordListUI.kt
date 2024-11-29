@@ -232,13 +232,13 @@ fun ProfileUsers (
 ){
     Box(
         Modifier
-            .height(120.dp)
+            .height(130.dp)
     ) {
         if (conditionStatus != null) {
             if(conditionStatus.isNormal){
                 Box(
                     modifier = Modifier
-                        .size(120.dp)
+                        .size(130.dp)
                         .clip(CircleShape)
                         .background(Color.Green)
                         .border(3.dp, Color(0xFF6650a4), CircleShape),
@@ -255,7 +255,7 @@ fun ProfileUsers (
             }else if(conditionStatus.isCritical) {
                 Box(
                     modifier = Modifier
-                        .size(120.dp)
+                        .size(130.dp)
                         .clip(CircleShape)
                         .background(Color.Red)
                         .border(3.dp, Color(0xFF6650a4), CircleShape),

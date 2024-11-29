@@ -58,7 +58,7 @@ fun ReminderListUI(
             .fillMaxWidth(),
          horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(55.dp))
+        Spacer(modifier = Modifier.height(60.dp))
         Column(
             modifier = Modifier
                 .padding(16.dp)
@@ -79,7 +79,7 @@ fun ReminderListUI(
                     .fillMaxWidth(),
                 color = Color(0xFF6650a4)
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             ScheduleList(navController, currentUser)
         }
     }
@@ -95,7 +95,7 @@ private fun RemindersButton (data: UserCheckupDto, onClick: () -> Unit, navContr
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 25.dp)
-            .height(55.dp),
+            .height(60.dp),
         elevation = ButtonDefaults.elevatedButtonElevation(
             defaultElevation = 4.dp,
             pressedElevation = 8.dp
