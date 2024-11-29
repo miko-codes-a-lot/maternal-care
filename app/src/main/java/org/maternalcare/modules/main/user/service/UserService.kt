@@ -289,7 +289,7 @@ class UserService @Inject constructor(private val realm: Realm) {
             if (userDto == null) return
 
             realm.write {
-                userDto.isCompleted = count == 4
+                userDto.isCompleted = count == 3
                 copyToRealm(userDto.toEntity(), updatePolicy = UpdatePolicy.ALL)
             }
         }
@@ -402,13 +402,6 @@ class UserService @Inject constructor(private val realm: Realm) {
         return realm.query<UserCheckup>(query.toString(), adminId, currentDate)
             .distinct("scheduleOfNextCheckUp")
             .sort("scheduleOfNextCheckUp", Sort.ASCENDING)
-            .find()
-            .map { it.toDTO() }
-    }
-
-    fun getAllUserWithCheckups(userId: String): List<UserCheckupDto> {
-        val query = "userId == $0 AND checkup > 0"
-        return realm.query<UserCheckup>(query, userId)
             .find()
             .map { it.toDTO() }
     }
