@@ -1,6 +1,8 @@
 package org.maternalcare.modules.main.residence.ui
 
+import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -158,7 +160,7 @@ fun ResidencesUI(
     } else {
         0
     }
-    val fetchResidencesReportDetails = userViewModel.fetchResidencesReportDetails(addressName = addressDto?.name!!)
+    val fetchResidencesReportDetails = userViewModel.fetchResidencesReportDetails(addressName = (addressDto?.name.toString()))
     val isShowFloatingIcon = rememberSaveable { mutableStateOf( !isArchive)}
     val context = LocalContext.current
     Column(
@@ -191,7 +193,8 @@ fun ResidencesUI(
                                     ).show()
                                 }
                             )
-                        }
+                        },
+                        context = context
                     )
                 }
             }
@@ -387,9 +390,9 @@ fun FloatingIcon(
     addressDto: AddressDto,
     currentUser: UserDto,
     filteredResidences: List<UserReport>,
-    onExportToPDF: (List<UserReport>) -> Unit
+    onExportToPDF: (List<UserReport>) -> Unit,
+    context: Context
 ) {
-    val context = LocalContext.current
     val activity = context as? MainActivity
     Column(
         modifier = Modifier
