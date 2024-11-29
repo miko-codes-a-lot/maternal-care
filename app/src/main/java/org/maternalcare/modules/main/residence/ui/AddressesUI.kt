@@ -163,7 +163,7 @@ private fun ListButton (
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 25.dp)
-            .height(55.dp),
+            .height(60.dp),
         elevation = ButtonDefaults.elevatedButtonElevation(
             defaultElevation = 4.dp,
             pressedElevation = 8.dp
@@ -175,7 +175,7 @@ private fun ListButton (
                 contentDescription = "Address Icon",
                 tint = Color.White,
                 modifier = Modifier
-                    .size(23.dp)
+                    .size(25.dp)
                     .clickable {
                         navController.navigate(MainNav.Map(addressDto.id!!))
                     }
@@ -226,7 +226,9 @@ fun ListAddress(
     }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .padding(bottom = 45.dp)
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         items(filteredAddresses) { address ->
