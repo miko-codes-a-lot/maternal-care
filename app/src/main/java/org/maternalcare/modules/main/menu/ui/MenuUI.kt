@@ -72,7 +72,8 @@ fun MenuUI(
                     .size(28.dp)
                     .clickable {
                         navController.navigate(MainNav.AboutView)
-                    }
+                    },
+                tint = Color(0xFF6650a4)
             )
         }
         Column(
