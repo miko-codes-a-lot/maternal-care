@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -72,10 +74,30 @@ fun SettingsUI(navController: NavController,
             .fillMaxSize()
             .background(Color.White)
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
+        Row(
+            modifier = Modifier
+                .height(180.dp)
+                .background(color = Color.White)
+                .padding(top = 40.dp, end = 8.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.Top,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.about),
+                contentDescription = "About",
+                modifier = Modifier
+                    .size(28.dp)
+                    .clickable {
+                        navController.navigate(MainNav.UserManual)
+                    },
+                tint = Color(0xFF6650a4)
+            )
+        }
         Profile(navController, currentUser, userService)
         Spacer(
             modifier = Modifier
@@ -143,7 +165,7 @@ fun Profile(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .background(Color.White)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

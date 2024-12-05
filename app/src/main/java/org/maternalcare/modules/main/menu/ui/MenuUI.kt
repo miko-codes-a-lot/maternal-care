@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,6 +57,24 @@ fun MenuUI(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
     ) {
+        Row(
+            modifier = Modifier
+                .height(50.dp)
+                .background(color = Color.White)
+                .padding(top = 55.dp ,end = 20.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.info),
+                contentDescription = "About",
+                modifier = Modifier
+                    .size(28.dp)
+                    .clickable {
+                        navController.navigate(MainNav.AboutView)
+                    }
+            )
+        }
         Column(
             modifier = Modifier
                 .padding(16.dp)
