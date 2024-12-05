@@ -93,4 +93,10 @@ object MainNav {
 
     @Serializable
     data class ChatDirect(val userId: String)
+
+    @Serializable
+    object AboutView
+
+    @Serializable
+    object UserManual
 }

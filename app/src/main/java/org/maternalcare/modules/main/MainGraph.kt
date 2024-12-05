@@ -52,6 +52,8 @@ import org.maternalcare.modules.main.user.ui.UsersUI
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 import org.maternalcare.shared.Guard
 import org.maternalcare.shared.ext.toObjectId
+import org.maternalcare.shared.html_viewer.AboutViewer
+import org.maternalcare.shared.html_viewer.UserManualViewer
 
 fun NavGraphBuilder.mainGraph(navController: NavController) {
     navigation<MainNav>(startDestination = MainNav.Menu) {
@@ -433,6 +435,16 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             val addressDto = residenceViewModel.fetchOneAddress(args.addressId.toObjectId())
             Guard(navController = navController) { currentUser ->
                 MapUI(addressDto = addressDto)
+            }
+        }
+        composable<MainNav.AboutView> {
+            Guard(navController = navController) { currentUser ->
+                AboutViewer("about.html")
+            }
+        }
+        composable<MainNav.UserManual> {
+            Guard(navController = navController) { currentUser ->
+                UserManualViewer("usermanual.html")
             }
         }
     }
