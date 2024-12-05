@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maternal Care Application - Overview</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        #header {
+            background-color: #6650a4;
+            margin-top: 40px;
+            color: #fff;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            animation: slideDown 1.5s ease-in-out;
+        }
+        #header h1 {
+            font-size: 1.8rem;
+            margin: 0 0 10px;
+            font-weight: bold;
+        }
+        #header p {
+            margin: 5px 0 0;
+            font-size: 1.5rem;
+        }
+
+        .body-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards;
+        }
+        .body-container:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+        .body-container:nth-child(odd) {
+            animation-delay: 0.4s;
+        }
+        h2 {
+            margin-top: 20px;
+            color: #6650a4;
+            font-size: 1.8rem;
+        }
+        ul {
+            margin: 10px 0 20px 20px;
+        }
+        li {
+            margin: 8px 0;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        li:hover {
+            color: #6650a4;
+            transform: translateX(10px);
+        }
+
+        #footer {
+                background-color: #6650a4;
+                color: #fff;
+                text-align: center;
+                padding: 40px 20px;
+                border-radius: 8px;
+                margin-top: 40px;
+                margin-bottom: 60px;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            }
+            .contact h3 {
+                font-size: 1.5rem;
+                margin: 0 0 10px;
+                font-weight: bold;
+            }
+            .contact p {
+                margin: 5px 0 0;
+                font-size: 1.1rem;
+            }
+
+        @keyframes slideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            #header h1 {
+                font-size: 1.8rem;
+            }
+            #header p {
+                font-size: 1rem;
+            }
+            .body-container {
+                padding: 15px;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <h1>Maternal Care Application</h1>
+    <p>
+        Designed to empower prenatal care, the <strong>Maternal Care Application</strong> integrates advanced technology
+        with healthcare needs. Built with Kotlin and Jetpack Compose, it bridges the gap between health workers and expectant mothers.
+    </p>
+</div>
+
+<div id="context-body">
+    <div class="body-container">
+        <h2>Overview</h2>
+        <p>The Maternal Care Application enhances prenatal care by providing a user-friendly platform for health monitoring and management, ensuring both efficiency and accessibility.</p>
+    </div>
+
+    <div class="body-container">
+        <h2>Key Objectives</h2>
+        <ul>
+            <li><b>User-Friendly Interface:</b> Simplify access for pregnant women and healthcare professionals.</li>
+            <li><b>Centralized Data Management:</b> Allow health workers to efficiently manage pregnancy-related information.</li>
+            <li><b>Timely Notifications:</b> Ensure mothers receive reminders for checkups and vaccinations.</li>
+            <li><b>Data Analytics:</b> Provide actionable insights to assist health workers in decision-making.</li>
+            <li><b>Secure Data Storage:</b> Protect patient records with reliable storage and backup solutions.</li>
+        </ul>
+    </div>
+
+    <div class="body-container">
+        <h2>Core Features</h2>
+        <ul>
+            <li><b>Personalized Health Profiles:</b> Offer detailed user profiles containing medical history and schedules.</li>
+            <li><b>Automated Notifications:</b> Deliver reminders for appointments and important updates.</li>
+            <li><b>Real-time Updates:</b> Enable health workers to record and track patient conditions instantly.</li>
+            <li><b>Analytics Tools:</b> Generate comprehensive data for improving health outcomes.</li>
+            <li><b>Backup and Security:</b> Ensure all health records are safeguarded and recoverable.</li>
+        </ul>
+    </div>
+
+    <div class="body-container">
+        <h2>User Roles</h2>
+        <ul>
+            <li><b>Midwives:</b> Manage health records, monitor pregnancies, and oversee health worker accounts.</li>
+            <li><b>Barangay Health Workers (BHW):</b> Update patient data, organize schedules, and support communication with patients.</li>
+            <li><b>Pregnant Women:</b> Access health profiles, receive reminders, and communicate with healthcare providers.</li>
+        </ul>
+    </div>
+
+    <div class="body-container">
+        <h2>Technologies Used</h2>
+        <ul>
+            <li><b>Android Studio:</b> For app development.</li>
+            <li><b>MongoDB:</b> Database for secure record storage.</li>
+            <li><b>Adobe XD:</b> For user interface design.</li>
+            <li><b>Agile Methodology:</b> Ensuring iterative development with user feedback.</li>
+        </ul>
+    </div>
+
+    <div class="body-container">
+        <h2>Benefits</h2>
+        <ul>
+            <li><b>For Midwives:</b> Simplified management of patient records and comprehensive analytics tools.</li>
+            <li><b>For Health Workers:</b> Real-time updates and improved communication systems.</li>
+            <li><b>For Pregnant Women:</b> Improved prenatal care through timely notifications and easy access to health data.</li>
+        </ul>
+    </div>
+</div>
+
+<div id="footer">
+    <div class="contact">
+        <h3>Contact Us</h3>
+        <p>For support or inquiries, contact your local Barangay Health Worker or midwife.</p>
+    </div>
+</div>
+
+</body>
+</html>

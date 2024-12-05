@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maternal Care - User Manual</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        #header {
+            background: linear-gradient(135deg, #6650a4, #8e7cc3);
+            color: #fff;
+            padding: 80px 20px 40px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+            margin-bottom: 40px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        #toc {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #toc a {
+            display: block;
+            padding: 10px 0;
+            color: #6650a4;
+            text-decoration: none;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        #toc a:hover {
+            color: #6650a4;
+            background-color: #f5f5f5;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #6650a4;
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .section p {
+            font-size: 1.1rem;
+        }
+
+        .image {
+            text-align: center;
+            margin: 15px 0;
+            animation: fadeIn 1s ease-in-out;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .image:hover {
+            background-color: #f1f1f1;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+
+        footer {
+            background-color: #6650a4;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            margin-bottom: 60px;
+            border-radius: 8px;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <h1>Maternal Care - User Manual</h1>
+    <p>
+        Empowering healthcare through technology, the <strong>Maternal Care</strong> application is an essential tool for
+        Super Admins, Admins, Barangay Health Workers (BHW), and pregnant users. This manual provides a comprehensive guide
+        to navigating the application's features, ensuring effective management of user data, scheduled checkups, health
+        monitoring, and communication. Start today to deliver superior care for maternal health.
+    </p>
+</div>
+
+
+<div id="toc">
+    <h2>Table of Contents</h2>
+    <a href="#login-session">1. Login Session</a>
+    <a href="#super-admin-menu">2. Super Admin Menu</a>
+    <a href="#address-selection">3. Address Selection</a>
+    <a href="#sample-user-data">4. Sample User Data</a>
+    <a href="#admin-user-features">5. Admin User Features</a>
+    <a href="#settings-page">6. Settings Page</a>
+    <a href="#bhw-login">7. BHW Login</a>
+    <a href="#menu-ui">8. BHW Menu UI</a>
+    <a href="#reminders">9. Reminders for Scheduled Checkups</a>
+    <a href="#user-management">10. Pregnant Users Management</a>
+    <a href="#condition-status">11. Condition Status</a>
+    <a href="#prenatal-checkup">12. Prenatal Checkup</a>
+    <a href="#immunization">13. Immunization and Health Monitoring</a>
+    <a href="#messages">14. Messages</a>
+    <a href="#settings">15. BHW Settings</a>
+    <a href="#pregnant-menu">16. Pregnant Menu UI</a>
+    <a href="#pregnant-reminder-alert">17. Pregnant User Reminder Alert</a>
+    <a href="#pregnant-reminder-list">18. Pregnant Reminder List</a>
+    <a href="#pregnant-health-record">19. Pregnant Health Record</a>
+    <a href="#pregnant-status">20. Pregnant Condition Status</a>
+    <a href="#pregnant-trimester">21. Pregnant Trimester Checkup</a>
+    <a href="#pregnant-bmi">22. Pregnant BMI Computation</a>
+    <a href="#pregnant-checkup">23. Pregnant Checkup Data</a>
+    <a href="#pregnant-settings">24. Pregnant Settings</a>
+</div>
+
+<div id="login-session" class="section">
+    <h2>1. Login Session</h2>
+    <p>The login session allows users to access the app securely. Super Admin has extended permissions to manage data and users.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/admin_login.jpg" alt="Login Session Screen">
+    </div>
+</div>
+
+<div id="super-admin-menu" class="section">
+    <h2>2. Super Admin Menu</h2>
+    <p>Super Admin has access to all features, including the ability to select addresses, manage users, and view session data.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/admin_menu.jpg" alt="Super Admin Menu">
+    </div>
+</div>
+
+<div id="address-selection" class="section">
+    <h2>3. Address Selection</h2>
+    <p>Super Admin can select specific addresses to view related user data and sessions. Printing sessions is also enabled for administrative ease.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/admin_address.jpg" alt="Address Selection">
+    </div>
+</div>
+
+<div id="sample-user-data" class="section">
+    <h2>4. Sample User Data</h2>
+    <p>Pregnant users' data is displayed in a dashboard accessible by the Super Admin, with relevant information on health and session history.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/dashboard.jpg" alt="Sample User Data">
+    </div>
+</div>
+
+<div id="admin-user-features" class="section">
+    <h2>5. Admin User Features</h2>
+    <p>The admin can create accounts for Barangay Health Workers (BHW). They can also manage settings and view sample users' profiles for management.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/admin_creation.jpg" alt="Admin Settings">
+    </div>
+</div>
+
+<div id="settings-page" class="section">
+    <h2>6. Settings Page</h2>
+    <p>The settings page enables Super Admin to configure the app and manage users effectively. This includes adding or removing users, modifying app settings, and controlling access rights.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/settings.jpg" alt="Settings Page">
+    </div>
+</div>
+
+<div id="bhw-login" class="section">
+    <h2>7. BHW Login</h2>
+    <p>BHWs can securely log in to their dashboard to access user management tools and scheduled tasks.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/bhw_login.jpg" alt="BHW Login">
+    </div>
+</div>
+
+<div id="menu-ui" class="section">
+    <h2>8. BHW Menu UI</h2>
+    <p>The BHW menu provides easy navigation to manage users, view reminders, and access settings.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/bhw_menu.jpg" alt="BHW Menu UI">
+    </div>
+</div>
+
+<div id="reminders" class="section">
+    <h2>9. Reminders for Scheduled Checkups</h2>
+    <p>The application sends reminders to BHWs about upcoming prenatal checkups to ensure timely care for pregnant users.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/bhw_reminder.jpg" alt="Reminders for Scheduled Checkups">
+    </div>
+</div>
+
+<div id="user-management" class="section">
+    <h2>10. Pregnant Users Management</h2>
+    <p>BHWs can create, preview, and manage pregnant users, including their addresses and pregnancy numbers. Successfully added users are shown on the dashboard.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/bhw_usermanagement.jpg" alt="Pregnant Users Management">
+    </div>
+</div>
+
+<div id="condition-status" class="section">
+    <h2>11. Condition Status</h2>
+    <p>The application highlights user conditions with color-coded indicators: green for normal and red for critical.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/bhw_conditionstatus.jpg" alt="Condition Status">
+    </div>
+</div>
+
+<div id="prenatal-checkup" class="section">
+    <h2>12. Prenatal Checkup</h2>
+    <p>BHWs can schedule checkups, monitor statuses, and update health information. BMI is calculated automatically after checkup data is submitted.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/bhw_checkup.jpg" alt="Prenatal Checkup">
+    </div>
+</div>
+
+<div id="immunization" class="section">
+    <h2>13. Immunization and Health Monitoring</h2>
+    <p>BHWs manage immunization records and check the overall health of pregnant users during their care cycle.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/bhw_immunization.jpg" alt="Immunization and Health Monitoring">
+    </div>
+</div>
+
+<div id="messages" class="section">
+    <h2>14. Messages</h2>
+    <p>BHWs can send and receive messages with pregnant users, ensuring effective communication and coordination.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/bhw_messages.jpg" alt="Messages">
+    </div>
+</div>
+
+<div id="settings" class="section">
+    <h2>15. BHW Settings</h2>
+    <p>The settings page allows BHWs to configure their profiles and preferences within the application.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/bhw_setting.jpg" alt="BHW Settings">
+    </div>
+</div>
+
+<div id="pregnant-menu" class="section">
+    <h2>16. Pregnant Menu UI</h2>
+    <p>The Pregnant Menu UI offers quick access to reminders, health updates, and condition monitoring for better prenatal care.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/pregnant_menu.jpg" alt="Pregnant Menu UI">
+    </div>
+</div>
+
+<div id="pregnant-reminder-alert" class="section">
+    <h2>17. Pregnant User Reminder Alert</h2>
+    <p>Sends timely alerts for checkups and immunizations to help maintain a healthy pregnancy.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/pregnant_reminder_alert.jpg" alt="Pregnant Reminder Alert">
+    </div>
+</div>
+
+<div id="pregnant-reminder-list" class="section">
+    <h2>18. Pregnant Reminder List</h2>
+    <p>Displays upcoming reminders, ensuring users stay updated on their prenatal care schedules.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/pregnant_reminder_list.jpg" alt="Pregnant Reminder List">
+    </div>
+</div>
+
+<div id="pregnant-health-record" class="section">
+    <h2>19. Pregnant Health Record</h2>
+    <p>View and update health records, including checkup details and immunization history.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/pregnant_health_record.jpg" alt="Pregnant Health Record">
+    </div>
+</div>
+
+<div id="pregnant-status" class="section">
+    <h2>20. Pregnant Condition Status</h2>
+    <p>Displays health status using indicators to identify critical or normal conditions.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/pregnant_status.jpg" alt="Pregnant Condition Status">
+    </div>
+</div>
+
+<div id="pregnant-trimester" class="section">
+    <h2>21. Pregnant Trimester Checkup</h2>
+    <p>Monitor and track trimester checkup schedules and updates for better pregnancy care.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/pregnant_trimester_record.jpg" alt="Pregnant Trimester Checkup">
+    </div>
+</div>
+
+<div id="pregnant-bmi" class="section">
+    <h2>22. Pregnant BMI Computation</h2>
+    <p>Automatically calculates BMI to assess and track user health during pregnancy.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/pregnant_computation_bmi.jpg" alt="Pregnant BMI Computation">
+    </div>
+</div>
+
+<div id="pregnant-checkup" class="section">
+    <h2>23. Pregnant Checkup Data</h2>
+    <p>Stores and updates user checkup data, ensuring accurate health tracking.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/pregnant_checkup_data.jpg" alt="Pregnant Checkup Data">
+    </div>
+</div>
+
+<div id="pregnant-settings" class="section">
+    <h2>24. Pregnant Settings</h2>
+    <p>Allows pregnant users to customize app preferences and health monitoring settings.</p>
+    <div class="image">
+        <img src="file:///android_asset/images/pregnant_settings.jpg" alt="Pregnant Settings">
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2024 Maternal Care Application. All rights reserved.</p>
+</footer>
+</body>
+</html>
