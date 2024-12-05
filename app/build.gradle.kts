@@ -92,6 +92,7 @@ dependencies {
     implementation(libs.jbcrypt)
     implementation(libs.play.services.maps)
     implementation(libs.maps.compose)
+    implementation("androidx.webkit:webkit:1.9.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
