@@ -699,6 +699,7 @@ fun TextFieldContainer(
                                 painter = painterResource(
                                     id = if (isPasswordVisible) R.drawable.visibilityon else R.drawable.visibility_off
                                 ),
+                                tint = Color.Black,
                                 contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
                             )
                         }

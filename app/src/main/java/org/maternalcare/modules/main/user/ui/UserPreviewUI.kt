@@ -88,7 +88,8 @@ fun UserPreviewUI(
                 text = "cancel",
                 modifier = Modifier,
                 fontSize = 15.sp,
-                fontFamily = FontFamily.SansSerif
+                fontFamily = FontFamily.SansSerif,
+                color = Color.Red
             )
         }
     }
