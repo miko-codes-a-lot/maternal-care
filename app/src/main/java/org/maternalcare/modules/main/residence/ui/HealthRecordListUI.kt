@@ -95,7 +95,8 @@ fun HealthRecordListUI(
                 Text(
                     text = userDto.firstName +" "+ userDto.middleName +" "+  userDto.lastName,
                     fontSize = 23.sp,
-                    fontFamily = FontFamily.SansSerif
+                    fontFamily = FontFamily.SansSerif,
+                    color = Color.Black
                 )
             }else{
                 Image(
