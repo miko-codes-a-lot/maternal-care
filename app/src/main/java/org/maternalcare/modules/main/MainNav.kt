@@ -99,4 +99,14 @@ object MainNav {
 
     @Serializable
     object UserManual
+
+    @Serializable
+    object BhwManual
+
+    @Serializable
+    object MidWifeManual
+
+    @Serializable
+    object PregnantManual
+
 }

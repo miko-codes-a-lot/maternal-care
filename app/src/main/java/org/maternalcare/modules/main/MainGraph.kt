@@ -53,6 +53,9 @@ import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 import org.maternalcare.shared.Guard
 import org.maternalcare.shared.ext.toObjectId
 import org.maternalcare.shared.html_viewer.AboutViewer
+import org.maternalcare.shared.html_viewer.BhwManualViewer
+import org.maternalcare.shared.html_viewer.MidWifeManualViewer
+import org.maternalcare.shared.html_viewer.PregnantManualViewer
 import org.maternalcare.shared.html_viewer.UserManualViewer
 
 fun NavGraphBuilder.mainGraph(navController: NavController) {
@@ -445,6 +448,21 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         composable<MainNav.UserManual> {
             Guard(navController = navController) { currentUser ->
                 UserManualViewer("usermanual.html")
+            }
+        }
+        composable<MainNav.BhwManual> {
+            Guard(navController = navController) { currentUser ->
+                BhwManualViewer("bhwManual.html")
+            }
+        }
+        composable<MainNav.MidWifeManual> {
+            Guard(navController = navController) { currentUser ->
+                MidWifeManualViewer("midWifeManual.html")
+            }
+        }
+        composable<MainNav.PregnantManual> {
+            Guard(navController = navController) { currentUser ->
+                PregnantManualViewer("pregnantManual.html")
             }
         }
     }
