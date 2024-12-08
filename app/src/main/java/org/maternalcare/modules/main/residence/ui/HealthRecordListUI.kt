@@ -274,7 +274,7 @@ fun ProfileUsers (
         }else{
             Box(
                 modifier = Modifier
-                    .size(120.dp)
+                    .size(135.dp)
                     .clip(CircleShape)
                     .background(Color(0xFF6650a4))
                     .border(3.dp, Color(0xFF6650a4), CircleShape),
