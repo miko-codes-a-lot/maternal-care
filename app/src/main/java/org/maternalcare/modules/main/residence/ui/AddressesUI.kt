@@ -148,7 +148,6 @@ fun AddressesUI(
 @SuppressLint("DefaultLocale")
 @Composable
 private fun ListButton (
-    isShowPercent: Boolean = false,
     addressDto: AddressDto,
     onClick: () -> Unit,
     navController: NavController,
@@ -189,15 +188,15 @@ private fun ListButton (
                 modifier = Modifier
                         .weight(0.9f)
             )
-            if (isShowPercent && totalToShow > 0.0) {
+            if (totalToShow > 0) {
                 Text(
-                    text = "% " +String.format("%d", totalToShow),
+                    text = totalToShow.toString(),
                     fontSize = 17.sp,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.SansSerif
                 )
-            }else{
+            } else {
                 Spacer(modifier = Modifier.padding(end = 18.dp))
             }
         }
@@ -239,7 +238,6 @@ fun ListAddress(
 
             ListButton(
                 addressDto = address,
-                isShowPercent = isShowPercent,
                 onClick = {
                     val checkupStatus =
                         if (isComplete)
