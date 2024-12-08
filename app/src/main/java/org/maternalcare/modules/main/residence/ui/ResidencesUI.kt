@@ -239,8 +239,8 @@ fun ResidencesUI(
                 LazyColumn(
                     modifier = Modifier
                         .background(Color.White)
-                        .height(600.dp)
-                        .fillMaxWidth(),
+                        .padding(bottom = 50.dp)
+                        .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     items(filteredResidences) { residence ->
