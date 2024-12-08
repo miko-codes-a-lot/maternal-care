@@ -71,7 +71,13 @@ fun MenuUI(
                 modifier = Modifier
                     .size(28.dp)
                     .clickable {
-                        navController.navigate(MainNav.AboutView)
+                        if (currentUser.isSuperAdmin) {
+                            navController.navigate(MainNav.MidWifeManual)
+                        } else if (currentUser.isAdmin) {
+                            navController.navigate(MainNav.BhwManual)
+                        } else {
+                            navController.navigate(MainNav.PregnantManual)
+                        }
                     },
                 tint = Color(0xFF6650a4)
             )

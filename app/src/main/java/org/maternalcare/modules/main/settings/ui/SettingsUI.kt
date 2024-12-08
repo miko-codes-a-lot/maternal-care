@@ -1,11 +1,15 @@
 package org.maternalcare.modules.main.settings.ui
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
+import android.widget.MediaController
+import android.widget.VideoView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -23,7 +28,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
@@ -54,7 +59,12 @@ import org.maternalcare.modules.main.user.service.UserService
 import org.maternalcare.modules.main.user.ui.UserImageUI
 import org.maternalcare.modules.main.user.ui.getBytesFromUri
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
+import org.maternalcare.shared.manual_videos.BhwManualVideo
+import org.maternalcare.shared.manual_videos.MidWifeManualVideo
+import org.maternalcare.shared.manual_videos.PregnantManualVideo
+import java.io.File
 
+@SuppressLint("Range")
 @Composable
 fun SettingsUI(navController: NavController,
                currentUser: UserDto,
@@ -64,7 +74,7 @@ fun SettingsUI(navController: NavController,
     val coroutineScope = rememberCoroutineScope()
     var showButton by remember { mutableStateOf(true) }
     var profileImageUri by remember { mutableStateOf<Uri?>(null) }
-
+    var playVideo by remember { mutableStateOf(false) }
     LaunchedEffect(currentUser.id) {
         profileImageUri = currentUser.imageBase64?.let { Uri.parse(it) }
     }
@@ -94,15 +104,22 @@ fun SettingsUI(navController: NavController,
                     .size(28.dp)
                     .clickable {
                         if(currentUser.isSuperAdmin){
-                            navController.navigate(MainNav.MidWifeManual)
+                            navController.navigate(MainNav.MIDWIFEVideo)
                         }else if (currentUser.isAdmin){
-                            navController.navigate(MainNav.BhwManual)
+                            navController.navigate(MainNav.BHWVideo)
                         }else{
-                            navController.navigate(MainNav.PregnantManual)
+                            navController.navigate(MainNav.PregnantVideo)
                         }
                     },
                 tint = Color(0xFF6650a4)
             )
+        }
+        if (playVideo) {
+            when {
+                currentUser.isSuperAdmin -> MidWifeManualVideo(startPlaying = false)
+                currentUser.isAdmin -> BhwManualVideo(startPlaying = false)
+                else -> PregnantManualVideo(startPlaying = false)
+            }
         }
         Profile(navController, currentUser, userService)
         Spacer(
