@@ -206,7 +206,7 @@ fun ConditionStatusUI(
             isCritical = isCritical.value,
             onSelect = { selectedOption ->
                 isNormal.value = selectedOption == "Normal"
-                isCritical.value = selectedOption == "Critical"
+                isCritical.value = selectedOption == "High Risk"
 
                 Log.d("ConditionStatusUI", "isNormal: ${isNormal.value}, isCritical: ${isCritical.value}")
             }
@@ -344,18 +344,17 @@ fun NutritionalStatus(
     isCritical: Boolean,
     onSelect: (String) -> Unit
 ) {
-    val selectionOption = listOf("Normal", "Critical")
+    val selectionOption = listOf("Normal", "High Risk")
     val (selectedOption, onOptionSelected) = remember {
         mutableStateOf(
             when {
                 isNormal -> "Normal"
-                isCritical -> "Critical"
+                isCritical -> "High Risk"
                 else -> "Normal"
             }
         )
     }
-    Log.d("NutritionalStatus", "Initial isNormal: $isNormal, isCritical: $isCritical")
-    Row {
+     Row {
         selectionOption.forEach { text ->
             Row(
                 Modifier
