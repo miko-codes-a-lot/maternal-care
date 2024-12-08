@@ -1,5 +1,6 @@
 package org.maternalcare.modules.main.user.service
 
+import android.util.Log
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
@@ -267,6 +268,7 @@ class UserService @Inject constructor(private val realm: Realm) {
                 Result.success(user.toDTO())
             }
         } catch (error: Exception) {
+            Log.e("Realm Upsert", "Error: ${error.message}")
             Result.failure(error)
         }
     }
@@ -422,32 +424,34 @@ class UserService @Inject constructor(private val realm: Realm) {
         val addresses = realm.query<Address>().find()
         val addressPercentageMap = mutableMapOf<String, Double>()
         var completedAddressCount = 0
+        var totalAddressCount = 0
+
         addresses.forEach { address ->
-            val usersAtAddress = realm.query<User>( "address == $0 AND isResidence == true AND isArchive == $1", address.name, isArchive ).find()
+            val usersAtAddress = realm.query<User>(
+                "address == $0 AND isResidence == true AND isArchive == $1",
+                address.name, isArchive
+            ).find()
             val usersWithFourCheckups = usersAtAddress.filter { user ->
                 val checkups = realm.query<UserCheckup>(
-                    "userId == $0",
-                    user._id.toHexString()
+                    "userId == $0", user._id.toHexString()
                 ).find()
                 checkups.size >= 3
             }
-            val percentage = if (usersAtAddress.isNotEmpty()) {
-                (usersWithFourCheckups.size.toDouble() / usersAtAddress.size.toDouble()) * 100
-            } else {
-                0.0
-            }
-            addressPercentageMap[address.name] = percentage
-            if (usersWithFourCheckups.isNotEmpty()) { completedAddressCount++ }
+            val addressCompletedCount = usersWithFourCheckups.size
+            val addressTotalCount = usersAtAddress.size
+
+            addressPercentageMap[address.name] = addressCompletedCount.toDouble()
+
+            completedAddressCount += addressCompletedCount
+            totalAddressCount += addressTotalCount
         }
-        val totalAddresses = addresses.size
-        val overallPercentage = if (totalAddresses > 0) {
-            (completedAddressCount.toDouble() / totalAddresses.toDouble()) * 100
-        } else {
-            0.0
-        }
-        addressPercentageMap["Overall Completed Address Percentage"] = overallPercentage
+
+        addressPercentageMap["Overall Completed Address Count"] = completedAddressCount.toDouble()
+        addressPercentageMap["Overall Total Address Count"] = totalAddressCount.toDouble()
+
         return addressPercentageMap
     }
+
 
     fun fetchAddressWithCompleteCheckup(isArchive: Boolean = false): Map<String, Map<String,Int>>{
         val addresses = realm.query<Address>().find()
