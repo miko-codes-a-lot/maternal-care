@@ -45,7 +45,8 @@ fun CheckupProgressUI(
     userViewModel: UserViewModel = hiltViewModel()
 ) {
     val addressCheckupPercentages = userViewModel.getCompleteCheckupPercentages(isArchive = isArchive)
-    val overallCompletedPercentage = addressCheckupPercentages["Overall Completed Address Percentage"] ?: 0.0
+    val completedCheckups = addressCheckupPercentages["Overall Completed Address Count"] ?: 0.0
+    val totalCheckups = addressCheckupPercentages["Overall Total Address Count"] ?: 0.0
     val getAllListAddressCheckups = userViewModel.getAllListAddressCheckup()
 
     Column(
@@ -58,13 +59,13 @@ fun CheckupProgressUI(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val completePercentage = "${String.format("%.2f", overallCompletedPercentage)}%"
-            val incompletePercentage = "${String.format("%.2f", 100 - overallCompletedPercentage)}%"
+            val completedCount = completedCheckups.toInt()
+            val incompleteCount = (totalCheckups - completedCheckups).toInt()
             Spacer(modifier = Modifier.padding(top = 50.dp))
 
             AverageStatusContainer(
-                completePercentage = completePercentage,
-                incompletePercentage = incompletePercentage,
+                completeCount  = completedCount.toString(),
+                incompleteCount  = incompleteCount.toString(),
                 isComplete = isComplete
             )
             Spacer(modifier = Modifier.height(30.dp))
@@ -82,7 +83,7 @@ fun CheckupProgressUI(
 }
 
 @Composable
-fun AverageStatusContainer(completePercentage: String, incompletePercentage: String, isComplete: Boolean) {
+fun AverageStatusContainer(completeCount: String, incompleteCount: String, isComplete: Boolean) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.elevatedCardColors(
@@ -96,9 +97,9 @@ fun AverageStatusContainer(completePercentage: String, incompletePercentage: Str
             contentAlignment = Alignment.Center
         ) {
             val result = if (isComplete) {
-                AverageStats(label = "Complete", value = completePercentage)
+                AverageStats(label = "Complete", value = completeCount.toString())
             } else {
-                AverageStats(label = "Incomplete", value = incompletePercentage)
+                AverageStats(label = "Incomplete", value = incompleteCount.toString())
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 result
