@@ -103,7 +103,7 @@ fun EditCheckupUI(
         listOfLabel.associateWith {
             mutableStateOf(
                 when (it) {
-                    "Blood Pressure (MM HG)" -> checkupUser?.bloodPressure?.toString() ?: "0.0"
+                    "Blood Pressure (MM HG)" -> checkupUser?.bloodPressure?.toString() ?: "0/0"
                     "Height (CM)" -> checkupUser?.height?.toString() ?: "0.0"
                     "Weight (KG)" -> checkupUser?.weight?.toString() ?: "0.0"
                     "Gravida Para (GP)" -> checkupUser?.gravidaPara ?: ""
@@ -195,8 +195,15 @@ fun TextFieldEditCheckUp(
                 TextField(
                     value = textFieldValue,
                     onValueChange = {  input ->
-                    val numericInput = input.filter { it.isDigit() || it == '.' }
-                        onValueChange(numericInput)
+                        val updatedInput = when {
+                            textFieldLabel == "Blood Pressure (MM HG)" -> {
+                                input.filter { it.isDigit() || it == '/' }
+                            }
+                            else -> {
+                                input.filter { it.isDigit() || it == '.' }
+                            }
+                        }
+                        onValueChange(updatedInput)
                     },
                     placeholder = {
                         Text("Enter value", color = Color.Black, fontFamily = FontFamily.SansSerif)
@@ -264,12 +271,18 @@ fun ButtonSaveEdit(
             onConfirm = {
                 showPreview = false
 
+                val bloodPressure = statesValue["Blood Pressure (MM HG)"]?.value
+                    ?.let {
+                        if (it == "/") 0.0
+                        else it.replace("/", ".").toDoubleOrNull() ?: 0.0
+                    } ?: 0.0
+
                 val checkUpDto = UserCheckupDto(
                     id = checkupUser.id,
                     userId = userId,
                     pregnantRecordId = pregnantRecordId,
                     trimesterRecordId = trimesterRecordId,
-                    bloodPressure = statesValue["Blood Pressure (MM HG)"]?.value?.toDoubleOrNull() ?: 0.0,
+                    bloodPressure = bloodPressure,
                     height = statesValue["Height (CM)"]?.value?.toDoubleOrNull() ?: 0.0,
                     weight = statesValue["Weight (KG)"]?.value?.toDoubleOrNull() ?: 0.0,
                     gravidaPara = statesValue["Gravida Para (GP)"]?.value ?: "",
