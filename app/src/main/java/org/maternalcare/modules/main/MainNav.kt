@@ -109,4 +109,12 @@ object MainNav {
     @Serializable
     object PregnantManual
 
+    @Serializable
+    object PregnantVideo
+
+    @Serializable
+    object BHWVideo
+
+    @Serializable
+    object MIDWIFEVideo
 }

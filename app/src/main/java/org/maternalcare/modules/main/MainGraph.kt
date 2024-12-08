@@ -57,6 +57,9 @@ import org.maternalcare.shared.html_viewer.BhwManualViewer
 import org.maternalcare.shared.html_viewer.MidWifeManualViewer
 import org.maternalcare.shared.html_viewer.PregnantManualViewer
 import org.maternalcare.shared.html_viewer.UserManualViewer
+import org.maternalcare.shared.manual_videos.BhwManualVideo
+import org.maternalcare.shared.manual_videos.MidWifeManualVideo
+import org.maternalcare.shared.manual_videos.PregnantManualVideo
 
 fun NavGraphBuilder.mainGraph(navController: NavController) {
     navigation<MainNav>(startDestination = MainNav.Menu) {
@@ -463,6 +466,21 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         composable<MainNav.PregnantManual> {
             Guard(navController = navController) { currentUser ->
                 PregnantManualViewer("pregnantManual.html")
+            }
+        }
+        composable<MainNav.PregnantVideo> {
+            Guard(navController = navController) { currentUser ->
+                PregnantManualVideo("PREGNANT.mp4", startPlaying = true)
+            }
+        }
+        composable<MainNav.BHWVideo> {
+            Guard(navController = navController) { currentUser ->
+                BhwManualVideo("BHW.mp4", startPlaying = true)
+            }
+        }
+        composable<MainNav.MIDWIFEVideo> {
+            Guard(navController = navController) { currentUser ->
+                MidWifeManualVideo("MIDWIFE.mp4", startPlaying = true)
             }
         }
     }
