@@ -100,7 +100,7 @@ class ChatService @Inject constructor(private val realm: Realm) {
     }
 
     fun fetchUsers(userId: ObjectId): Flow<List<UserChatDto>> {
-        return realm.query<User>("createdById == $0", userId)
+        return realm.query<User>("createdById == $0 AND isArchive == false", userId)
             .sort("firstName", Sort.DESCENDING)
             .find()
             .asFlow()
