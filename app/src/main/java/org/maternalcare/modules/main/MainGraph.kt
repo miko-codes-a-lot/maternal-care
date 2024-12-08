@@ -470,17 +470,17 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         composable<MainNav.PregnantVideo> {
             Guard(navController = navController) { currentUser ->
-                PregnantManualVideo("PREGNANT.mp4", startPlaying = true)
+                PregnantManualVideo("videos/PREGNANT.mp4", startPlaying = true)
             }
         }
         composable<MainNav.BHWVideo> {
             Guard(navController = navController) { currentUser ->
-                BhwManualVideo("BHW.mp4", startPlaying = true)
+                BhwManualVideo("videos/BHW.mp4", startPlaying = true)
             }
         }
         composable<MainNav.MIDWIFEVideo> {
             Guard(navController = navController) { currentUser ->
-                MidWifeManualVideo("MIDWIFE.mp4", startPlaying = true)
+                MidWifeManualVideo("videos/MIDWIFE.mp4", startPlaying = true)
             }
         }
     }
