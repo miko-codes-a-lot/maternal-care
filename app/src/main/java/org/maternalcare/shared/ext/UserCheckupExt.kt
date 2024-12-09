@@ -23,8 +23,8 @@ fun UserCheckupDto.determineBMICategory(): String {
 
     return when {
         bmi < 18.5 -> "Underweight"
-        bmi < 24.99 -> "Normal"
-        bmi < 29.9 -> "Overweight"
+        bmi in 18.5..24.9  -> "Normal"
+        bmi in 25.0..29.9 -> "Overweight"
         else -> "Obesity"
     }
 }
