@@ -14,7 +14,8 @@ fun UserCheckupDto.assessBloodPressure(): String = when {
 }
 
 fun UserCheckupDto.calculateBMI(): Double {
-    return if (height > 0) weight / (height * height) else 0.0
+    val heightInMeters = height / 100.0
+    return if (heightInMeters > 0) weight / (heightInMeters * heightInMeters) else 0.0
 }
 
 fun UserCheckupDto.determineBMICategory(): String {
