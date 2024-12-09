@@ -123,7 +123,7 @@ fun CheckUpValueContainer (userDto: UserDto, checkup: UserCheckupDto) {
         "Nutritional Status" to  "%s".format(bmiCategory),
         "Expected Due Date" to checkup.expectedDueDate(),
     )
-    if (checkup.checkup < 4) {
+    if (checkup.checkup < 3) {
         labelValueMap["Next Check-up"] = formatDate(checkup.scheduleOfNextCheckUp)
     }
 
