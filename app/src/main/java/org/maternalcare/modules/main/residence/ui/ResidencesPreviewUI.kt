@@ -140,6 +140,7 @@ fun TextFieldContain(
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.SansSerif,
                 fontSize = 17.sp,
+                color = Color.Black,
                 modifier = Modifier
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -154,6 +155,7 @@ fun TextFieldContain(
                 ) {
                     Text(
                         text = textState.value,
+                        color = Color.Black,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 12.dp),
@@ -163,7 +165,7 @@ fun TextFieldContain(
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth(),
                         thickness = 1.dp,
-                        color = Color.Gray
+                        color = Color.Black
                     )
                 }
             }

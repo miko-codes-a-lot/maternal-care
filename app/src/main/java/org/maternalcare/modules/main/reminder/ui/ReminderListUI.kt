@@ -120,8 +120,9 @@ fun ScheduleList (navController: NavController, currentUser: UserDto) {
         else
             reminderViewModel.getMyUpcomingCheckup(currentUser.id!!)
 
+    val sortedReminders = reminders.sortedByDescending { it.scheduleOfNextCheckUp }
 
-    val uniqueCheckupDetails = reminders
+    val uniqueCheckupDetails = sortedReminders
         .map { formatListDates(it.scheduleOfNextCheckUp) }
         .toSet()
         .mapIndexed { index, date -> index + 1 to date }
