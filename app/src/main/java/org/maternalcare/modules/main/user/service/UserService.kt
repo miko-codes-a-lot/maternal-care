@@ -169,7 +169,7 @@ class UserService @Inject constructor(private val realm: Realm) {
 
         val query = StringBuilder()
             .append("isArchive == false")
-            .append(" AND dateOfCheckUp >= $1 AND dateOfCheckUp <= $2")
+            .append(" AND scheduleOfNextCheckUp >= $1 AND scheduleOfNextCheckUp <= $2")
 
         if (userId != null) query.append(" AND createdById == $0")
 
