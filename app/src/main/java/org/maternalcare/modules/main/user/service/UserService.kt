@@ -428,23 +428,26 @@ class UserService @Inject constructor(private val realm: Realm) {
         return addressPercentageMap
     }
 
+    private fun countUsersInAddressByStatus(
+        addressName: String,
+        isArchive: Boolean,
+        isCompleted: Boolean,
+    ): List<UserDto> {
+        return realm.query<User>(
+            "address == $0 AND isResidence == true AND isArchive == $1 AND isCompleted == $2",
+            addressName,
+            isArchive,
+            isCompleted
+        ).find().map { it.toDTO() }
+    }
 
     fun fetchAddressWithCompleteCheckup(isArchive: Boolean = false): Map<String, Map<String,Int>>{
         val addresses = realm.query<Address>().find()
+
         return addresses.associate { address ->
-            val usersAtAddress = realm.query<User>(
-                "address == $0 And isResidence == true And isArchive == $1", address.name, isArchive
-            ).find()
-            val (usersWithFourCheckups, usersWithoutFourCheckups) = usersAtAddress.partition { user ->
-                val checkups = realm.query<UserCheckup>("userId == $0", user._id.toHexString()).find()
-                checkups.size >= 3
-            }
-            val totalUsers = usersAtAddress.size
-            val usersCompleteCheckup = if(totalUsers > 0) (usersWithFourCheckups.size) else 0
-            val usersNotCompleteCheckup = if(totalUsers > 0) (usersWithoutFourCheckups.size) else 0
             address.name to mapOf(
-                "Complete" to usersCompleteCheckup,
-                "Incomplete" to usersNotCompleteCheckup
+                "Complete" to countUsersInAddressByStatus(address.name, isArchive, true).size,
+                "Incomplete" to countUsersInAddressByStatus(address.name, isArchive, false).size
             )
         }
     }
