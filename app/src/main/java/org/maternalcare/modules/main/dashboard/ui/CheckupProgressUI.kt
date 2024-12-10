@@ -27,7 +27,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.maternalcare.modules.main.residence.ui.ListAddress
-import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.modules.main.user.viewmodel.UserViewModel
 
 @Preview
@@ -44,9 +43,7 @@ fun CheckupProgressUI(
     isArchive: Boolean,
     userViewModel: UserViewModel = hiltViewModel()
 ) {
-    val addressCheckupPercentages = userViewModel.getCompleteCheckupPercentages(isArchive = isArchive)
-    val completedCheckups = addressCheckupPercentages["Overall Completed Address Count"] ?: 0.0
-    val totalCheckups = addressCheckupPercentages["Overall Total Address Count"] ?: 0.0
+//    val addressCheckupPercentages = userViewModel.getCompleteCheckupPercentages(isArchive = isArchive)
     val getAllListAddressCheckups = userViewModel.getAllListAddressCheckup()
 
     Column(
@@ -59,13 +56,18 @@ fun CheckupProgressUI(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val completedCount = completedCheckups.toInt()
-            val incompleteCount = (totalCheckups - completedCheckups).toInt()
             Spacer(modifier = Modifier.padding(top = 50.dp))
 
+            val totalNumber = getAllListAddressCheckups.values
+                .fold(mapOf("Complete" to 0, "Incomplete" to 0)) { acc, counts ->
+                    acc.mapValues { (key, value) ->
+                        value + (counts[key] ?: 0)
+                    }
+            }
+
             AverageStatusContainer(
-                completeCount  = completedCount.toString(),
-                incompleteCount  = incompleteCount.toString(),
+                completeCount  = totalNumber["Complete"].toString(),
+                incompleteCount  = totalNumber["Incomplete"].toString(),
                 isComplete = isComplete
             )
             Spacer(modifier = Modifier.height(30.dp))
@@ -97,9 +99,9 @@ fun AverageStatusContainer(completeCount: String, incompleteCount: String, isCom
             contentAlignment = Alignment.Center
         ) {
             val result = if (isComplete) {
-                AverageStats(label = "Complete", value = completeCount.toString())
+                AverageStats(label = "Complete", value = completeCount)
             } else {
-                AverageStats(label = "Incomplete", value = incompleteCount.toString())
+                AverageStats(label = "Incomplete", value = incompleteCount)
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 result
