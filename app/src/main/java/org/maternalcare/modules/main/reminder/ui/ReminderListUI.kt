@@ -34,8 +34,6 @@ import org.maternalcare.modules.main.residence.enum.CheckupStatus
 import org.maternalcare.modules.main.user.model.dto.UserCheckupDto
 import org.maternalcare.modules.main.user.model.dto.UserDto
 import org.maternalcare.shared.ui.formatListDates
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 @Preview(showSystemUi = true)
 @Composable
@@ -102,7 +100,7 @@ private fun RemindersButton (data: UserCheckupDto, onClick: () -> Unit, navContr
         )
     ) {
         Text(
-            text = formatListDates(data.dateOfCheckUp),
+            text = formatListDates(data.scheduleOfNextCheckUp),
             fontSize = 17.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
@@ -120,51 +118,21 @@ fun ScheduleList (navController: NavController, currentUser: UserDto) {
         else
             reminderViewModel.getMyUpcomingCheckup(currentUser.id!!)
 
-
-    val uniqueCheckupDetails = reminders
-        .map { formatListDates(it.scheduleOfNextCheckUp) }
-        .toSet()
-        .mapIndexed { index, date -> index + 1 to date }
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
-        items(uniqueCheckupDetails.toList()) { (num, _) ->
-            RemindersButton(data = reminders[num - 1 ], onClick = {
+        items(reminders) { reminder ->
+            RemindersButton(data = reminder, navController = navController, onClick = {
                 if (!currentUser.isAdmin) return@RemindersButton
 
                 val route = MainNav.Residences(
                     status = CheckupStatus.ALL.name,
-                    dateOfCheckUp = reminders[num - 1].scheduleOfNextCheckUp,
+                    dateOfCheckUp = reminder.scheduleOfNextCheckUp,
                     isDashboard = false
                 )
                 navController.navigate(route)
-            }, navController = navController)
-        }
-    }
-}
-
-fun formatReminderDates(dateString: String?): String {
-    if (dateString.isNullOrBlank()) {
-        return "No Date Available"
-    }
-
-    return try {
-        val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        val date = isoFormatter.parse(dateString) ?: throw Exception("ISO format error")
-
-        val displayFormatter = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
-        displayFormatter.format(date)
-    } catch (e: Exception) {
-        try {
-            val simpleFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val date = simpleFormatter.parse(dateString) ?: throw Exception("Simple date format error")
-
-            val displayFormatter = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
-            displayFormatter.format(date)
-        } catch (e: Exception) {
-            "Invalid Date"
+            })
         }
     }
 }
