@@ -273,30 +273,6 @@ class UserService @Inject constructor(private val realm: Realm) {
         }
     }
 
-    suspend fun updateCompletionStatus() {
-        val checkups = realm.query<UserCheckup>()
-            .sort("userId", Sort.ASCENDING)
-            .find()
-
-        val userCheckupCount = checkups
-            .groupBy { it.userId }
-            .mapValues { it.value.size }
-
-        userCheckupCount.forEach { (userId, count) ->
-            val userDto = realm.query<User>("_id == $0", ObjectId(userId))
-                .find()
-                .firstOrNull()
-                ?.toDTO()
-
-            if (userDto == null) return
-
-            realm.write {
-                userDto.isCompleted = count == 3
-                copyToRealm(userDto.toEntity(), updatePolicy = UpdatePolicy.ALL)
-            }
-        }
-    }
-
     suspend fun archiveOldResidences() {
         val fiveYearsAgoInstant = LocalDate.now().minusYears(5).atStartOfDay().toInstant(ZoneOffset.UTC)
         val fiveYearsAgoRealmInstant = RealmInstant.from(fiveYearsAgoInstant.epochSecond, 0)
