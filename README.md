@@ -33,7 +33,7 @@ Click on the ▶️ "Run" button in Android Studio or use the shortcut Shift + F
 
 ![Image](https://github.com/user-attachments/assets/fb492006-efee-44e5-b965-9f60569406a7)
 
-![Image](https://github.com/user-attachments/assets/00881305-039e-4ff4-a009-e113391bd091)
+![Image](https://github.com/user-attachments/assets/8141d741-f917-4cc7-8d99-4cc8752f03dc)
 
 Database Setup
 🌥️ Deploy with MongoDB Atlas (Cloud
