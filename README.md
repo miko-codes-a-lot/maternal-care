@@ -19,3 +19,19 @@ The Maternal Care Mobile Application 🤰📱 is a comprehensive digital solutio
 ![Image](https://github.com/user-attachments/assets/6caed6df-fa42-4649-811b-933d0b7476f1)
 
 ![Image](https://github.com/user-attachments/assets/dff35119-5c7b-4b38-b39a-cad9211a9dc5)
+
+Installation
+https://github.com/miko-codes-a-lot/maternal-care.git
+
+Native to the project cd agriguard
+
+Open the project in Android Studio.
+
+Install necessary dependencies:
+
+Clone
+Open the build.gradle files and sync the project. Connect your Android device or start an emulator in the Device Manager.
+
+Run the app:
+
+Click on the ▶️ "Run" button in Android Studio or use the shortcut Shift + F10.
