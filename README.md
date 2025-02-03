@@ -15,3 +15,7 @@ The Maternal Care Mobile Application 🤰📱 is a comprehensive digital solutio
 🔗 Retrofit: Library for fetching expert recommendations and backend data efficiently.
 
 📲 Installation To set up and run the AgriGuard application on your local machine, follow these steps:
+
+![Image](https://github.com/user-attachments/assets/6caed6df-fa42-4649-811b-933d0b7476f1)
+
+![Image](https://github.com/user-attachments/assets/dff35119-5c7b-4b38-b39a-cad9211a9dc5)
