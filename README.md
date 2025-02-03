@@ -18,7 +18,7 @@ The Maternal Care Mobile Application 🤰📱 is a comprehensive digital solutio
 
 ![Image](https://github.com/user-attachments/assets/6caed6df-fa42-4649-811b-933d0b7476f1)
 
-![Image](https://github.com/user-attachments/assets/dff35119-5c7b-4b38-b39a-cad9211a9dc5)
+![Image](https://github.com/user-attachments/assets/549f4db1-045a-4e6b-877d-e4841cbaf338)
 
 Installation
 1. Clone the repository:
