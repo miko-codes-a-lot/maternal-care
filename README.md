@@ -46,7 +46,7 @@ Create a Cluster:
 Create a free cluster and add a database user with appropriate access.
 Update Connection String:
 
-Replace and add (mongodb+srv://:@cluster0.mongodb.net/materncalcare)
+Replace and add (mongodb+srv://:@cluster0.mongodb.net/maternalcare)
 📧 Contact If you have any questions, suggestions, or feedback, feel free to reach out:
 
 📄 License MaternalCare is open-source software licensed under the MIT License. Feel free to use, modify, and distribute it as per the terms of the license.
