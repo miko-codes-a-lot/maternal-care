@@ -21,17 +21,32 @@ The Maternal Care Mobile Application 🤰📱 is a comprehensive digital solutio
 ![Image](https://github.com/user-attachments/assets/dff35119-5c7b-4b38-b39a-cad9211a9dc5)
 
 Installation
+1. Clone the repository:
 https://github.com/miko-codes-a-lot/maternal-care.git
-
-Native to the project cd agriguard
-
-Open the project in Android Studio.
-
-Install necessary dependencies:
-
-Clone
-Open the build.gradle files and sync the project. Connect your Android device or start an emulator in the Device Manager.
-
-Run the app:
+2. Native to the project cd maternalcare
+3. Open the project in Android Studio.
+4. Install necessary dependencies:
+5.Open the build.gradle files and sync the project. Connect your Android device or start an emulator in the Device Manager.
+6. Run the app:
 
 Click on the ▶️ "Run" button in Android Studio or use the shortcut Shift + F10.
+
+![Image](https://github.com/user-attachments/assets/fb492006-efee-44e5-b965-9f60569406a7)
+
+![Image](https://github.com/user-attachments/assets/46717c2f-b5e6-4e80-941d-d8f265905d6f)
+
+Database Setup
+🌥️ Deploy with MongoDB Atlas (Cloud
+
+Create a MongoDB Atlas Account:
+
+Sign up at MongoDB Atlas.
+Create a Cluster:
+
+Create a free cluster and add a database user with appropriate access.
+Update Connection String:
+
+Replace and add (mongodb+srv://:@cluster0.mongodb.net/materncalcare)
+📧 Contact If you have any questions, suggestions, or feedback, feel free to reach out:
+
+📄 License MaternalCare is open-source software licensed under the MIT License. Feel free to use, modify, and distribute it as per the terms of the license.
